@@ -19,8 +19,8 @@ export default defineConfig({
     },
 
     manifest: {
-      name: 'front-end',
-      short_name: 'frontend',
+      name: 'DriveParts - Sistema PWA',
+      short_name: 'DriveParts',
       description: 'Front-end referente ao sistema PWA do projeto DriveParts',
       theme_color: '#F3F3F3',
     },

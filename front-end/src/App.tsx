@@ -2,8 +2,9 @@ import PWABadge from './PWABadge.tsx'
 import { Routes, Route, useNavigate } from "react-router-dom"
 import './App.css'
 import Catalogo from './pages/Catalogo.tsx'
-import Login from './pages/login.tsx'
-import Cadastro from './pages/cadastro.tsx'
+import Login from './pages/Login.tsx'
+import Cadastro from './pages/Cadastro.tsx'
+import DashboardGeral from './pages/dashboard/Geral.tsx'
 //import { useEffect } from 'react'
 
 function App() {
@@ -42,12 +43,19 @@ function App() {
               >
                 Ir para cadastro
               </button>
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                onClick={() => navigate("/dashboard/geral")}
+              >
+                Ir para dashboard
+              </button>
             </div>
           }
         />
         <Route path="/catalogo" element={<Catalogo />} />
         <Route path="/login" element={<Login/>}/>
         <Route path="/cadastro" element={<Cadastro/>}/>
+        <Route path="/dashboard/geral" element={<DashboardGeral/>}/>
       </Routes>
       <PWABadge />
     </>

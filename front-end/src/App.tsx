@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate } from "react-router-dom"
 import './App.css'
 import Catalogo from './pages/Catalogo.tsx'
 import Login from './pages/login.tsx'
+import Cadastro from './pages/cadastro.tsx'
 //import { useEffect } from 'react'
 
 function App() {
@@ -35,11 +36,18 @@ function App() {
               >
                 Ir para login
               </button>
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                onClick={() => navigate("/cadastro")}
+              >
+                Ir para cadastro
+              </button>
             </div>
           }
         />
         <Route path="/catalogo" element={<Catalogo />} />
         <Route path="/login" element={<Login/>}/>
+        <Route path="/cadastro" element={<Cadastro/>}/>
       </Routes>
       <PWABadge />
     </>

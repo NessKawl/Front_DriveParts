@@ -5,6 +5,8 @@ import Catalogo from './pages/Catalogo.tsx'
 import Login from './pages/Login.tsx'
 import Cadastro from './pages/Cadastro.tsx'
 import DashboardGeral from './pages/dashboard/Geral.tsx'
+import Reserva from './pages/produto/DetalheProduto.tsx'
+import DetalheProduto from './pages/produto/DetalheProduto.tsx'
 //import { useEffect } from 'react'
 
 function App() {
@@ -49,6 +51,18 @@ function App() {
               >
                 Ir para dashboard
               </button>
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                onClick={() => navigate("/detalhe-produto")}
+              >
+                Ir para detalhe produto
+              </button>
+              <button 
+                className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                onClick={() => navigate("/reserva")}
+              >
+                Ir para reserva
+              </button>
             </div>
           }
         />
@@ -56,6 +70,8 @@ function App() {
         <Route path="/login" element={<Login/>}/>
         <Route path="/cadastro" element={<Cadastro/>}/>
         <Route path="/dashboard/geral" element={<DashboardGeral/>}/>
+        <Route path="/reserva" element={<DetalheProduto/>}/>
+        <Route path="/detalhe-produto" element={<Reserva/>}/>
       </Routes>
       <PWABadge />
     </>

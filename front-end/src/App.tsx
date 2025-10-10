@@ -5,7 +5,7 @@ import Catalogo from './pages/Catalogo.tsx'
 import Login from './pages/Login.tsx'
 import Cadastro from './pages/Cadastro.tsx'
 import DashboardGeral from './pages/dashboard/Geral.tsx'
-import Reserva from './pages/produto/DetalheProduto.tsx'
+import Reserva from './pages/produto/Reserva.tsx'
 import DetalheProduto from './pages/produto/DetalheProduto.tsx'
 //import { useEffect } from 'react'
 
@@ -70,8 +70,8 @@ function App() {
         <Route path="/login" element={<Login/>}/>
         <Route path="/cadastro" element={<Cadastro/>}/>
         <Route path="/dashboard/geral" element={<DashboardGeral/>}/>
-        <Route path="/reserva" element={<DetalheProduto/>}/>
-        <Route path="/detalhe-produto" element={<Reserva/>}/>
+        <Route path="/reserva" element={<Reserva/>}/>
+        <Route path="/detalhe-produto" element={<DetalheProduto/>}/>
       </Routes>
       <PWABadge />
     </>

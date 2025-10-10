@@ -11,7 +11,7 @@ import Informacoes from "../../components/produto/Informacoes";
 export default function DetalheProduto() {
   return (
 
-    <div className="">
+    <div className="min-h-screen bg-ice">
       <div>
         <NavBar />
       </div>
@@ -38,7 +38,7 @@ export default function DetalheProduto() {
           <BotaoReserva />
         </div>
 
-        <hr className="mt-8"/>
+        <hr className="mt-8" />
 
         <div className="mt-5">
           <Informacoes />

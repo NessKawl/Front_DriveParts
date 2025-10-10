@@ -1,5 +1,6 @@
 //import { useNavigate } from "react-router-dom"
 import ProductsGrid from "../components/cards/ProductsGrid.tsx"
+import FooterMain from "../components/footer/FooterMain.tsx"
 import Banner from "../components/imagens/Banner.tsx"
 import NavBar from "../components/navbar/NavBar.tsx"
 export default function Catalogo() {
@@ -21,6 +22,9 @@ export default function Catalogo() {
                     <ProductsGrid />
                 </div>
             </main>
+            <footer>
+                <FooterMain />
+            </footer>
         </div>
     )
 }

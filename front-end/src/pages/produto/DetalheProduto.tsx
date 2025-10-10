@@ -8,7 +8,7 @@ import Informacoes from "../../components/produto/Informacoes";
 
 
 
-export default function Reserva() {
+export default function DetalheProduto() {
   return (
 
     <div className="">

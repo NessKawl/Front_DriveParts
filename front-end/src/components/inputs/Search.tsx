@@ -8,7 +8,7 @@ export default function Search() {
           name="search" 
           id=""
           placeholder="Pesquise..."
-          className="bg-ice font-semibold placeholder:text-gray outline-none text-black-smooth text-md"
+          className="bg-ice font-semibold placeholder:text-gray outline-none text-black-smooth text-md md:w-full"
           />
           <SearchIcon className="text-black-smooth mr-1" size={18}/>
 

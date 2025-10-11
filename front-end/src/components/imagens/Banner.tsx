@@ -12,7 +12,7 @@ export default function Banner() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length)
-    }, 4000) 
+    }, 4000)
     return () => clearInterval(interval)
   }, [])
 
@@ -23,9 +23,13 @@ export default function Banner() {
           key={index}
           src={img}
           alt={`Banner ${index + 1}`}
-          className={`absolute  w-full h-full object-cover transition-opacity duration-1000 ${
-            index === currentIndex ? "opacity-100" : "opacity-0"
-          }`}
+          loading="lazy"
+          onLoad={(e) => {
+            e.currentTarget.style.filter = "none"
+            e.currentTarget.style.opacity = "1"
+          }}
+          className={`absolute  w-full h-full object-cover transition-opacity duration-1000 ${index === currentIndex ? "opacity-100" : "opacity-0"
+            }`}
         />
       ))}
     </div>

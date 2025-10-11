@@ -7,11 +7,19 @@ interface ProductCardProps {
 
 export default function CardProduto({ image, name, price, parcelas }: ProductCardProps) {
   return (
-    <div 
+    <div
       onClick={() => window.location.href = `/detalhe-produto?produto=${name}`}
       className="bg-white md:w-60 h-70 md:h-96  p-2 flex flex-col items-left justify-between rounded-sm shadow-md hover:shadow-lg transition-shadow duration-300">
       <div className="flex flex-col md:w-full items-center">
-        <img src={image} alt={name} className="w-32 h-32 md:w-48 md:h-48 mb-2 items-center" />
+        <img
+          src={image}
+          alt={name}
+          onLoad={(e) => {
+            e.currentTarget.style.filter = "none"
+            e.currentTarget.style.opacity = "1"
+          }}
+          loading="lazy"
+          className="w-32 h-32 md:w-48 md:h-48 mb-2 items-center" />
         <h3 className="text-sm md:text-lg font-semibold text-left line-clamp-3 md:line-clamp-4">{name}</h3>
       </div>
       <div className="flex flex-col items-left justify-left">

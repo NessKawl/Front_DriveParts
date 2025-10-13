@@ -7,6 +7,8 @@ import Cadastro from './pages/Cadastro.tsx'
 import DashboardGeral from './pages/dashboard/Geral.tsx'
 import Reserva from './pages/produto/Reserva.tsx'
 import DetalheProduto from './pages/produto/DetalheProduto.tsx'
+import Pesquisa from './pages/Pesquisa.tsx'
+import Perfil from './pages/perfil/Perfil.tsx'
 //import { useEffect } from 'react'
 
 function App() {
@@ -63,10 +65,18 @@ function App() {
               >
                 Ir para reserva
               </button>
+              <button 
+                className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                onClick={() => navigate("/pesquisa")}
+              >
+                Ir para pesquisa
+              </button>
             </div>
           }
         />
         <Route path="/catalogo" element={<Catalogo />} />
+        <Route path="/pesquisa" element={<Pesquisa />} />
+        <Route path="/perfil" element={<Perfil />} />
         <Route path="/login" element={<Login/>}/>
         <Route path="/cadastro" element={<Cadastro/>}/>
         <Route path="/dashboard/geral" element={<DashboardGeral/>}/>

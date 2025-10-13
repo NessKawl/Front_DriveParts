@@ -1,12 +1,9 @@
+import NavBarSimples from "../components/navbar/NavbarSimples";
 
 export default function Cadastro() {
   return (
     <div>
-      <div className="bg-primary-orange py-4 px-2">
-        <div>
-          <p className="text-black-smooth text-sm font-bold flex items-center justify-center">Mare Auto Peças</p>
-        </div>
-      </div>
+      <NavBarSimples rota={"login"} />
       <div className="m-15 mb-15">
         <h1 className="text-4xl font-bold flex justify-center items-center">Crie sua conta</h1>
       </div>

@@ -1,13 +1,15 @@
+import { useNavigate } from "react-router-dom"
+import Button from "../components/buttons/Button"
+import NavBarSimples from "../components/navbar/NavbarSimples"
+import FooterMain from "../components/footer/FooterMain"
 
 
 export default function Login() {
+  const navigate = useNavigate()
   return (
     <div>
-      <div className="bg-primary-orange py-4 px-2">
-        <div>
-          <p className="text-black-smooth text-sm font-bold flex items-center justify-center">Mare Auto Peças</p>
-        </div>
-      </div>
+      <NavBarSimples rota={"catalogo"} />
+      
       <div className="m-15 mb-15">
         <h1 className="text-4xl font-bold flex justify-center items-center">Entrar</h1>
       </div>
@@ -34,14 +36,22 @@ export default function Login() {
           <p>Esqueceu sua senha?</p>
         </div>
         <div className="pt-8 flex items-center justify-center">
-          <button type="submit" className="mb-8 pl-4 pr-4 font-semibold bg-blue-600 text-white py-2 rounded-lg ">
-            Continuar
-          </button>
+          <Button
+            onClick={() => navigate("/catalogo")}
+            children="ACESSAR"
+            className="bg-ocean-blue text-ice font-semibold py-2 px-4 md:text-xl hover:bg-primary-orange"
+          />
         </div>
-        <div className="mt-8">
-          <p className="font-medium">Não possui uma conta? Cadastre-se agora!</p>
+        <div className="mt-8 w-full flex justify-center items-center">
+          <Button 
+            children="Não possui uma conta? Cadastre-se agora!"
+            className="font-medium text-black-smooth hover:text-primary-orange"
+          />
         </div>
       </div>
+      <footer className="mt-30">
+        <FooterMain/>
+      </footer>
     </div>
   )
 }

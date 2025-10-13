@@ -3,9 +3,11 @@ import TituloProduto from "../../components/produto/TituloProduto";
 import InputQtd from "../../components/reserva/InputQtd";
 import SelecionarPeriodo from "../../components/reserva/SelecionarPeriodo";
 import Total from "../../components/reserva/Total";
-import BotaoReserva from "../../components/produto/BotaoReserva";
+import Button from "../../components/buttons/Button";
+import { useNavigate } from "react-router-dom";
 
 export default function Reserva() {
+  const navigate = useNavigate()
   return (
     <div className="min-h-screen bg-ice">
       <NavBar />
@@ -24,12 +26,16 @@ export default function Reserva() {
             <SelecionarPeriodo />
           </div>
 
-          <div className="mt-50">
+          <div className="mt-40">
             <Total />
           </div>
 
-          <div className="mt-20 flex justify-center">
-            <BotaoReserva />
+          <div className="py-20 flex justify-center items-center">
+            <Button
+              children="Reservar"
+              className="rounded-4xl bg-primary-orange text-ice px-15 py-1"
+              onClick={() => navigate("/catalogo")}
+            />
           </div>
         </form>
       </div>

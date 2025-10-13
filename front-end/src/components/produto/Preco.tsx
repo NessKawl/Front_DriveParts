@@ -1,8 +1,8 @@
-export default function preco (){
-    return(
-        <div className="flex items-center ">
-            <p className="text-[30px]">R$ 499,99</p>
-            <p className="ms-3 text-[12px]">ou 12x R$41,66 sem juros</p>
-        </div>
-    )
+export default function Preco() {
+  return (
+    <div className="flex flex-col  items-start">
+      <p className="text-3xl md:text-4xl font-semibold">R$ 499,99</p>
+      <p className=" text-xs md:mt-2">ou 12x R$41,66 sem juros</p>
+    </div>
+  )
 }

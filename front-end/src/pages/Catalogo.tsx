@@ -11,14 +11,14 @@ export default function Catalogo() {
                 <NavBar />
             </aside>
 
-            <main>
+            <main className="w-full">
                 <div className="w-full h-auto flex items-center justify-center mt-2">
                     <Banner />
                 </div>
                 <div className="mt-4 mx-4 border-b border-gray/10 pb-2 md:mx-10 ">
                     <h2 className="text-xl md:text-2xl font-bold text-black-smooth">Populares</h2>
                 </div>
-                <div className="md:mx-20 md:mt-10">
+                <div className="md:mt-10 flex justify-center">
                     <ProductsGrid />
                 </div>
             </main>

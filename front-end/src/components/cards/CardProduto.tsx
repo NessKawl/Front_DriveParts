@@ -1,15 +1,17 @@
 interface ProductCardProps {
   image: string
   name: string
-  price: string
+  price?: string
   parcelas?: string
+  praso?: string
+  reserva?: string
 }
 
-export default function CardProduto({ image, name, price, parcelas }: ProductCardProps) {
+export default function CardProduto({ image, name, price, parcelas,praso, reserva }: ProductCardProps) {
   return (
     <div
       onClick={() => window.location.href = `/detalhe-produto?produto=${name}`}
-      className="bg-white md:w-60 h-70 md:h-96  p-2 flex flex-col items-left justify-between rounded-sm shadow-md hover:shadow-lg transition-shadow duration-300">
+      className="bg-white md:w-60 h-70 md:h-96  p-2 flex flex-col items-left justify-between rounded-sm shadow-md hover:shadow-lg hover:shadow-primary-orange/40 transition-shadow duration-300 cursor-pointer">
       <div className="flex flex-col md:w-full items-center">
         <img
           src={image}
@@ -25,6 +27,8 @@ export default function CardProduto({ image, name, price, parcelas }: ProductCar
       <div className="flex flex-col items-left justify-left">
         <p className="text-primary-orange font-bold text-xl md:text-3xl">{price}</p>
         <p className="text-black-smooth font-semibold text-xs md:text-md">{parcelas}</p>
+        <p className="text-black-smooth font-semibold text-md">{praso}</p>
+        <p className="text-black-smooth font-semibold text-md">{reserva}</p>
       </div>
     </div>
   );

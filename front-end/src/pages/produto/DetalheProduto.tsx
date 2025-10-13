@@ -13,12 +13,12 @@ export default function DetalheProduto() {
 
   return (
 
-    <div className="min-h-screen bg-ice">
+    <div className="min-h-screen bg-ice flex flex-col">
       <div>
         <NavBar />
       </div>
 
-      <main className="m-5 md:mx-10 lg:mx-20 xl:mx-40">
+      <main className="m-5 md:mx-10 lg:mx-20 xl:mx-40 flex-1">
 
         <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-10 ">
         

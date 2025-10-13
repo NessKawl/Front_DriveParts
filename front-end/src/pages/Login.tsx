@@ -43,13 +43,14 @@ export default function Login() {
           />
         </div>
         <div className="mt-8 w-full flex justify-center items-center">
-          <Button 
+          <Button
+            onClick={() => navigate("/cadastro")}
             children="Não possui uma conta? Cadastre-se agora!"
             className="font-medium text-black-smooth hover:text-primary-orange"
           />
         </div>
       </div>
-      <footer className="mt-30">
+      <footer className="mt-35">
         <FooterMain/>
       </footer>
     </div>

@@ -6,56 +6,60 @@ import Preco from "../../components/produto/Preco";
 import Informacoes from "../../components/produto/Informacoes";
 import FooterMain from "../../components/footer/FooterMain";
 import Button from "../../components/buttons/Button";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom"
 
 
 export default function DetalheProduto() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
   return (
 
-    <div className="min-h-screen bg-ice">
+    <div className="min-h-screen bg-ice flex flex-col">
       <div>
         <NavBar />
       </div>
 
-      <div className="m-5 row">
+      <main className="m-5 md:mx-10 lg:mx-20 xl:mx-40 flex-1">
 
-        <div className=" flex flex-row-reverse">
-          <QuantidadeDisponivel />
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-10 ">
 
-        <div className="mt-3">
-          <ImagemProduto />
-        </div>
+          <div className="flex flex-row-reverse md:mt-5 md:col-start-2 lg:col-start-2 md:row-start-1 self-start md:mr-6">
+            <QuantidadeDisponivel />
+          </div>
 
-        <div className="mt-3">
-          <TituloProduto />
-        </div>
+          <div className="my-3 md:m-1 lg:col-start-1 md:row-span-5 lg:max-h-[500px] lg:w-full bg-white ">
+            <ImagemProduto />
+          </div>
 
-        <div className="mt-3">
-          <Preco />
-        </div>
+          <div className=" md:mt-5 md:col-start-2 md:row-start-2  md:mr-6">
+            <TituloProduto />
+          </div>
 
-        <div className="mt-5 flex justify-center">
-          <Button
-            children="Reservar"
-            className="rounded-4xl bg-primary-orange text-ice px-15 py-1"
-            onClick={() => navigate("/reserva")}
-          />
+          <div className="mt-5 md:mt-10 lg:mt-15 xl:mt-25 md:col-start-2 md:row-start-3  md:mr-6">
+            <Preco />
+          </div>
+
+          <div className="mt-5 flex justify-center md:col-start-2 md:row-start-5 md:mb-10">
+            <Button
+              children="Reservar"
+              className="rounded-4xl bg-primary-orange px-15 py-1 lg:px-25 lg:py-2 text-ice"
+              onClick={() => navigate("/reserva")}
+            />
+          </div>
+
         </div>
 
         <hr className="mt-8" />
 
-        <div className="mt-5">
+        <div className="mt-5 ">
           <Informacoes />
         </div>
-      </div>
+
+      </main>
+
       <footer>
-        <FooterMain/>
+        <FooterMain />
       </footer>
-
-
     </div>
   );
 }

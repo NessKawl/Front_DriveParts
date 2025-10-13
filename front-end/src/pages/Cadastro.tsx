@@ -1,6 +1,9 @@
 import NavBarSimples from "../components/navbar/NavbarSimples";
+import { useNavigate } from "react-router-dom"
 
 export default function Cadastro() {
+  const navigate = useNavigate()
+
   return (
     <div>
       <NavBarSimples rota={"login"} />
@@ -45,7 +48,7 @@ export default function Cadastro() {
           />
         </div>
         <div className="pt-8 flex items-center justify-center">
-          <button type="submit" className="mb-8 pl-4 pr-4 font-semibold bg-blue-600 text-white py-2 rounded-lg ">
+          <button type="submit" className="mb-8 pl-4 pr-4 font-semibold bg-blue-600 text-white py-2 rounded-lg " onClick={() => navigate("/login")}>
             Continuar
           </button>
         </div>

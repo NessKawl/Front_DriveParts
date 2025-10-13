@@ -7,7 +7,7 @@ export default function Total(){
 
             <div className="flex justify-end">
                 
-                <p className="mt-3 text-[18px] font-semibold">R$ 499,99</p>
+                <p className="mt-3 text-[18px] font-semibold">R$ 424,90</p>
 
             </div>
         </div>

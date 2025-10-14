@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom"
 import Button from "../components/buttons/Button"
 import NavBarSimples from "../components/navbar/NavbarSimples"
 import FooterMain from "../components/footer/FooterMain"
+import InputLabel from "../components/inputs/InputLabel"
 
 
 export default function Login() {
@@ -9,27 +10,28 @@ export default function Login() {
   return (
     <div>
       <NavBarSimples rota={"catalogo"} />
-      
+
       <div className="m-15 mb-15">
         <h1 className="text-4xl font-bold flex justify-center items-center">Entrar</h1>
       </div>
       <div className="ml-8 mr-8">
         <div>
-          <label htmlFor="telefone" className="font-semibold">Telefone</label>
-          <input 
-          id="telefone"
-          type="text"
-          placeholder="Insira seu Telefone"
-          className = "w-full border border-gray-300 rounded-lg p-2 "
-          />
+          <InputLabel
+            label="Telefone"
+            id="telefone"
+            type="text"
+            placeholder="Insira seu Telefone"
+            classNameLABEL="font-semibold"
+            classNameINPUT="w-full border border-gray-300 rounded-lg p-2 " />
         </div>
         <div className="mt-8">
-          <label htmlFor="Senha" className="font-semibold">Senha</label>
-          <input 
-          id="Senha"
-          type="password"
-          placeholder="********"
-          className = "w-full border border-gray-300 rounded-lg p-2 "
+          <InputLabel
+            label="Senha"
+            id="Senha"
+            type="password"
+            placeholder="Insira sua Senha"
+            classNameLABEL="font-semibold"
+            classNameINPUT="w-full border border-gray-300 rounded-lg p-2 "
           />
         </div>
         <div className="font-bold flex justify-end items-end mb-8">
@@ -51,7 +53,7 @@ export default function Login() {
         </div>
       </div>
       <footer className="mt-35">
-        <FooterMain/>
+        <FooterMain />
       </footer>
     </div>
   )

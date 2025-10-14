@@ -11,7 +11,7 @@ export default function Search() {
   };
   function handleSearch(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    navigate(`/pesquisa?q=${encodeURIComponent(query)}`)
+    navigate(`/pesquisa?produto=${encodeURIComponent(query)}`)
   }
   return (
     <div className="bg-ice px-2 py-1 rounded-xl md:rounded-none ">
@@ -23,7 +23,7 @@ export default function Search() {
           name="search"
           id=""
           placeholder="Pesquise..."
-          className="bg-ice font-semibold placeholder:text-gray outline-none text-black-smooth text-md md:w-full"
+          className="bg-ice font-semibold placeholder:text-gray outline-none text-black-smooth text-md w-full"
           value={query}
           onChange={handleInputChange}
         />

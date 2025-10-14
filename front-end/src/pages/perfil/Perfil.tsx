@@ -15,7 +15,7 @@ export default function Perfil() {
                     <h1 className="text-black-smooth md:text-4xl text-2xl font-bold">Suas informações</h1>
                 </div>
                 <div className="w-full flex justify-center items-center my-5">
-                    <div className="bg-white md:w-4/12 w-10/12 h-auto p-4">
+                    <div className="bg-white md:w-4/12 w-10/12 h-auto p-4 rounded-2xl">
                         <div className="w-full flex items-end justify-end">
                             <Button
                                 children={"Editar"}
@@ -40,7 +40,7 @@ export default function Perfil() {
                             <Button
                                 children={"Sair"}
                                 onClick={() => navigate("/catalogo")}
-                                className={"bg-red-alert text-xl font-semibold text-ice hover:text-black-smooth py-2 md:px-10 px-8 hover:shadow-sm hover:shadow-primary-orange"}
+                                className={"bg-red-alert text-xl font-semibold text-ice hover:text-black-smooth py-2 md:px-10 px-8 hover:shadow-sm hover:shadow-primary-orange rounded-md"}
                             />
                         </div>
                     </div>

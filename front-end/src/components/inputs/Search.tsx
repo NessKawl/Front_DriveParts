@@ -14,8 +14,10 @@ export default function Search() {
     navigate(`/pesquisa?q=${encodeURIComponent(query)}`)
   }
   return (
-    <div className="bg-ice px-1 py-0.5 ">
-      <form onSubmit={handleSearch} className="flex flex-row items-center ">
+    <div className="bg-ice px-2 py-1 rounded-xl md:rounded-none ">
+      <form 
+        onSubmit={handleSearch} 
+        className="flex flex-row items-center justify-between">
         <input
           type="text"
           name="search"

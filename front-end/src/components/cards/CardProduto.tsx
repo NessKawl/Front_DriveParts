@@ -11,7 +11,7 @@ export default function CardProduto({ image, name, price, parcelas,praso, reserv
   return (
     <div
       onClick={() => window.location.href = `/detalhe-produto?produto=${name}`}
-      className="bg-white md:w-60 h-70 md:h-96  p-2 flex flex-col items-left justify-between rounded-sm shadow-md hover:shadow-lg hover:shadow-primary-orange/40 transition-shadow duration-300 cursor-pointer">
+      className="bg-white md:w-60 h-70 md:h-96 p-2 flex flex-col items-left justify-between rounded-lg md:rounded-sm shadow-md hover:shadow-lg hover:shadow-primary-orange/40 transition-shadow duration-300 cursor-pointer">
       <div className="flex flex-col md:w-full items-center">
         <img
           src={image}

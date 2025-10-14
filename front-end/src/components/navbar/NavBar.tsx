@@ -13,21 +13,18 @@ export default function navbar() {
       <div className="flex justify-between items-center w-full">
         <div>
           <button onClick={() => window.location.href = "/"} >
-            <p className="text-black-smooth text-sm md:text-2xl font-bold">DriveParts</p>
+            <p className="text-black-smooth text-xl md:text-2xl font-bold">DriveParts</p>
           </button>
 
         </div>
-        <div className="md:w-6/12">
+        <div className="hidden md:block md:w-6/12">
           <Search />
         </div>
-
-
-        <button onClick={() => setOpen(!open)} className="md:hidden ">
-          <Menu size={28} className="text-black-smooth" />
-        </button>
-
-        <div className="hidden md:flex">
+        <div className="flex gap-2 mb-2">
           <Profile name={"Mare Autopeças"} />
+          <button onClick={() => setOpen(!open)} className="md:hidden ">
+            <Menu size={30} className="text-black-smooth" />
+          </button>
         </div>
 
         <AnimatePresence>
@@ -43,24 +40,27 @@ export default function navbar() {
                   <button onClick={() => setOpen(!open)}>
                     <X size={28} className="text-black-smooth" />
                   </button>
-                  <p className="text-black-smooth text-sm font-bold">DriveParts</p>
+                  <p className="text-black-smooth text-lg font-bold">DriveParts</p>
                 </div>
-                <div className="flex justify-center items-center border-b-1 border-gray pb-2">
+                <div className="flex justify-end items-center border-b-1 border-gray pb-2">
                   <Profile name={"Mare Autopeças"} />
                 </div>
                 <h2 className="text-black-smooth text-md font-bold text-right">CATEGORIAS</h2>
-                <Categoria name="Motor" />
+                <Categoria name="Motor"  />
                 <Categoria name="Freios" />
                 <Categoria name="Suspensão" />
                 <Categoria name="Elétrica" />
                 <Categoria name="Filtros" />
                 <Categoria name="Óleos e Lubrificantes" />
-                
+
               </div>
 
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+      <div className="md:hidden w-11/12">
+        <Search />
       </div>
       <div>
         <nav className="hidden md:flex gap-6">

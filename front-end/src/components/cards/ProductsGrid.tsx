@@ -44,7 +44,7 @@ export default function ProductsGrid({ tipo = "catalogo" }: ProductsGridProps) {
   })
 
   return (
-    <div className="p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-6 md:gap-10">
+    <div className="p-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-2 sm:gap-6 md:gap-10">
       {filteredProducts.map((product, index) => (
         <ProductCard
           key={index}

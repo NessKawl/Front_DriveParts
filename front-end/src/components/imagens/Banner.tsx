@@ -17,7 +17,8 @@ export default function Banner() {
   }, [])
 
   return (
-    <div className="relative  w-full h-32 md:h-80 overflow-hidden mx-2 md:mx-4">
+    <div className="relative z-20 w-full h-32 md:h-80 overflow-hidden mx-2 md:mx-4">
+
       {images.map((img, index) => (
         <img
           key={index}
@@ -28,8 +29,7 @@ export default function Banner() {
             e.currentTarget.style.filter = "none"
             e.currentTarget.style.opacity = "1"
           }}
-          className={`absolute  w-full h-full object-cover transition-opacity duration-1000 ${index === currentIndex ? "opacity-100" : "opacity-0"
-            }`}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out ${index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"}`}
         />
       ))}
     </div>

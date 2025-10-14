@@ -9,6 +9,7 @@ import Reserva from './pages/produto/Reserva.tsx'
 import DetalheProduto from './pages/produto/DetalheProduto.tsx'
 import Pesquisa from './pages/Pesquisa.tsx'
 import Perfil from './pages/perfil/Perfil.tsx'
+import Verificacao from './pages/verificacao.tsx'
 //import { useEffect } from 'react'
 
 function App() {
@@ -71,6 +72,12 @@ function App() {
               >
                 Ir para pesquisa
               </button>
+              <button 
+                className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                onClick={() => navigate("/verificacao")}
+              >
+                Ir para verificação
+              </button>
             </div>
           }
         />
@@ -82,6 +89,7 @@ function App() {
         <Route path="/dashboard/geral" element={<DashboardGeral/>}/>
         <Route path="/reserva" element={<Reserva/>}/>
         <Route path="/detalhe-produto" element={<DetalheProduto/>}/>
+        <Route path="/verificacao" element={<Verificacao/>}/>
       </Routes>
       <PWABadge />
     </>

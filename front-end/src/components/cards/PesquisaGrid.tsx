@@ -54,13 +54,16 @@ export default function PesquisaGrid() {
                             hover:scale-105 transition
                             flex flex-row sm:flex-col sm:justify-between sm:items-center"
                     >
-                        <div className="hidden sm:flex flex-col">
+                        <div className="hidden sm:flex flex-col items-center">
                             <img
                                 src={product.image}
                                 alt={product.name}
                                 className="w-40 h-full sm:h-40 "
                             />
-                            <p className="text-sm font-medium">{product.name}</p>
+                            <div>
+                                <p className="text-sm font-medium">{product.name}</p>
+                            </div>
+                            
                         </div>
                         <img
                             src={product.image}

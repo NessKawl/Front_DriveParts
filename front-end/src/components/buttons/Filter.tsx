@@ -1,20 +1,38 @@
-import { useState } from "react";
-import Button from "./Button";
-import {ListFilter} from "lucide-react";
-
-
 export default function Filter() {
-    const [open, setOpen] = useState(false)
+
     return (
-        <div className="flex justify-end md:m-5">
-            <div className="bg-primary-orange px-2 py-1 md:px-4 md:mx-10  flex felx-row items-center gap-1">
-                <Button
-                    children="Filtar"
-                    className="font-semibold text-lg md:text-xl cursor-pointer"
-                    onClick={() => setOpen(!open)}
-                />
-                <ListFilter size={26} className="text-black-smooth" />
-            </div>
+        <div className="flex justify-end md:m-2">
+            <select
+                className="bg-primary-orange w-30 h-10 font-bold px-2 rounded-md sm:rounded-none "              
+            >   
+                <option value="">FILTRAR</option>
+                <option
+                    value="A-Z"
+                    className="font-semibold text-lg sm:text-md sm:font-medium text-black-smooth bg-ice"
+                >
+                    De A - Z
+                </option>
+                <option
+                    value="Z-A"
+                    className="font-semibold text-lg sm:text-md sm:font-medium text-black-smooth bg-ice"
+                >
+                    De Z - A
+                </option>
+                <option
+                    value="Menor"
+                    className="font-semibold text-lg sm:text-md sm:font-medium text-black-smooth bg-ice"
+                >
+                    Preço Menor
+                </option>
+                <option
+                    value="Maior"
+                    className="font-semibold text-lg sm:text-md sm:font-medium text-black-smooth bg-ice"
+                >
+                    Preço Maior
+                </option>
+            </select>
+
+
         </div>
     );
 }

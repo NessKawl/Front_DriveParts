@@ -36,7 +36,7 @@ export default function Reserva() {
               <div className="flex justify-center">
                 <Button
                   children="Reservar"
-                  className="rounded-4xl bg-primary-orange px-15 py-1 lg:px-25 lg:py-2 text-ice"
+                  className="rounded-xl bg-primary-orange px-15 py-1 lg:px-25 lg:py-2 text-ice"
                   onClick={() => navigate("/catalogo")}
                 />
               </div>

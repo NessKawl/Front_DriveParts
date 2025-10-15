@@ -42,7 +42,7 @@ export default function DetalheProduto() {
           <div className="mt-5 flex justify-center md:col-start-2 md:row-start-5 md:mb-10">
             <Button
               children="Reservar"
-              className="rounded-4xl bg-primary-orange px-15 py-1 lg:px-25 lg:py-2 text-ice"
+              className="rounded-lg text-xl font-semibold bg-primary-orange px-15 py-1 lg:px-25 lg:py-2 text-ice"
               onClick={() => navigate("/reserva")}
             />
           </div>

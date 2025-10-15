@@ -1,4 +1,4 @@
-export default function Gearal() {
+export default function DashGeral() {
     return (
         <div className="flex bg-black-smooth/95">
 

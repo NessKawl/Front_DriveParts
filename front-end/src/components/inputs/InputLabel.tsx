@@ -9,7 +9,7 @@ interface InputLabelProps {
 export default function InputLabel({label, id, type, placeholder, classNameLABEL, classNameINPUT}: InputLabelProps) {
     return (
         <div>
-            <div>
+            <div className="flex flex-col">
                 <label htmlFor="telefone" className={classNameLABEL}>{label}</label>
                 <input
                     id={id}

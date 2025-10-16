@@ -9,7 +9,7 @@ import Reserva from './pages/produto/Reserva.tsx'
 import DetalheProduto from './pages/produto/DetalheProduto.tsx'
 import Pesquisa from './pages/Pesquisa.tsx'
 import Perfil from './pages/perfil/Perfil.tsx'
-import Verificacao from './pages/verificacao.tsx'
+import Verificacao from './pages/Verificacao.tsx'
 //import { useEffect } from 'react'
 
 function App() {

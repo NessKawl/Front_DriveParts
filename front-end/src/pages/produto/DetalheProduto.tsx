@@ -1,16 +1,33 @@
 import NavBar from "../../components/navbar/NavBar";
-import TituloProduto from "../../components/produto/TituloProduto";
-import QuantidadeDisponivel from "../../components/produto/QuantidadeDisponivel"
-import ImagemProduto from "../../components/produto/ImagemProduto";
-import Preco from "../../components/produto/Preco";
-import Informacoes from "../../components/produto/Informacoes";
 import FooterMain from "../../components/footer/FooterMain";
 import Button from "../../components/buttons/Button";
 import { useNavigate } from "react-router-dom"
+import ProductCarousel from "../../components/carrosel/ProductCarousel";
 
 
 export default function DetalheProduto() {
   const navigate = useNavigate();
+
+  const informacoes = {
+    imagensProduto: [
+      "/produtos/pneu.png",
+      "/produtos/oleo.png",
+      "/produtos/cabecote.png",
+    ],
+    nome: "Pneu Goodyear Direction Touring 2 185/70 R14 88H",
+    preco: 424.90,
+    parcelas: () => `ou 3x de R$ ${parcelas.toFixed(2)} sem juros`,
+    detalhes: [
+      "Marca: Goodyear",
+      "Modelo: Kelly Edge",
+      "Índice de carga: 88",
+      "Velocidade máxima: 210 km/h",
+      "Design da banda de rodagem simétrico"
+    ]
+  }
+  const parcelas = informacoes.preco / 3;
+
+  const quantidade = 10;
 
   return (
 
@@ -24,19 +41,28 @@ export default function DetalheProduto() {
         <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-10 ">
 
           <div className="flex flex-row-reverse md:mt-5 md:col-start-2 lg:col-start-2 md:row-start-1 self-start md:mr-6">
-            <QuantidadeDisponivel />
+            <div className="rounded-xl bg-black-smooth/20 px-2 py-1">
+              <p className="text-xs">{quantidade} produtos disponiveis</p>
+            </div>
           </div>
 
-          <div className="my-3 md:m-1 lg:col-start-1 md:row-span-5 lg:max-h-[500px] lg:w-full bg-white ">
-            <ImagemProduto />
+          <div className="my-3 md:m-1 lg:col-start-1 md:row-span-5 lg:max-w-[500px] lg:max-h-[500px]  bg-white ">
+            <ProductCarousel images={informacoes.imagensProduto} />
           </div>
 
           <div className=" md:mt-5 md:col-start-2 md:row-start-2  md:mr-6">
-            <TituloProduto />
+            <p className="font-bold text-base lg:text-2xl">
+              {informacoes.nome}
+            </p>
           </div>
 
           <div className="mt-5 md:mt-10 lg:mt-15 xl:mt-25 md:col-start-2 md:row-start-3  md:mr-6">
-            <Preco />
+            <p className="font-semibold text-2xl lg:text-5xl text-primary-orange">
+              {informacoes.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </p>
+            <p className="font-light">
+              {informacoes.parcelas()}
+            </p>
           </div>
 
           <div className="mt-5 flex justify-center md:col-start-2 md:row-start-5 md:mb-10">
@@ -51,8 +77,11 @@ export default function DetalheProduto() {
 
         <hr className="mt-8" />
 
-        <div className="mt-5 ">
-          <Informacoes />
+        <div className="mt-10 ">
+          <p className="font-bold text-2xl lg:text-3xl ">Detalhes do Produto</p>
+          <p className="mt-5 text-lg lg:text-2xl font-semibold text-black-smooth ">
+            {informacoes.detalhes.map((detalhe, index) =>  (<li className="m-3 border-b border-black-smooth/30  p-2" key={index}>{detalhe}</li>))}
+          </p>
         </div>
 
       </main>

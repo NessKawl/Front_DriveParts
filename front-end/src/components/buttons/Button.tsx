@@ -4,13 +4,15 @@ type ButtonProps = {
   children: React.ReactNode
   className?: string
   onClick?: () => void
+  type?: "button" | "submit" | "reset" 
 }
 
-export default function Button({ children, className = "", onClick }: ButtonProps) {
+export default function Button({ children, className = "", onClick, type  }: ButtonProps) {
   return (
     <div>
       <button
         onClick={onClick}
+        type={type}
         className={clsx(
           "cursor-pointer transition",
           className

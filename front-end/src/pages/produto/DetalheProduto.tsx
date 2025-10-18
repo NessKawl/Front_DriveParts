@@ -57,7 +57,7 @@ export default function DetalheProduto() {
           </div>
 
           <div className="mt-5 md:mt-10 lg:mt-15 xl:mt-25 md:col-start-2 md:row-start-3  md:mr-6">
-            <p className="font-semibold text-2xl lg:text-5xl text-primary-orange">
+            <p className="font-bold text-3xl lg:text-5xl text-pear-green">
               {informacoes.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
             </p>
             <p className="font-light">
@@ -68,8 +68,8 @@ export default function DetalheProduto() {
           <div className="mt-5 flex justify-center md:col-start-2 md:row-start-5 md:mb-10">
             <Button
               children="Reservar"
-              className="rounded-lg text-xl font-semibold bg-primary-orange px-15 py-1 lg:px-25 lg:py-2 text-ice"
-              onClick={() => navigate("/reserva")}
+              className="rounded-lg text-xl font-semibold bg-primary-orange px-15 py-1 lg:px-25 lg:py-2 text-ice sm:rounded-none"
+              onClick={() => navigate(`/reserva?produto=${informacoes.nome}`)}
             />
           </div>
 
@@ -79,8 +79,8 @@ export default function DetalheProduto() {
 
         <div className="mt-10 ">
           <p className="font-bold text-2xl lg:text-3xl ">Detalhes do Produto</p>
-          <p className="mt-5 text-lg lg:text-2xl font-semibold text-black-smooth ">
-            {informacoes.detalhes.map((detalhe, index) =>  (<li className="m-3 border-b border-black-smooth/30  p-2" key={index}>{detalhe}</li>))}
+          <p className="mt-5 sm:text-lg lg:text-xl  text-black-smooth ">
+            {informacoes.detalhes.map((detalhe, index) =>  (<li className="bg-white border-b border-ice list-none p-2" key={index}>{detalhe}</li>))}
           </p>
         </div>
 

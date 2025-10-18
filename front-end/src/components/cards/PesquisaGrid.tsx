@@ -73,7 +73,7 @@ export default function PesquisaGrid() {
                         <div className="flex flex-col justify-between items-start w-full mt-2">
                             <p className="text-md font-medium sm:hidden line-clamp-3">{product.name}</p>
                             <div>
-                                <p className="text-2xl text-primary-orange font-semibold">
+                                <p className="text-2xl text-pear-green font-bold">
                                     {product.price}
                                 </p>
                                 <p className="text-sm font-light">{product.parcelas}</p>

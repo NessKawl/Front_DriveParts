@@ -1,24 +1,9 @@
+import NavBarDashboard from "../../components/navbar/NavBarDashboard"
+
 export default function DashGeral() {
     return (
         <div className="flex bg-black-smooth/95">
-
-            <div className="bg-black-smooth border-primary-orange border-r-2 w-50 text-center text-white flex flex-col min-h-screen font-bold">
-
-                <div className="mt-5">
-                    <h1>Mare Auto Peças</h1>
-                </div>
-
-                <div className="m-auto w-50">
-                    <div className="border-t border-primary-orange bg-primary-orange p-5 text-black ">Geral</div>
-                    <div className="border-t border-primary-orange p-5">Reservas</div>
-                    <div className="border-t border-primary-orange p-5">Venda</div>
-                    <div className="border-t border-primary-orange p-5">Caixa</div>
-                    <div className="border-t border-primary-orange border-b p-5">Produtos</div>
-                </div>
-
-                <div className="border-t border-red-alert text-red-alert p-5">Sair</div>
-            </div>
-
+            <NavBarDashboard page="Geral"/>
             <div className="flex m-auto items-center text-white">
 
                 <div className="grid grid-cols-3 gap-20">

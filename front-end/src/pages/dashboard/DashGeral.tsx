@@ -1,9 +1,16 @@
+import GraficoLinhas from "../../components/graficos/GraficoLinhas"
 import NavBarDashboard from "../../components/navbar/NavBarDashboard"
-
+const data = [
+    { name: "Jan", vendas: 400 },
+    { name: "Fev", vendas: 800 },
+    { name: "Mar", vendas: 600 },
+    { name: "Abr", vendas: 1000 },
+    { name: "Mai", vendas: 750 },
+]
 export default function DashGeral() {
     return (
         <div className="flex bg-black-smooth/95">
-            <NavBarDashboard page="Geral"/>
+            <NavBarDashboard page="Geral" />
             <div className="flex m-auto items-center text-white">
 
                 <div className="grid grid-cols-3 gap-20">
@@ -23,8 +30,9 @@ export default function DashGeral() {
                         <span className="text-primary-orange ps-1">GRÁFICO</span>
                         <span></span>
                     </div>
-                </div>
 
+                </div>
+                <GraficoLinhas data={data} />
 
             </div>
         </div>

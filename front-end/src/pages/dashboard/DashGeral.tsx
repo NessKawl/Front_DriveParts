@@ -78,10 +78,10 @@ export default function DashGeral() {
     return (
         <div className="flex bg-black-smooth/95">
             <NavBarDashboard page="Geral" />
-            <div className="flex flex-col gap-2 py-10 px-5 w-screen">
-                <div className="flex fle-row justify-between gap-4 w-full h-1/2">
-                    <div className="flex flex-col w-full gap-4">
-                        <div className="flex flex-row items-center gap-4 w-full">
+            <div className="grid grid-cols-1 w-full gap-2 py-2 px-5">
+                <div className="flex fle-row gap-4 h-full ">
+                    <div className="flex flex-col w-full gap-4 ">
+                        <div className="flex flex-row items-center gap-4 w-full h-full">
                             <CardEstatistica
                                 className="bg-black-smooth flex flex-col border-l border-primary-orange p-2 w-60 h-full"
                                 titulo="RESERVAS ATIVAS"
@@ -91,10 +91,10 @@ export default function DashGeral() {
                                 titulo="Últimas Reservas"
                                 colunas={colunasReservas}
                                 fetchData={buscarReservas}
-                                alturaMax="max-h-35"
+                                alturaMax="max-h-45 md:max-h-33"
                             />
                         </div>
-                        <div className="flex flex-row items-center gap-4 w-full">
+                        <div className="flex flex-row items-center gap-4 w-full h-full">
                             <CardEstatistica
                                 className="bg-black-smooth flex flex-col border-l border-primary-orange p-2 w-60 h-full"
                                 titulo="VENDAS NOS ULTIMOS 30 DIAS"
@@ -104,20 +104,21 @@ export default function DashGeral() {
                                 titulo="Últimas Vendas"
                                 colunas={colunasVendas}
                                 fetchData={buscarVendas}
-                                alturaMax="max-h-35"
+                                alturaMax="max-h-45 md:max-h-33"
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col gap-5 ">
+                    <div className="flex flex-col gap-4 h-full">
                         <CardEstatistica
-                            className="bg-black-smooth flex flex-col border-l border-primary-orange p-2 min-w-80"
+                            className="bg-black-smooth flex flex-col border-l border-primary-orange p-2 min-w-80 "
                             titulo="CAIXA ATUAL (R$)"
                             valor="32.192,19"
                         />
                         <GraficoBarras data={dataFluxo} />
                     </div>
                 </div>
-                <div className="flex flex-row justify-between gap-4 w-full h-1/2">
+                
+                <div className="flex flex-row gap-4 w-full h-full">
                     <GraficoLinhas
                         titulo="Reservas Mensais"
                         data={dataReservas}

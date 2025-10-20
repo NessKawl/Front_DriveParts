@@ -31,7 +31,7 @@ export default function TabelaLista({
   }, []);
 
   return (
-    <div className="bg-black-smooth border-l border-primary-orange p-4 w-full">
+    <div className="bg-black-smooth border-l border-primary-orange p-3 w-full h-full">
       <h2 className="text-lg font-semibold  text-primary-orange">{titulo}</h2>
 
       {loading ? (

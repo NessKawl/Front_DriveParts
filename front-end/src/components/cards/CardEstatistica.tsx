@@ -1,10 +1,11 @@
 interface  CardEstatisticaProps{
     titulo: string,
     valor: string
+    className?: string
 }
-export default function CardEstatistica({titulo, valor }: CardEstatisticaProps) {
+export default function CardEstatistica({titulo, valor, className }: CardEstatisticaProps) {
     return (
-        <div className="bg-black-smooth flex flex-col border-l border-primary-orange p-2 min-w-50">
+        <div className={className}>
             <div>
                 <h2 className="text-md text-primary-orange">{titulo}</h2>
 

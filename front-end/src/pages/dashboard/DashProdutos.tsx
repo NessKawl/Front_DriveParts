@@ -1,31 +1,57 @@
 import NavBarDashboard from "../../components/navbar/NavBarDashboard";
-
+import TabelaLista from "../../components/tabelas/TabelaLista";
 export default function DashProdutos() {
+    const colunasReservas = [
+        { chave: "cliente", titulo: "Cliente" },
+        { chave: "valor", titulo: "Valor" },
+        { chave: "data", titulo: "Data" },
+        { chave: "quantidade", titulo: "Quantidade" },
+    ];
+
+    const buscarReservas = async () => [
+        { cliente: "João", valor: "R$120,00", data: "20/10/2025", quantidade: 2 },
+        { cliente: "Maria", valor: "R$75,00", data: "19/10/2025", quantidade: 1 },
+        { cliente: "João", valor: "R$120,00", data: "20/10/2025", quantidade: 2 },
+        { cliente: "Maria", valor: "R$75,00", data: "19/10/2025", quantidade: 1 },
+    ];
+
     return (
         <div className="flex bg-black-smooth/95">
             <NavBarDashboard page="Produtos" />
-            <div className="flex m-auto items-center text-white">
+            <div className="flex flex-1 flex-col text-white">
+                <div className="p-6 bg-gray-100 min-h-screen">
+                    <div className="grid gap-6">
+                        <TabelaLista
+                            titulo="Últimas Reservas"
+                            colunas={colunasReservas}
+                            fetchData={buscarReservas}
+                            alturaMax="max-h-64"
+                        />
+                        <TabelaLista
+                            titulo="Últimas Vendas"
+                            colunas={[
+                                { chave: "cliente", titulo: "Cliente" },
+                                { chave: "valor", titulo: "Valor" },
+                                { chave: "data", titulo: "Data" },
+                                { chave: "quantidade", titulo: "Quantidade" },
+                            ]}
+                            fetchData={async () => [
+                                { cliente: "João", valor: "R$120,00", data: "20/10/2025", quantidade: 2 },
+                                { cliente: "Maria", valor: "R$75,00", data: "19/10/2025", quantidade: 1 },
+                                { cliente: "Maria", valor: "R$75,00", data: "19/10/2025", quantidade: 1 },
+                                { cliente: "Maria", valor: "R$75,00", data: "19/10/2025", quantidade: 1 },
+                                { cliente: "Maria", valor: "R$75,00", data: "19/10/2025", quantidade: 1 },
+                                { cliente: "Maria", valor: "R$75,00", data: "19/10/2025", quantidade: 1 },
+                                { cliente: "Maria", valor: "R$75,00", data: "19/10/2025", quantidade: 1 },
+                                { cliente: "Maria", valor: "R$75,00", data: "19/10/2025", quantidade: 1 }, 
+                                { cliente: "Maria", valor: "R$75,00", data: "19/10/2025", quantidade: 1 }, 
+                                { cliente: "Maria", valor: "R$75,00", data: "19/10/2025", quantidade: 1 },
 
-                <div className="grid grid-cols-3 gap-20">
-                    <div className="bg-black-smooth w-50 h-30 flex flex-col">
-                        <span className="text-primary-orange ps-1">RESERVAS</span>
-                        <span className="text-center mt-2 text-5xl">30</span>
-                    </div>
-                    <div className="bg-black-smooth flex flex-col">
-                        <span className="text-primary-orange ps-1">VENDAS (30 DIAS)</span>
-                        <span className="text-center mt-2 text-5xl">123</span>
-                    </div>
-                    <div className="bg-black-smooth flex flex-col">
-                        <span className="text-primary-orange ps-1">CAIXA</span>
-                        <span className="text-center mt-4 text-3xl">R$150,00</span>
-                    </div>
-                    <div className="bg-black-smooth col-span-3 h-80">
-                        <span className="text-primary-orange ps-1">GRÁFICO</span>
-                        <span></span>
+                            ]}
+                            alturaMax="max-h-64" // altura padrão
+                        />
                     </div>
                 </div>
-
-
             </div>
         </div>
     );

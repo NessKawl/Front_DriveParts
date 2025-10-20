@@ -1,26 +1,42 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
-interface GraficoLinhasProps {
-    data: {
-        name: string;
-        vendas: number;
-    }[];
+interface Serie {
+  key: string;      // nome da propriedade no data (ex: "vendidas")
+  color: string;    // cor da linha
+  label: string;    // nome exibido na legenda
 }
 
-export default function GraficoLinhas({ data }: GraficoLinhasProps) {
+interface GraficoLinhasProps {
+  titulo: string;
+  data: { name: string; [key: string]: number | string }[];
+  series: Serie[];
+}
+
+export default function GraficoLinhas({ titulo, data, series }: GraficoLinhasProps) {
   return (
-    <div className="w-full h-96 bg-black-smooth  p-4 rounded-2xl shadow-md">
-      <h2 className="text-xl font-semibold mb-4 text-ice">Vendas Mensais</h2>
+    <div className="w-full h-96 bg-black-smooth border-l border-primary-orange p-4 ">
+      <h2 className="text-xl font-semibold mb-4 text-primary-orange">{titulo}</h2>
 
       <ResponsiveContainer width="100%" height="90%">
         <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#F3F3F3" />
-          <XAxis dataKey="name" />
-          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" stroke="#3A3A3A" />
+          <XAxis dataKey="name" tick={{ fill: "#EAEAEA" }} />
+          <YAxis tick={{ fill: "#EAEAEA" }} />
           <Tooltip />
-          <Line type="monotone" dataKey="vendas" stroke="#FF961F" strokeWidth={3} />
+          <Legend />
+          {series.map((serie) => (
+            <Line
+              key={serie.key}
+              type="linear"
+              dataKey={serie.key}
+              stroke={serie.color}
+              strokeWidth={3}
+              dot={{ r: 5 }}
+              name={serie.label}
+            />
+          ))}
         </LineChart>
       </ResponsiveContainer>
     </div>
-  )
+  );
 }

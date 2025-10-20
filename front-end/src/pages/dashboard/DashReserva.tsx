@@ -4,7 +4,7 @@ export default function DashReserva() {
     return (
         <div className="flex bg-black-smooth/95">
             <NavBarDashboard page="Reserva" />
-            <div className="flex m-auto items-center text-white">
+            <div className="flex flex-col gap-2 py-10 px-5 w-screen">
 
                 <div className="grid grid-cols-3 gap-20">
                     <div className="bg-black-smooth w-50 h-30 flex flex-col">

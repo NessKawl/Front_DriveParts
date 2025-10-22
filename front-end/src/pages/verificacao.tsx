@@ -10,12 +10,12 @@ export default function Verificacao() {
   return (
     <div className="bg-ice h-screen">
       <NavBarSimples rota={"cadastro"} />
-      <div className="flex flex-col justify-center items-center ">
-        <h1 className="text-xl font-bold flex justify-center items-center">Verificação de Segurança</h1>
+      <div className="flex flex-col justify-center items-center mt-6">
+        <h1 className="text-xl font-bold flex justify-center items-center mb-4">Verificação de Segurança</h1>
         <div className="bg-white flex flex-col justify-between items-center p-10 rounded-2xl sm:rounded-none w-10/12 md:w-8/12 lg:w-6/12 xl:w-5/12 2xl:w-4/12">
-          <p className="font-medium text-lg mb-4">Para proteger sua conta, enviamos um código de verificação para o número cadastrado</p>
-          <h2 className="font-light text-start w-full">Código de verificação</h2>
-          <div className="w-full sm:w-10/12 flex flex-row justify-between items-center">
+          <p className="font-medium text-lg mb-6">Para proteger sua conta, enviamos um código de verificação para o número cadastrado</p>
+          <h2 className="font-light text-start w-full mb-2">Código de verificação</h2>
+          <div className="w-full sm:w-10/12 flex flex-row justify-center items-center gap-3">
             {Array(5).fill(0).map((_, index) => (
               <InputLabel
                 key={index}
@@ -25,11 +25,11 @@ export default function Verificacao() {
               />
             ))}
           </div>
-          <p className="w-full text-end font-semibold mb-4">Reenviar código</p>
+          <p className="w-full text-end font-semibold mb-8">Reenviar código</p>
           <Button
             onClick={() => navigate("/login")}
             children="Verificar"
-            className="bg-pear-green text-ice font-semibold rounded-sm py-2 px-4 md:text-xl hover:bg-primary-orange"
+            className="bg-pear-green text-ice font-semibold py-2 px-4 md:text-xl hover:bg-primary-orange"
           />
         </div>
 

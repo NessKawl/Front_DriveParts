@@ -20,7 +20,7 @@ export default function Perfil() {
                             <Button
                                 children={"Editar"}
                                 onClick={() => navigate("/editar-perfil")}
-                                className={"bg-primary-orange md:text-xl sm:text-sm font-semibold text-black-smooth hover:text-ice p-2 rounded-xs hover:shadow-sm hover:shadow-primary-orange"}
+                                className={"bg-primary-orange md:text-xl sm:text-sm font-semibold text-black-smooth hover:text-ice px-2 hover:shadow-sm hover:shadow-primary-orange"}
                             />
                         </div>
                         <div className="flex flex-col justify-center items-center border-b border-b-gray-300 pb-6">
@@ -40,7 +40,7 @@ export default function Perfil() {
                             <Button
                                 children={"Sair"}
                                 onClick={() => navigate("/catalogo")}
-                                className={"bg-red-alert text-xl font-semibold text-ice hover:text-black-smooth py-2 md:px-10 px-8 hover:shadow-sm hover:shadow-primary-orange rounded-md"}
+                                className={"bg-red-alert text-xl font-semibold text-ice hover:text-black-smooth py-2 md:px-10 px-8 hover:shadow-sm hover:shadow-primary-orange"}
                             />
                         </div>
                     </div>

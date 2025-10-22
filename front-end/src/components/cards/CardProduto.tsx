@@ -26,7 +26,7 @@ export default function CardProduto({ image, name, price, parcelas,praso, reserv
       </div>
       <div className="flex flex-col items-left justify-left">
         <p className="text-pear-green font-bold text-2xl md:text-3xl">{price}</p>
-        <p className="text-black-smooth font-semibold text-xs md:text-md">{parcelas}</p>
+        <p className="text-black-smooth font-light text-xs md:text-md">{parcelas}</p>
         <p className="text-black-smooth font-semibold text-md">{praso}</p>
         <p className="text-black-smooth font-semibold text-md">{reserva}</p>
       </div>

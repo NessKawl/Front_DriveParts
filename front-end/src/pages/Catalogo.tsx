@@ -34,9 +34,9 @@ export default function Catalogo() {
                     <InfiniteProductCarousel products={products} speed={35} />
                 </div>
                 <div className="mt-4 mx-4 border-b border-gray/10 pb-2 md:mx-10 ">
-                    <h2 className="text-xl md:text-2xl font-bold text-black-smooth">Mais vendidos</h2>
+                    <h2 className="text-xl md:text-3xl font-bold text-black-smooth">Mais vendidos</h2>
                 </div>
-                <div className="md:mt-10 flex justify-center">
+                <div className="md:mt-10 mx-4 flex justify-center">
                     <ProductsGrid tipo="catalogo"/>
                 </div>
             </main>

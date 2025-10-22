@@ -91,7 +91,7 @@ export default function DashGeral() {
                                 titulo="Últimas Reservas"
                                 colunas={colunasReservas}
                                 fetchData={buscarReservas}
-                                alturaMax="max-h-45 md:max-h-33"
+                                alturaMax="md:max-h-33"
                             />
                         </div>
                         <div className="flex flex-row items-center gap-4 w-full h-full">
@@ -104,7 +104,7 @@ export default function DashGeral() {
                                 titulo="Últimas Vendas"
                                 colunas={colunasVendas}
                                 fetchData={buscarVendas}
-                                alturaMax="max-h-45 md:max-h-33"
+                                alturaMax="md:max-h-33"
                             />
                         </div>
                     </div>

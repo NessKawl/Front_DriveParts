@@ -74,6 +74,13 @@ const buscarVendas = async () => [
     { produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$120,00", quantidade: 2, total: "R$240,00", reserva: "Não" },
     { produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$75,00", quantidade: 1, total: "R$75,00", reserva: "Sim" },
 ];
+const filtros = [
+        { value: "Dia",         children: "Dia" },
+        { value: "Semanal",     children: "Semanal" },
+        { value: "Mensal",      children: "Mensal" },
+        { value: "Semestral",   children: "Semestral" },
+        { value: "Anual",       children: "Anual" },
+    ];
 export default function DashGeral() {
     return (
         <div className="flex bg-black-smooth/95">
@@ -120,7 +127,10 @@ export default function DashGeral() {
                 
                 <div className="flex flex-row gap-4 w-full h-full">
                     <GraficoLinhas
-                        titulo="Reservas Mensais"
+                        titulo="Reservas "
+                        filtro={true}
+                        tituloFiltro="Filtar"
+                        filtroChildren={filtros}
                         data={dataReservas}
                         series={[
                             { key: "vendidas", color: "#22C55E", label: "Reservas Vendidas" },
@@ -129,7 +139,10 @@ export default function DashGeral() {
                     />
                     <GraficoLinhas
                         data={data}
-                        titulo="Vendas Mensais"
+                        titulo="Vendas"
+                        filtro={true}
+                        tituloFiltro="Filtar"
+                        filtroChildren={filtros}
                         series={[
                             { key: "vendas", color: "#22C55E", label: "Vendas" },
                         ]}

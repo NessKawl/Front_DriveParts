@@ -1,24 +1,43 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import FilterTable from "../buttons/FilterTable";
 
 interface Serie {
   key: string;      // nome da propriedade no data (ex: "vendidas")
   color: string;    // cor da linha
   label: string;    // nome exibido na legenda
 }
-
+interface Filtro{
+  value: string;
+  children: React.ReactNode
+}
 interface GraficoLinhasProps {
+  filtro?: boolean;
+  tituloFiltro?: string;
+  filtroChildren?: Filtro[];
   titulo: string;
   data: { name: string;[key: string]: number | string }[];
   series: Serie[];
 }
 
-export default function GraficoLinhas({ titulo, data, series }: GraficoLinhasProps) {
+
+export default function GraficoLinhas({ titulo, data, series, filtro,
+  tituloFiltro,
+  filtroChildren, }: GraficoLinhasProps) {
   return (
     <div className="w-full md:h-70">
       <div className="w-full h-full bg-black-smooth border-l border-primary-orange p-2" >
-        <h2 className="text-xl font-semibold mb-2 text-primary-orange">{titulo}</h2>
+        <div className="flex flex-row justify-between items-end">
+          <h2 className="text-xl font-semibold mb-2 text-primary-orange">{titulo}</h2>
+          {filtro && <div>
+                    <FilterTable 
+                      titulo={tituloFiltro}
+                      FilterTableProps={filtroChildren}
+                    />
+                  </div>}
+        </div>
 
-        <ResponsiveContainer width="100%" height="91%">
+
+        <ResponsiveContainer width="100%" height="90%">
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#3A3A3A" />
             <XAxis dataKey="name" tick={{ fill: "#EAEAEA" }} />

@@ -1,26 +1,52 @@
-import { Pie, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart } from "recharts"
+import { PieChart, Pie, Tooltip, ResponsiveContainer, Cell, Legend } from "recharts";
 
-interface GraficoLinhasProps {
-    data: {
-        name: string;
-        vendas: number;
-    }[];
+interface GraficoPizzaProps {
+  titulo?: string;
+  data: {
+    name: string;
+    value: number;
+  }[];
+  height?: string;
 }
 
-export default function GraficoLinhas({ data }: GraficoLinhasProps) {
-  return (
-    <div className="w-full h-full bg-black-smooth border-l border-primary-orange p-4 ">
-      <h2 className="text-xl font-semibold mb-2 text-primary-orange">Vendas</h2>
+const COLORS = ["#FF961F", "#1F47FF", "#369638", "#FF2817"]; // cores personalizáveis
 
-      <ResponsiveContainer width="100%" height="90%">
-        <PieChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#F3F3F3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Pie type="monotone" dataKey="vendas" stroke="#FF961F" strokeWidth={3} />
+export default function GraficoPizza({ data, titulo, height = "h-60" }: GraficoPizzaProps) {
+  return (
+    <div className={`w-96 ${height} bg-black-smooth border-l border-primary-orange py-2`}>
+      <h2 className="text-xl font-semibold mb-1 px-2 text-primary-orange">{titulo}</h2>
+
+      <ResponsiveContainer width="100%" height="80%">
+        <PieChart>
+          <Pie
+            data={data}
+            dataKey="value"
+            nameKey="name"
+            cx="50%"         // desloca o gráfico um pouco à esquerda
+            cy="50%"
+            outerRadius={60} // reduz o tamanho da pizza
+            innerRadius={0} // deixa o formato tipo donut
+            paddingAngle={2} // espaço entre as fatias
+            
+          >
+            {data.map((_, index) => (
+              <Cell key={index} fill={COLORS[index % COLORS.length]} cursor="pointer" />
+            ))}
+          </Pie>
+
+          <Tooltip
+            contentStyle={{ backgroundColor: "#1c1c1c", border: "1px solid #FF961F", color: "#fff" }}
+            itemStyle={{ color: "#FF961F" }}
+          />
+
+          <Legend
+            verticalAlign="middle"
+            align="right"
+            layout="vertical"
+            wrapperStyle={{ paddingLeft: "30px" }}
+          />
         </PieChart>
       </ResponsiveContainer>
     </div>
-  )
+  );
 }

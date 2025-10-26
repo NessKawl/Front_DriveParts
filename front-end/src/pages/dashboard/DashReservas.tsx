@@ -3,7 +3,7 @@ import GraficoLinhas from "../../components/graficos/GraficoLinhas";
 import NavBarDashboard from "../../components/navbar/NavBarDashboard";
 import TabelaLista from "../../components/tabelas/TabelaLista";
 
-export default function DashReserva() {
+export default function DashReservas() {
     const dataReservas = [
         { name: "Jan", vendidas: 45,    canceladas: 10 },
         { name: "Fev", vendidas: 60,    canceladas: 15 },
@@ -60,7 +60,7 @@ export default function DashReserva() {
     ];
     return (
         <div className="flex bg-black-smooth/95">
-            <NavBarDashboard page="Reserva" />
+            <NavBarDashboard page="Reservas" />
             <div className="flex flex-col justify-center gap-2 py-5 px-5 w-screen">
                 <div className="flex flex-row w-ful gap-5">
                     <CardEstatistica

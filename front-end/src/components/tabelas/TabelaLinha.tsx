@@ -36,7 +36,7 @@ export default function TabelaLinha({
                 if (acao.link) window.location.href = `${acao.link}?id=${item.id}`;
                 else if (acao.onClick) acao.onClick(item);
               }}
-              className={`text-white text-xs font-semibold px-3 py-1 rounded-md transition 
+              className={`font-semibold px-3 py-1 rounded-md transition 
                 ${acao.cor || "bg-gray-600 hover:bg-gray-700"}`}
             >
               {acao.label}

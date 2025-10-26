@@ -10,10 +10,11 @@ import DetalheProduto from './pages/produto/DetalheProduto.tsx'
 import Pesquisa from './pages/Pesquisa.tsx'
 import Perfil from './pages/perfil/Perfil.tsx'
 import Verificacao from './pages/Verificacao.tsx'
-import DashReserva from './pages/dashboard/DashReserva.tsx'
 import DashCaixa from './pages/dashboard/DashCaixa.tsx'
 import DashProdutos from './pages/dashboard/DashProdutos.tsx'
-import DashVenda from './pages/dashboard/DashVenda.tsx'
+import DashReservas from './pages/dashboard/DashReservas.tsx'
+import DashAnalise from './pages/dashboard/DashAnalise.tsx'
+import DashNovaVenda from './pages/dashboard/DashNovaVenda.tsx'
 //import { useEffect } from 'react'
 
 function App() {
@@ -60,10 +61,11 @@ function App() {
         <Route path="/verificacao" element={<Verificacao/>}/>
         <Route path="*" element={<h1>404</h1>} />
 
-        <Route path="/dashboard/reserva" element={<DashReserva />} />
+        <Route path="/dashboard/reservas" element={<DashReservas />} />
         <Route path="/dashboard/caixa" element={<DashCaixa />} />
         <Route path="/dashboard/produtos" element={<DashProdutos />} />
-        <Route path="/dashboard/vendas" element={<DashVenda />} />
+        <Route path="/dashboard/vendas/analise" element={<DashAnalise />} />
+        <Route path="/dashboard/vendas/nova-venda" element={<DashNovaVenda />} />
       </Routes>
       <PWABadge />
     </>

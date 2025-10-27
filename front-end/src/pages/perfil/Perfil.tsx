@@ -7,6 +7,14 @@ import { useNavigate } from "react-router-dom";
 
 export default function Perfil() {
     const navigate = useNavigate()
+    const filtros = [
+        { value: "Hoje",                children: "Hoje" },
+        { value: "Ultimos 7 dias",      children: "Ultimos 7 dias" },
+        { value: "Ultimos 30 dias",     children: "Ultimos 30 dias" },
+        { value: "Ultimos 6 meses",     children: "Ultimos 6 meses" },
+        { value: "Ultimos 1 ano",       children: "Ultimos 1 ano" },
+        { value: "Todos",               children: "Todos" },
+    ];
     return (
         <div className="bg-ice min-h-screen ">
             <NavBarSimples rota={"catalogo"} />
@@ -45,17 +53,25 @@ export default function Perfil() {
                         </div>
                     </div>
                 </div>
-                <div className="md:px-10">
-                    <h2 className="md:text-3xl text-xl font-semibold border-b border-gray-300 p-2">Suas Reservas</h2>
-                    <ProductsGrid tipo="reservasAtivas" />
+                <div className="md:px-10 mb-2">
+                    <ProductsGrid
+                        filtro={false}
+                        title="Suas Reservas Ativas"
+                        tipo="reservasAtivas" 
+                    />
                 </div>
                 <div className="md:px-10">
-                    <h2 className="md:text-3xl text-xl font-semibold border-b border-gray-300 p-2">Histórico de Reservas</h2>
-                    <ProductsGrid  tipo="historico"/>
+                    <ProductsGrid 
+                        filtro={true}
+                        filtroChildren={filtros}
+                        tituloFiltro="Período"
+                        title="Histórico de Reservas"
+                        tipo="historico" 
+                    />
                 </div>
             </main>
             <footer>
-                <FooterMain/>
+                <FooterMain />
             </footer>
         </div>
     )

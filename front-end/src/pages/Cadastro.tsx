@@ -46,6 +46,19 @@ export default function Cadastro() {
               classNameLABEL="font-semibold"
               classNameINPUT="w-full border border-gray-300 rounded-lg p-2 "
             />
+            <div className="flex fle-row items-center justify-center gap-2">
+              <input
+                type="checkbox"
+                id="termos"
+                className="accent-primary-orange w-4 h-4"
+              />
+              <Button
+                onClick={() => navigate("/termos-de-uso")}
+                children="Concordo com os TERMOS DE USO"
+                className="font-medium text-black-smooth"
+              />
+            </div>
+
 
 
 

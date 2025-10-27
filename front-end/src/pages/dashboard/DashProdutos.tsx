@@ -14,7 +14,6 @@ export default function DashProdutos() {
         estoque: "",
         status: "Ativo",
     });
-
     const fields = [
         { name: "nome", type: "text", placeholder: "Nome do produto", required: true },
         { name: "descricao", type: "text", placeholder: "Descrição do produto" },
@@ -30,7 +29,6 @@ export default function DashProdutos() {
             ],
         },
     ];
-
     const [images, setImages] = useState<File[]>([]);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -39,7 +37,6 @@ export default function DashProdutos() {
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
     const [isOpen, setIsOpen] = useState(false);
-
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files) return;
@@ -54,17 +51,13 @@ export default function DashProdutos() {
             const objectUrl = URL.createObjectURL(file);
             img.src = objectUrl;
             img.onload = () => {
-                
-                 
                     validFiles.push(file);
                     urls.push(objectUrl);
                     setImages([...validFiles]);
                     setPreviewUrls([...urls]);
-                
             };
         });
     };
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!form.nome || !form.valor || images.length === 0) {
@@ -75,22 +68,17 @@ export default function DashProdutos() {
         alert("Produto cadastrado com sucesso!");
         setIsOpen(false);
     };
-
     // Função utilitária para recortar imagem
     const getCroppedImg = useCallback(async (imageSrc: string, crop: any) => {
         const image = new Image();
         image.src = imageSrc;
         await new Promise((resolve) => (image.onload = resolve));
-
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-
         if (!ctx) return null;
-
         const { width, height } = crop;
         canvas.width = width;
         canvas.height = height;
-
         ctx.drawImage(
             image,
             crop.x,
@@ -102,7 +90,6 @@ export default function DashProdutos() {
             width,
             height
         );
-
         return new Promise<{ file: File; url: string }>((resolve) => {
             canvas.toBlob((blob) => {
                 if (!blob) return;
@@ -112,29 +99,22 @@ export default function DashProdutos() {
             }, "image/png");
         });
     }, []);
-
     const onCropComplete = useCallback((_crop: any, croppedAreaPixels: any) => {
         setCroppedAreaPixels(croppedAreaPixels);
     }, []);
-
     const handleSaveCrop = async () => {
         if (!selectedImage || !croppedAreaPixels || selectedIndex === null) return;
-
         const cropped = await getCroppedImg(selectedImage, croppedAreaPixels);
         if (!cropped) return;
-
         const newImages = [...images];
         newImages[selectedIndex] = cropped.file;
         setImages(newImages);
-
         const newPreviews = [...previewUrls];
         newPreviews[selectedIndex] = cropped.url;
         setPreviewUrls(newPreviews);
-
         setSelectedImage(null);
         setSelectedIndex(null);
     };
-
     return (
         <div className="flex bg-black-smooth/95">
             <NavBarDashboard page="Produtos" />
@@ -149,7 +129,6 @@ export default function DashProdutos() {
                         onClick={() => setIsOpen(true)}
                     />
                 </div>
-
                 <div>
                     <TabelaLista
                         titulo="Produtos"
@@ -193,7 +172,6 @@ export default function DashProdutos() {
                     />
                 </div>
             </div>
-
             {/* === Modal de Cadastro === */}
             {isOpen && (
                 <div className="absolute flex justify-center items-center w-full h-full bg-black/50 z-50">
@@ -209,7 +187,6 @@ export default function DashProdutos() {
                                 className="cursor-pointer hover:scale-110 transition-transform"
                             />
                         </div>
-
                         <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
                             {/* Upload de imagens */}
                             <div>
@@ -249,7 +226,7 @@ export default function DashProdutos() {
                             </div>
 
                             {/* Inputs dinâmicos */}
-                            <FormGenerator fields={fields} form={form} setForm={setForm} />
+                            <FormGenerator fields={fields} form={form} setForm={setForm} className="grid grid-cols-2 gap-4" />
 
                             <button
                                 type="submit"
@@ -259,7 +236,6 @@ export default function DashProdutos() {
                             </button>
                         </form>
                     </div>
-
                     {/* Modal de corte de imagem */}
                     {selectedImage && (
                         <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-50">

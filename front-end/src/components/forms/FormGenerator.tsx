@@ -1,6 +1,6 @@
 // components/forms/FormGenerator.tsx
 import React from "react";
-
+import clsx from "clsx";
 interface Field {
   name: string;
   type: string;
@@ -13,11 +13,12 @@ interface FormGeneratorProps {
   fields: Field[];
   form: Record<string, string>;
   setForm: React.Dispatch<React.SetStateAction<any>>;
+  className: string;
 }
 
-export default function FormGenerator({ fields, form, setForm }: FormGeneratorProps) {
+export default function FormGenerator({ fields, form, setForm, className }: FormGeneratorProps) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className={clsx(className)}>
       {fields.map((field) => {
         if (field.type === "select") {
           return (

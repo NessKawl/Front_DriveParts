@@ -90,7 +90,7 @@ export default function DashReservas() {
                             {
                                 label: "Vender",
                                 cor: "bg-pear-green hover:bg-green-700",
-                                link: "/vendas",
+                                link: "/dashboard/vendas/nova-venda",
                             },
                             {
                                 label: "Cancelar",

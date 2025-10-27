@@ -37,7 +37,9 @@ export default function Catalogo() {
                     <h2 className="text-xl md:text-3xl font-bold text-black-smooth">Mais vendidos</h2>
                 </div>
                 <div className="md:mt-10 mx-4 flex justify-center">
-                    <ProductsGrid tipo="catalogo"/>
+                    <ProductsGrid
+                        title="" 
+                        tipo="catalogo"/>
                 </div>
             </main>
             <footer>

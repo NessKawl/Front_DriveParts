@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Button from "../../components/buttons/Button";
 import CardEstatistica from "../../components/cards/CardEstatistica";
 import GraficoBarras from "../../components/graficos/GraficoBarras";
@@ -5,6 +6,8 @@ import GraficoLinhas from "../../components/graficos/GraficoLinhas";
 import GraficoPizza from "../../components/graficos/GraficoPizza";
 import NavBarDashboard from "../../components/navbar/NavBarDashboard";
 import TabelaLista from "../../components/tabelas/TabelaLista";
+import { X } from "lucide-react";
+import FormGenerator from "../../components/forms/FormGenerator";
 
 const dataVendasPizza = [
     { name: "Dinheiro", value: 600 },
@@ -58,6 +61,41 @@ const historicoDeMovimentacoes = [
     },
 ]
 export default function DashCaixa() {
+    const [isOpen, setIsOpen] = useState(false);
+    const [form, setForm] = useState({
+        tipo: "",
+        descricao: "",
+        valor: "",
+        data: "",
+
+    });
+    const fields = [
+        {
+            name: "tipo",
+            type: "select",
+            placeholder: "Selecione um tipo de movimentação",
+            options: [
+                { label: "Entrada", value: "Entrada" },
+                { label: "Saida", value: "Saida" },
+            ],
+        },
+        
+        { name: "valor", type: "number", placeholder: "Valor da movimentação (R$)", required: true },
+        { name: "data", type: "date", placeholder: "Data da movimentação" },
+        { name: "descricao", type: "text", placeholder: "Descrição do produto" },
+
+    ];
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!form.tipo || !form.descricao || !form.data || !form.valor ) {
+            alert("Preencha todos os campos obrigatórios e adicione pelo menos uma imagem.");
+            return;
+        }
+        console.log("Produto cadastrado:", form);
+        alert("Produto cadastrado com sucesso!");
+        setIsOpen(false);
+    };
+    
     return (
         <div className="flex bg-black-smooth/95">
             <NavBarDashboard page="Caixa" />
@@ -103,11 +141,46 @@ export default function DashCaixa() {
                         <Button
                             className="bg-primary-orange text-black font-semibold mt-2 px-4 py-2 rounded hover:bg-orange-600"
                             children="Fazer nova movimentação"
-                            onClick={() => { }}
+                            onClick={() => { setIsOpen(true) }}
                         />
                     </div>
                 </div>
             </div>
+            {isOpen &&
+                <div className="absolute flex justify-center items-center w-full h-full bg-black/50 z-50">
+                    <div className="bg-black-smooth h-[90%] w-[60%] rounded-md p-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+
+
+                        <div className="flex flex-row justify-between mb-4">
+                            <h1 className="text-2xl font-semibold text-primary-orange">
+                                Cadastre um novo produto
+                            </h1>
+                            <X
+                                size={30}
+                                color="#FFF"
+                                onClick={() => setIsOpen(false)}
+                                className="cursor-pointer hover:scale-110 transition-transform"
+                            />
+                        </div>
+                        <form className="flex flex-col gap-5 w-full" action="" onSubmit={handleSubmit}>
+                            {/* Inputs dinâmicos */}
+                            <FormGenerator
+                                fields={fields}
+                                form={form}
+                                setForm={setForm}
+                                className="grid grid-cols-1 gap-4 w-full" />
+
+                            <button
+                                type="submit"
+                                className="bg-pear-green hover:bg-orange-300 w-48 py-2 text-ice text-xl font-semibold rounded-md self-end"
+                            >
+                                Registrar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            }
         </div>
     );
 }

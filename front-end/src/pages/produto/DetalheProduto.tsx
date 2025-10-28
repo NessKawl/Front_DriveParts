@@ -51,7 +51,7 @@ export default function DetalheProduto() {
           </div>
 
           <div className=" md:mt-5 md:col-start-2 md:row-start-2  md:mr-6">
-            <p className="font-bold text-base lg:text-2xl">
+            <p className="font-bold text-xl lg:text-3xl">
               {informacoes.nome}
             </p>
           </div>

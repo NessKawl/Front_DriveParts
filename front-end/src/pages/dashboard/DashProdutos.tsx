@@ -1,7 +1,7 @@
 import Button from "../../components/buttons/Button";
 import NavBarDashboard from "../../components/navbar/NavBarDashboard";
 import TabelaLista from "../../components/tabelas/TabelaLista";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { X } from "lucide-react";
 import Cropper from "react-easy-crop";
 import FormGenerator from "../../components/forms/FormGenerator";
@@ -37,6 +37,9 @@ export default function DashProdutos() {
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
     const [isOpen, setIsOpen] = useState(false);
+
+    const [produtoEditando, setProdutoEditando] = useState<any>(null); // novo estado
+    const [isOpenEdit, setIsOpenEdit] = useState(false);
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files) return;
@@ -51,10 +54,10 @@ export default function DashProdutos() {
             const objectUrl = URL.createObjectURL(file);
             img.src = objectUrl;
             img.onload = () => {
-                    validFiles.push(file);
-                    urls.push(objectUrl);
-                    setImages([...validFiles]);
-                    setPreviewUrls([...urls]);
+                validFiles.push(file);
+                urls.push(objectUrl);
+                setImages([...validFiles]);
+                setPreviewUrls([...urls]);
             };
         });
     };
@@ -115,6 +118,18 @@ export default function DashProdutos() {
         setSelectedImage(null);
         setSelectedIndex(null);
     };
+
+    useEffect(() => {
+    if (produtoEditando) {
+      setForm({
+        nome: produtoEditando.produto || "",
+        descricao: produtoEditando.descricao || "",
+        valor: produtoEditando.valor?.replace("R$", "").replace(",", ".") || "",
+        estoque: produtoEditando.estoque || "",
+        status: produtoEditando.status || "Ativo",
+      });
+    }
+  }, [produtoEditando]);
     return (
         <div className="flex bg-black-smooth/95">
             <NavBarDashboard page="Produtos" />
@@ -166,7 +181,10 @@ export default function DashProdutos() {
                             {
                                 label: "Editar",
                                 cor: "bg-primary-orange text-black-smooth hover:bg-orange-300",
-                                onClick: (item) => alert(`Editando ${item.produto}`),
+                                onClick: (item) => {
+                                    setProdutoEditando(item); // 🔥 salva o produto
+                                    setIsOpenEdit(true);      // abre o modal
+                                },
                             },
                         ]}
                     />
@@ -271,6 +289,83 @@ export default function DashProdutos() {
                             </div>
                         </div>
                     )}
+
+                </div>
+            )}
+
+            {/* === MODAL DE EDIÇÃO === */}
+            {isOpenEdit && (
+                <div className="absolute flex justify-center items-center w-full h-full bg-black/50 z-50">
+                    <div className="bg-black-smooth h-[90%] w-[60%] rounded-md p-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+                        <div className="flex flex-row justify-between mb-4">
+                            <h1 className="text-2xl font-semibold text-primary-orange">
+                                Editar produto
+                            </h1>
+                            <X
+                                size={30}
+                                color="#FFF"
+                                onClick={() => {
+                                    setIsOpenEdit(false);
+                                    setProdutoEditando(null);
+                                }}
+                                className="cursor-pointer hover:scale-110 transition-transform"
+                            />
+                        </div>
+
+                        <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+                            {/* Upload de imagens */}
+                            <div>
+                                <label className="text-md font-medium text-ice block mb-2">
+                                    Imagens do produto (máx. 5MB cada):
+                                </label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleFileChange}
+                                    className="block w-full text-sm text-ice file:mr-3 file:py-2 file:px-4 
+                    file:rounded-md file:border-0 file:text-sm file:font-semibold 
+                    file:bg-primary-orange file:text-black-smooth hover:file:bg-orange-300"
+                                />
+                                <div className="grid grid-cols-6 gap-3 mt-3">
+                                    {previewUrls.map((url, i) => (
+                                        <div
+                                            key={i}
+                                            className="relative group cursor-pointer"
+                                            onClick={() => {
+                                                setSelectedImage(url);
+                                                setSelectedIndex(i);
+                                            }}
+                                        >
+                                            <img
+                                                src={url}
+                                                alt="preview"
+                                                className="h-32 w-32 object-cover rounded-md border border-gray-500"
+                                            />
+                                            <span className="absolute top-1 left-1 bg-black/60 text-ice px-1 text-xs rounded opacity-0 group-hover:opacity-100">
+                                                Cortar
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Inputs dinâmicos */}
+                            <FormGenerator
+                                fields={fields}
+                                form={form}
+                                setForm={setForm}
+                                className="grid grid-cols-2 gap-4"
+                            />
+
+                            <button
+                                type="submit"
+                                className="bg-pear-green hover:bg-orange-300 w-48 py-2 text-ice text-xl font-semibold rounded-md self-end"
+                            >
+                                Salvar alterações
+                            </button>
+                        </form>
+                    </div>
                 </div>
             )}
         </div>

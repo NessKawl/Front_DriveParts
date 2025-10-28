@@ -14,7 +14,7 @@ export default function FilterTable({ titulo, FilterTableProps = [], color = "bl
         <div className="flex justify-end md:m-1 relative">
             <select
                 defaultValue=""
-                className={clsx("appearance-none  font-bold px-2 rounded-md sm:rounded-none w-32 outline-none border cursor-pointer transition duration-200 h-8", color === "black" ? "bg-black-smooth text-primary-orange" : "bg-primary-orange text-black-smooth border-none")}
+                className={clsx("appearance-none  font-bold px-2 rounded-md sm:rounded-none w-32 lg:w-44 outline-none border cursor-pointer transition duration-200 h-8", color === "black" ? "bg-black-smooth text-primary-orange" : "bg-primary-orange text-black-smooth border-none")}
             >
                 <option value="" disabled hidden>
                     {titulo}

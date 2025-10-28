@@ -23,7 +23,7 @@ export default function Perfil() {
                     <h1 className="text-black-smooth md:text-4xl text-2xl font-bold">Suas informações</h1>
                 </div>
                 <div className="w-full flex justify-center items-center my-5">
-                    <div className="bg-white md:w-4/12 w-10/12 h-auto p-4 rounded-2xl">
+                    <div className="bg-white md:w-4/12 w-10/12 h-auto p-4 rounded-sm">
                         <div className="w-full flex items-end justify-end">
                             <Button
                                 children={"Editar"}
@@ -39,8 +39,8 @@ export default function Perfil() {
                                 className="mx-auto"
                             />
                             <div className="flex flex-col justify-start items-start">
-                                <p>Nome: <span className="font-bold md:text-2xl text-xl text-black-smooth">Fulano da Silva</span></p>
-                                <p>Telefone: <span className="font-bold md:text-2xl text-xl text-black-smooth">(11) 98765-4321</span></p>
+                                <p className="font-bold">Nome: <span className="font-light md:text-2xl text-xl text-black-smooth">Fulano da Silva</span></p>
+                                <p className="font-bold">Telefone: <span className="font-light md:text-2xl text-xl text-black-smooth">(11) 98765-4321</span></p>
                             </div>
 
                         </div>
@@ -48,7 +48,7 @@ export default function Perfil() {
                             <Button
                                 children={"Sair"}
                                 onClick={() => navigate("/catalogo")}
-                                className={"bg-red-alert text-xl font-semibold text-ice hover:text-black-smooth py-2 md:px-10 px-8 hover:shadow-sm hover:shadow-primary-orange"}
+                                className={"bg-red-alert text-xl font-semibold text-black-smooth hover:text-ice py-2 md:px-10 px-8 hover:shadow-sm hover:shadow-primary-orange"}
                             />
                         </div>
                     </div>

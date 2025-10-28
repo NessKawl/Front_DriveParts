@@ -75,12 +75,12 @@ const buscarVendas = async () => [
     { produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$75,00", quantidade: 1, total: "R$75,00", reserva: "Sim" },
 ];
 const filtros = [
-        { value: "Dia",         children: "Dia" },
-        { value: "Semanal",     children: "Semanal" },
-        { value: "Mensal",      children: "Mensal" },
-        { value: "Semestral",   children: "Semestral" },
-        { value: "Anual",       children: "Anual" },
-    ];
+    { value: "Dia", children: "Dia" },
+    { value: "Semanal", children: "Semanal" },
+    { value: "Mensal", children: "Mensal" },
+    { value: "Semestral", children: "Semestral" },
+    { value: "Anual", children: "Anual" },
+];
 export default function DashGeral() {
     return (
         <div className="flex bg-black-smooth/95">
@@ -124,7 +124,7 @@ export default function DashGeral() {
                         <GraficoBarras data={dataFluxo} />
                     </div>
                 </div>
-                
+
                 <div className="flex flex-row gap-4 w-full h-full">
                     <GraficoLinhas
                         titulo="Reservas "

@@ -45,7 +45,7 @@ export default function Login() {
           <Button
             onClick={() => navigate("/cadastro")}
             children="Não possui uma conta? Cadastre-se agora!"
-            className="font-medium text-black-smooth hover:text-primary-orange mt-5"
+            className="font-medium text-black-smooth hover:text-primary-orange mt-5  underline"
           />
         </div>
       </div>

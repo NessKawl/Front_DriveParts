@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom";
 export default function footerMain() {
+    const navigate = useNavigate();
     return (
         <div className="bg-black-smooth flex flex-col items-center justify-center p-4 mt-20">
             <div className="flex md:flex-row flex-col justify-between md:items-top xs:items-center p-4 text-white w-full">
@@ -22,8 +24,12 @@ export default function footerMain() {
                 </div>
             </div>
             <div className="text-white text-center">
+                <p 
+                    className="text-semibold text-ocean-blue/80 cursor-pointer underline"
+                    onClick={() => navigate("/termos-de-uso")}>Termos de uso</p>
                 <p>Protótipo do PI grupo Drive Parts</p>
-                <p>© 2025 DriveParts. Todos os direitos reservados.</p> 
+                <p>© 2025 DriveParts. Todos os direitos reservados.</p>
+                <p>Versão: 0.1.1</p> 
             </div>
             
         </div>

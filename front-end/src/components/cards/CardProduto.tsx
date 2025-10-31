@@ -1,3 +1,4 @@
+import clsx from "clsx"
 interface ProductCardProps {
   image: string
   name: string
@@ -5,9 +6,9 @@ interface ProductCardProps {
   parcelas?: string
   praso?: string
   reserva?: string
+  status?: string
 }
-
-export default function CardProduto({ image, name, price, parcelas,praso, reserva }: ProductCardProps) {
+export default function CardProduto({ image, name, price, parcelas,praso, reserva, status }: ProductCardProps) {
   return (
     <div
       onClick={() => window.location.href = `/detalhe-produto?produto=${name}`}
@@ -29,6 +30,7 @@ export default function CardProduto({ image, name, price, parcelas,praso, reserv
         <p className="text-black-smooth font-light text-xs md:text-md">{parcelas}</p>
         <p className="text-black-smooth font-semibold text-md">{praso}</p>
         <p className="text-black-smooth font-semibold text-md">{reserva}</p>
+        <p className={clsx("text-black-smooth font-semibold text-lg", status === "Finalizado" ? "text-pear-green" : "text-red-alert")}>{status}</p>
       </div>
     </div>
   );

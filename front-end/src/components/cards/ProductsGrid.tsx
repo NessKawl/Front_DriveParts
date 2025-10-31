@@ -36,6 +36,13 @@ export default function ProductsGrid({ title, filtro, tituloFiltro, filtroChildr
       image: "/produtos/cabecote.png",
       name: "JUNTA CABECOTE - HISTÓRICO",
       reserva: "Reservado em 20/10/2025",
+      status: "Finalizado",
+    },
+    {
+      image: "/produtos/cabecote.png",
+      name: "JUNTA CABECOTE - HISTÓRICO",
+      reserva: "Reservado em 20/10/2025",
+      status: "Cancelado",
     },
     {
       image: "/produtos/cabecote.png",
@@ -47,7 +54,7 @@ export default function ProductsGrid({ title, filtro, tituloFiltro, filtroChildr
   // 🔍 Filtro baseado no tipo de grid
   const filteredProducts = products.filter((product) => {
     if (tipo === "catalogo") return product.price
-    if (tipo === "historico") return product.reserva
+    if (tipo === "historico") return product.reserva && product.status
     if (tipo === "reservasAtivas") return product.praso
     return true
   })
@@ -55,7 +62,7 @@ export default function ProductsGrid({ title, filtro, tituloFiltro, filtroChildr
   return (
     <div>
       <div className="flex flex-row justify-between items-center px-2 border-b border-gray-300 mb-4">
-        <h1 className="text-black-smooth text-3xl font-semibold">
+        <h1 className="text-black-smooth text-xl md:text-3xl font-semibold">
           {title}
         </h1>
         {filtro &&
@@ -76,6 +83,7 @@ export default function ProductsGrid({ title, filtro, tituloFiltro, filtroChildr
             parcelas={product.parcelas}
             praso={product.praso}
             reserva={product.reserva}
+            status={product.status}
           />
         ))}
       </div>

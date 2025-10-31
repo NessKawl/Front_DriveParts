@@ -1,72 +1,78 @@
-import Button from "../../components/buttons/Button";
 import ProductsGrid from "../../components/cards/ProductsGrid";
-import Avatar from "../../components/imagens/Avatar";
 import NavBarSimples from "../../components/navbar/NavbarSimples";
 import FooterMain from "../../components/footer/FooterMain";
 import { useNavigate } from "react-router-dom";
+import {  Edit, LogOut, Phone, User } from "lucide-react";
 
 export default function Perfil() {
     const navigate = useNavigate()
     const filtros = [
-        { value: "Hoje",                children: "Hoje" },
-        { value: "Ultimos 7 dias",      children: "Ultimos 7 dias" },
-        { value: "Ultimos 30 dias",     children: "Ultimos 30 dias" },
-        { value: "Ultimos 6 meses",     children: "Ultimos 6 meses" },
-        { value: "Ultimos 1 ano",       children: "Ultimos 1 ano" },
-        { value: "Todos",               children: "Todos" },
+        { value: "Hoje", children: "Hoje" },
+        { value: "Ultimos 7 dias", children: "Ultimos 7 dias" },
+        { value: "Ultimos 30 dias", children: "Ultimos 30 dias" },
+        { value: "Ultimos 6 meses", children: "Ultimos 6 meses" },
+        { value: "Ultimos 1 ano", children: "Ultimos 1 ano" },
+        { value: "Todos", children: "Todos" },
+        { value: "Finalizado", children: "Finalizado" },
+        { value: "Cancelado", children: "Cancelado" },
     ];
+    const user = {
+        nome: "Fulano da Silva",
+        telefone: "(11) 98765-4321",
+    }
     return (
         <div className="bg-ice min-h-screen ">
             <NavBarSimples rota={"catalogo"} />
             <main>
-                <div className="w-full flex flex-col justify-center items-center mt-10">
-                    <h1 className="text-black-smooth md:text-4xl text-2xl font-bold">Suas informações</h1>
-                </div>
-                <div className="w-full flex justify-center items-center my-5">
-                    <div className="bg-white md:w-4/12 w-10/12 h-auto p-4 rounded-sm">
-                        <div className="w-full flex items-end justify-end">
-                            <Button
-                                children={"Editar"}
+                {/* Header */}
+                <header className=" flex justify-center items-center px-6 py-3 shadow">
+                    <h1 className="text-2xl font-bold">Seu Perfil</h1>
+                </header>
+                {/* Card de informações */}
+                <div className="flex justify-center my-10">
+                    <div className="bg-white shadow-xl rounded-xl p-4 w-[350px] text-center">
+                        <div className=" flex justify-end">
+                            <button 
+                                className="flex items-center gap-2 bg-white hover:bg-primary-orange border hover:border-primary-orange px-3 py-1 rounded transition"
                                 onClick={() => navigate("/editar-perfil")}
-                                className={"bg-primary-orange md:text-xl sm:text-sm font-semibold text-black-smooth hover:text-ice px-2 hover:shadow-sm hover:shadow-primary-orange"}
-                            />
+                            >
+                                <Edit size={18} /> Editar
+                            </button>
                         </div>
-                        <div className="flex flex-col justify-center items-center border-b border-b-gray-300 pb-6">
-                            <Avatar
-                                src="/icons/avatar.png"
-                                alt="Avatar"
-                                size="xl2"
-                                className="mx-auto"
-                            />
-                            <div className="flex flex-col justify-start items-start">
-                                <p className="font-bold">Nome: <span className="font-light md:text-2xl text-xl text-black-smooth">Fulano da Silva</span></p>
-                                <p className="font-bold">Telefone: <span className="font-light md:text-2xl text-xl text-black-smooth">(11) 98765-4321</span></p>
+                        <div className="flex flex-col items-center mt-4">
+                            <div className="w-26 h-26 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white mb-3">
+                                <User size={48} />
                             </div>
-
+                            <h2 className="text-2xl font-bold text-gray-800">{user.nome}</h2>
+                            <p className="text-gray-600 flex items-center justify-center gap-1 mt-1">
+                                <Phone size={16} /> {user.telefone}
+                            </p>
                         </div>
-                        <div className="w-full flex justify-center items-center mt-10">
-                            <Button
-                                children={"Sair"}
-                                onClick={() => navigate("/catalogo")}
-                                className={"bg-red-alert text-xl font-semibold text-black-smooth hover:text-ice py-2 md:px-10 px-8 hover:shadow-sm hover:shadow-primary-orange"}
-                            />
-                        </div>
+                        <button 
+                            className="mt-6 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition px-4 py-2 rounded-lg flex items-center justify-center gap-2 w-full"
+                            onClick={() => {
+                                // Lógica de logout aqui
+                                navigate("/catalogo")
+                            }}
+                        >
+                            <LogOut size={20} /> Desconectar
+                        </button>
                     </div>
                 </div>
                 <div className="md:px-10 mb-2">
                     <ProductsGrid
                         filtro={false}
                         title="Suas Reservas Ativas"
-                        tipo="reservasAtivas" 
+                        tipo="reservasAtivas"
                     />
                 </div>
                 <div className="md:px-10">
-                    <ProductsGrid 
+                    <ProductsGrid
                         filtro={true}
                         filtroChildren={filtros}
                         tituloFiltro="Período"
                         title="Histórico de Reservas"
-                        tipo="historico" 
+                        tipo="historico"
                     />
                 </div>
             </main>

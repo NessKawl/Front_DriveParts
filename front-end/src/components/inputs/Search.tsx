@@ -22,7 +22,7 @@ export default function Search() {
           type="text"
           name="search"
           id=""
-          placeholder="Pesquise..."
+          placeholder="Pesquisar..."
           className="bg-ice font-semibold placeholder:text-gray outline-none text-black-smooth text-md w-full"
           value={query}
           onChange={handleInputChange}

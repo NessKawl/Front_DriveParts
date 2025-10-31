@@ -78,7 +78,7 @@ export default function navbar() {
                   <div className="flex flex-col gap-3 mt-2">
                     <Categoria name="Motor" icon="engine" />
                     <Categoria name="Freios" icon="brake" />
-                    <Categoria name="Suspensão" icon="shock" />
+                    <Categoria name="Suspensão" icon="blinds" />
                     <Categoria name="Elétrica" icon="bolt" />
                     <Categoria name="Filtros" icon="filter" />
                     <Categoria name="Óleos e Lubrificantes" icon="oil" />

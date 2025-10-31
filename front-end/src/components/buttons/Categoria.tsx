@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Wrench, Zap, Droplet, Settings, Gauge, Filter } from "lucide-react";
+import { Wrench, Zap, Droplet, Settings, Gauge, Filter, Blinds } from "lucide-react";
 
 type CategoriaProps = {
   name: string;
@@ -17,6 +17,7 @@ export default function Categoria({ name, icon }: CategoriaProps) {
       case "bolt": return <Zap size={18} />;
       case "filter": return <Filter size={18} />;
       case "oil": return <Droplet size={18} />;
+      case "blinds": return <Blinds size={18} />;
       default: return <Wrench size={18} />;
     }
   };

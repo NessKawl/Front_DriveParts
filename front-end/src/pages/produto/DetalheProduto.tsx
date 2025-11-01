@@ -3,6 +3,7 @@ import FooterMain from "../../components/footer/FooterMain";
 import Button from "../../components/buttons/Button";
 import { useNavigate } from "react-router-dom"
 import ProductCarousel from "../../components/carrosel/ProductCarousel";
+import ProductsGridReco from "../../components/cards/ProductsGridReco";
 
 
 export default function DetalheProduto() {
@@ -83,9 +84,11 @@ export default function DetalheProduto() {
             {informacoes.detalhes.map((detalhe, index) =>  (<li className="bg-white border-b border-ice list-none p-2" key={index}>{detalhe}</li>))}
           </p>
         </div>
-
+        <div className="mt-10">
+          <h1 className="text-2xl font-semibold border-b border-gray-300">Recomendados</h1>
+          <ProductsGridReco />
+        </div>
       </main>
-
       <footer>
         <FooterMain />
       </footer>

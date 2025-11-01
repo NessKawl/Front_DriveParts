@@ -34,7 +34,7 @@ export default function DashNovaVenda() {
     return (
         <div className="flex bg-black-smooth/95">
             <NavBarDashboard page="Vendas" />
-            <form action="" className="flex-1 flex flex-row justify-center  p-2 gap-5">
+            <form action="" className="w-full flex flex-row justify-center  p-2 gap-5">
                 <div className="flex flex-col gap-5 w-full">
                     <div className="flex flex-col gap-5 w-full">
                         <div className="flex flex-col">

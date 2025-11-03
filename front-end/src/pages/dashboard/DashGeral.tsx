@@ -46,20 +46,18 @@ const dataFluxo = [
 ];
 const colunasReservas = [
     { chave: "cliente", titulo: "Cliente", size: "sm" },
-    { chave: "produto", titulo: "produto", size: "auto" },
-    { chave: "valor", titulo: "Valor Unidade", size: "md" },
-    { chave: "quantidade", titulo: "Quantidade", size: "sm" },
-    { chave: "total", titulo: "Total", size: "sm" },
+    { chave: "telefone", titulo: "Telefone", size: "md" },
+    { chave: "quantidade", titulo: "Quantidade de produtos", size: "sm" },
+    { chave: "total", titulo: "Total (R$)", size: "md" },
+    { chave: "periodo", titulo: "Período", size: "auto" },
 ];
 const buscarReservas = async () => [
-    { cliente: "João", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$120,00", quantidade: 2, total: "R$240,00" },
-    { cliente: "Maria", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$75,00", quantidade: 1, total: "R$75,00" },
-    { cliente: "João", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$120,00", quantidade: 2, total: "R$240,00" },
-    { cliente: "Maria", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$75,00", quantidade: 1, total: "R$75,00" },
-    { cliente: "Maria", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$75,00", quantidade: 1, total: "R$75,00" },
-    { cliente: "Maria", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$75,00", quantidade: 1, total: "R$75,00" },
-    { cliente: "Maria", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$75,00", quantidade: 1, total: "R$75,00" },
-
+    { cliente: "Maria", telefone: "1234-5678", quantidade: 1, total: "1.500,00", periodo: "01/01/2025 - manhã" },
+    { cliente: "João", telefone: "1234-5678", quantidade: 2, total: "240,00", periodo: "02/01/2025 - tarde" },
+    { cliente: "Pedro", telefone: "1234-5678", quantidade: 3, total: "1.500,00", periodo: "03/01/2025 - noite" },
+    { cliente: "Maria", telefone: "1234-5678", quantidade: 1, total: "75,00", periodo: "04/01/2025 - manhã" },
+    { cliente: "João", telefone: "1234-5678", quantidade: 2, total: "240,00", periodo: "05/01/2025 - tarde" },
+    { cliente: "Pedro", telefone: "1234-5678", quantidade: 3, total: "1.500,00", periodo: "06/01/2025 - noite" },
 ];
 const colunasVendas = [
     { chave: "produto", titulo: "produto", size: "auto" },

@@ -159,12 +159,12 @@ export default function DashProdutos() {
                         ]}
                         pesquisa={true}
                         colunas={[
-                            { chave: "codigo", titulo: "Código" },
-                            { chave: "produto", titulo: "Produto" },
-                            { chave: "descricao", titulo: "Descrição" },
-                            { chave: "valor", titulo: "Valor Unidade" },
-                            { chave: "estoque", titulo: "Estoque" },
-                            { chave: "status", titulo: "Status" },
+                            { chave: "codigo", titulo: "Código", size: "sm" },
+                            { chave: "produto", titulo: "Produto", size: "auto" },
+                            { chave: "descricao", titulo: "Descrição", size: "auto" },
+                            { chave: "valor", titulo: "Valor Unidade", size: "md" },
+                            { chave: "estoque", titulo: "Estoque", size: "sm" },
+                            { chave: "status", titulo: "Status", size: "sm" },
                         ]}
                         fetchData={async () => [
                             {

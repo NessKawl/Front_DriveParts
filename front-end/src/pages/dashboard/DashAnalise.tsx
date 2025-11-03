@@ -18,11 +18,11 @@ export default function DashAnalise() {
         { name: "Dez", vendas: 1500 },
     ]
     const colunasVendas = [
-        { chave: "produto", titulo: "produto" },
-        { chave: "valor", titulo: "Valor Unidade" },
-        { chave: "quantidade", titulo: "Quantidade" },
-        { chave: "total", titulo: "Total" },
-        { chave: "reserva", titulo: "Reserva" },
+        { chave: "produto", titulo: "produto", size: "auto" },
+        { chave: "valor", titulo: "Valor Unidade", size: "md" },
+        { chave: "quantidade", titulo: "Quantidade", size: "sm" },
+        { chave: "total", titulo: "Total", size: "sm" },
+        { chave: "reserva", titulo: "Reserva", size: "sm" },
     ];
     const buscarVendas = async () => [
         { produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$120,00", quantidade: 2, total: "R$240,00", reserva: "Sim" },
@@ -40,7 +40,6 @@ export default function DashAnalise() {
         { value: "Semestral", children: "Semestral" },
         { value: "Anual", children: "Anual" },
     ];
-    const quantidade = 10;
     return (
         <div className="flex bg-black-smooth/95">
             <NavBarDashboard page="Vendas" />

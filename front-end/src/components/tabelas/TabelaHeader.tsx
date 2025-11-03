@@ -1,21 +1,30 @@
+// TabelaHeader.tsx
 interface Coluna {
   chave: string;
   titulo: string;
+  size?: string;
 }
 
 export default function TabelaHeader({
   colunas,
   temAcoes = false,
+  gridTemplateColumns,
 }: {
   colunas: Coluna[];
   temAcoes?: boolean;
+  gridTemplateColumns: string;
 }) {
   return (
-    <li className="grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))] font-bold text-ice text-sm py-2">
+    <li
+      style={{ gridTemplateColumns }}
+      className="grid gap-2 font-bold text-ice text-sm py-2 items-center border-b border-gray-600/40"
+    >
       {colunas.map((c, i) => (
-        <span key={i}>{c.titulo}</span>
+        <span key={i} className="truncate px-2" title={c.titulo}>
+          {c.titulo}
+        </span>
       ))}
-      {temAcoes && <span className="text-end">Ações</span>}
+      {temAcoes && <span className="text-end px-2">Ações</span>}
     </li>
   );
 }

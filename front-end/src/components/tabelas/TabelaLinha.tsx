@@ -1,6 +1,8 @@
+// TabelaLinha.tsx
 interface Coluna {
   chave: string;
   titulo: string;
+  size?: string;
 }
 
 interface Acao {
@@ -14,21 +16,30 @@ export default function TabelaLinha({
   item,
   colunas,
   acoes = [],
+  gridTemplateColumns,
 }: {
   item: any;
   colunas: Coluna[];
   acoes?: Acao[];
+  gridTemplateColumns: string;
 }) {
   return (
-    <li className="grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))] py-2 items-center transition">
+    <li
+      style={{ gridTemplateColumns }}
+      className="grid gap-2 py-2 items-center transition hover:bg-gray-900/20"
+    >
       {colunas.map((c, i) => (
-        <span key={i} className="text-ice text-sm truncate mr-3">
+        <span
+          key={i}
+          className="text-ice text-sm truncate px-2"
+          title={String(item[c.chave] ?? "")}
+        >
           {item[c.chave]}
         </span>
       ))}
 
       {acoes.length > 0 && (
-        <div className="flex gap-2 justify-end">
+        <div className="flex gap-2 justify-end px-2">
           {acoes.map((acao, i) => (
             <button
               key={i}
@@ -36,8 +47,7 @@ export default function TabelaLinha({
                 if (acao.link) window.location.href = `${acao.link}?id=${item.id}`;
                 else if (acao.onClick) acao.onClick(item);
               }}
-              className={`font-semibold px-3 py-1 rounded-md transition 
-                ${acao.cor || "bg-gray-600 hover:bg-gray-700"}`}
+              className={`font-semibold px-3 py-1 rounded-md transition ${acao.cor || "bg-gray-600 hover:bg-gray-700"}`}
             >
               {acao.label}
             </button>

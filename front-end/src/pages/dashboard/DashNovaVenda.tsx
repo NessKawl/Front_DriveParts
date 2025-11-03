@@ -5,10 +5,10 @@ import TabelaLista from "../../components/tabelas/TabelaLista";
 
 export default function DashNovaVenda() {
     const colunas = [
-        { chave: "numero", titulo: "N° Item" },
-        { chave: "codigo", titulo: "Código" },
-        { chave: "produto", titulo: "Produto" },
-        { chave: "valor", titulo: "Valor" },
+        { chave: "numero", titulo: "N° Item", size: "sm" },
+        { chave: "codigo", titulo: "Código", size: "sm" },
+        { chave: "produto", titulo: "Produto", size: "auto" },
+        { chave: "valor", titulo: "Valor", size: "sm" },
     ];
     const listaItens = async () => [
         { numero: 1, codigo: "001", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$120,00" },
@@ -68,10 +68,13 @@ export default function DashNovaVenda() {
                     </div>
                     <div className="max-h-150">
                         <TabelaLista
-                            titulo="Últimas Vendas"
+                            titulo="Lista de Itens"
                             colunas={colunas}
                             fetchData={listaItens}
                             alturaMax="md:max-h-125"
+                            acoes={[
+                                { label: "Remover", cor: "bg-red-alert hover:bg-red-700" },
+                            ]}
                         />
                     </div>
                 </div>

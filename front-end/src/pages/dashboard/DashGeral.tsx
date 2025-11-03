@@ -45,11 +45,11 @@ const dataFluxo = [
     { mes: "Out", entrada: 14000, saida: 10200 },
 ];
 const colunasReservas = [
-    { chave: "cliente", titulo: "Cliente" },
-    { chave: "produto", titulo: "produto" },
-    { chave: "valor", titulo: "Valor Unidade" },
-    { chave: "quantidade", titulo: "Quantidade" },
-    { chave: "total", titulo: "Total" },
+    { chave: "cliente", titulo: "Cliente", size: "sm" },
+    { chave: "produto", titulo: "produto", size: "auto" },
+    { chave: "valor", titulo: "Valor Unidade", size: "md" },
+    { chave: "quantidade", titulo: "Quantidade", size: "sm" },
+    { chave: "total", titulo: "Total", size: "sm" },
 ];
 const buscarReservas = async () => [
     { cliente: "João", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$120,00", quantidade: 2, total: "R$240,00" },
@@ -62,11 +62,11 @@ const buscarReservas = async () => [
 
 ];
 const colunasVendas = [
-    { chave: "produto", titulo: "produto" },
-    { chave: "valor", titulo: "Valor Unidade" },
-    { chave: "quantidade", titulo: "Quantidade" },
-    { chave: "total", titulo: "Total" },
-    { chave: "reserva", titulo: "Reserva" },
+    { chave: "produto", titulo: "produto", size: "auto" },
+    { chave: "valor", titulo: "Valor Unidade", size: "md" },
+    { chave: "quantidade", titulo: "Quantidade", size: "sm" },
+    { chave: "total", titulo: "Total", size: "sm" },
+    { chave: "reserva", titulo: "Reserva", size: "sm" },
 ];
 const buscarVendas = async () => [
     { produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$120,00", quantidade: 2, total: "R$240,00", reserva: "Sim" },

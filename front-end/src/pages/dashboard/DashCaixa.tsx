@@ -47,10 +47,10 @@ const filtros = [
     { value: "Anual", children: "Anual" },
 ];
 const colunashistoricoCaixa = [
-    { chave: "tipo", titulo: "Tipo" },
-    { chave: "descricao", titulo: "Descrição" },
-    { chave: "data", titulo: "Data" },
-    { chave: "valor", titulo: "Valor" },
+    { chave: "tipo", titulo: "Tipo", size: "sm" },
+    { chave: "descricao", titulo: "Descrição", size: "auto" },
+    { chave: "data", titulo: "Data", size: "md" },
+    { chave: "valor", titulo: "Valor", size: "sm" },
 ];
 const historicoDeMovimentacoes = [
     {

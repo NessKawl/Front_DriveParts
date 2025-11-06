@@ -18,6 +18,25 @@ const products = [
   { id: 9, name: "9Volante Esportivo", price: "R$ 249,90", image: "/produtos/volante.jpg" },
   { id: 10, name:"10Protetor de Cinto", price: "R$ 39,90", image: "/produtos/cinto.jpg" },
 ];
+const productsGridMaisVendidos = [
+    {
+      image: "/produtos/pneu.png",
+      name: "Pneu Aro 13 Goodyear 165/70R13 Assurance Maxlife 83T",
+      price: "R$ 424,90",
+      parcelas: "ou 6x de R$ 70,82 sem juros",
+    },
+    {
+      image: "/produtos/oleo.png",
+      name: "ÓLEO DE MOTOR - LUBRAX MINERAL DIESEL 15W40 (1 LITRO)",
+      price: "R$ 35,90",
+    },
+    {
+      image: "/produtos/cabecote.png",
+      name: "JUNTA CABECOTE (5 PICS) - AMIANTO - L200 GL/ GLS - AJUSA - AJU10070330",
+      price: "R$ 308,34",
+      parcelas: "ou 6x de R$ 51,39",
+    },
+  ]
 export default function Catalogo() {
     //const navigate = useNavigate()
     return (
@@ -37,7 +56,9 @@ export default function Catalogo() {
                 <div className="md:mt-10 mx-4 flex justify-center">
                     <ProductsGrid
                         title="Mais vendidos" 
-                        tipo="catalogo"/>
+                        tipo="catalogo"
+                        products={productsGridMaisVendidos}
+                    />
                 </div>
             </main>
             <footer>

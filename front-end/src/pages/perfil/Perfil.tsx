@@ -18,7 +18,25 @@ export default function Perfil() {
         { value: "Finalizado", children: "Finalizado" },
         { value: "Cancelado", children: "Cancelado" },
     ];
-
+    const products = [
+        {
+            image: "/produtos/cabecote.png",
+            name: "JUNTA CABECOTE - HISTÓRICO",
+            reserva: "Reservado em 20/10/2025",
+            status: "Finalizado",
+        },
+        {
+            image: "/produtos/cabecote.png",
+            name: "JUNTA CABECOTE - HISTÓRICO",
+            reserva: "Reservado em 20/10/2025",
+            status: "Cancelado",
+        },
+        {
+            image: "/produtos/cabecote.png",
+            name: "JUNTA CABECOTE - ATIVA",
+            praso: "Reservado até as 18:00 de 13/10/2025",
+        },
+    ]
     const [nome, setNome] = useState<any>(null);
     const [tel, setTel] = useState<any>(null);
 
@@ -91,6 +109,7 @@ export default function Perfil() {
                         filtro={false}
                         title="Suas Reservas Ativas"
                         tipo="reservasAtivas"
+                        products={products}
                     />
                 </div>
                 <div className="md:px-10">
@@ -100,6 +119,7 @@ export default function Perfil() {
                         tituloFiltro="Período"
                         title="Histórico de Reservas"
                         tipo="historico"
+                        products={products}
                     />
                 </div>
             </main>

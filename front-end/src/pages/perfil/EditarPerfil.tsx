@@ -45,7 +45,7 @@ export default function EdiarPerefil() {
                     <Button
                         children={"Salvar Alterações"}
                         type="submit"
-                        className={"bg-primary-orange md:text-xl sm:text-sm font-semibold text-black-smooth hover:text-ice px-4 py-2 mb-10 hover:shadow-sm hover:shadow-primary-orange mt-5"}
+                        className={"bg-primary-orange md:text-xl sm:text-sm font-semibold text-black-smooth hover:text-ice px-4 py-2 mb-10 hover:shadow-sm hover:shadow-primary-orange mt-5 rounded-md"}
                     />
                 </form>
             </main>

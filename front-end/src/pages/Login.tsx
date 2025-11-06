@@ -36,6 +36,7 @@ export default function Login() {
 
       navigate("/catalogo");
     } catch (err: any) {
+      console.log(err);
       setError(err.response?.data?.message || "Erro ao fazer login.");
     } finally {
       setLoading(false);

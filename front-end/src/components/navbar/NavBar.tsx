@@ -1,16 +1,16 @@
 import Search from "../inputs/Search.tsx";
-
 import { useEffect, useState } from "react"
 import { Menu, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import Profile from "../buttons/Profile.tsx";
 import Categoria from "../buttons/Categoria.tsx";
 import Avatar from "../imagens/Avatar.tsx";
 import { useNavigate } from "react-router-dom";
 import { getUserProfile } from "../../services/dataService.tsx";
-export default function navbar() {
+import clsx from "clsx";
+export default function NavBar() {
 
   const [user, setUser] = useState<any>(null);
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -20,6 +20,7 @@ export default function navbar() {
 
         const response = await getUserProfile();
         setUser(response.data); // O Nest retorna req.user
+        setUserName(response.data.usu_nome)
       } catch (err) {
         console.error("Erro ao obter perfil:", err);
         // Token inválido ou expirado → limpa storage
@@ -46,7 +47,10 @@ export default function navbar() {
           <Search />
         </div>
         <div className="flex gap-2 mb-2">
-          <Profile name={"Mare Autopeças"} />
+          <div className="text-right border-r border-black-smooth pr-3 items-center">
+            {userName ? <p className="font-light text-sm md:text-lg">Bem vindo(a)</p> : <p className="font-semibold text-md" onClick={() => navigate("/login")}>Acessar conta</p>}
+            <p className="font-bold text-sm md:text-lg">{userName}</p>
+          </div>
           <button onClick={() => setOpen(!open)} className="md:hidden ">
             <Menu size={30} className="text-black-smooth" />
           </button>
@@ -61,7 +65,6 @@ export default function navbar() {
               className="fixed inset-0 z-[9999] top-0 right-0 w-full h-full bg-black/60 flex justify-end md:hidden"
             >
               <div className="relative w-9/12 h-full bg-gradient-to-b from-[#fffdfa] to-[#f5f5f5] flex flex-col gap-8 border-l border-primary-orange rounded-l-3xl shadow-xl overflow-y-auto">
-
                 {/* Header */}
                 <div className="bg-primary-orange px-4 pt-5 pb-4 rounded-tl-3xl shadow-md">
                   <div className="flex justify-between items-center">
@@ -70,22 +73,28 @@ export default function navbar() {
                     </button>
                     <p className="text-black-smooth text-lg font-bold tracking-tight">DriveParts</p>
                   </div>
-
                   <div
-                    className="flex justify-end items-center mt-4 cursor-pointer hover:opacity-80 transition"
-                    onClick={() => navigate("/perfil")}
+                    className={clsx("flex justify-end items-center mt-4 cursor-pointer hover:opacity-80 transition")}
+                    onClick={() => (userName ? navigate("/perfil") : navigate("/login"))}
                   >
                     <div className="text-right mr-3">
-                      <p className="text-sm text-black-smooth/80">Bem vindo(a), {user.usu_nome}</p>
-                      <p className="text-base font-bold text-black-smooth">Mare Autopeças</p>
+                      <div className="text-right border-r border-black-smooth pr-3 items-center">
+                        {userName ? <p className="font-light text-sm md:text-lg">Bem vindo(a)</p> : <p className="font-semibold text-md">Acessar conta</p>}
+                        <p
+                          className="font-bold text-sm md:text-lg"
+                        >
+                          {userName}
+                        </p>
+                      </div>
                     </div>
                     <div className="relative">
                       <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />
+
                       <Avatar
-                        src="https://avatars.githubusercontent.com/u/52288913?v=4"
+                        src="/icons/avatar.png"
                         alt="Avatar do usuário"
                         size="md"
-                        className="relative border-2 border-white shadow-lg"
+                        className="relative shadow-lg"
                       />
                     </div>
                   </div>

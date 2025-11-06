@@ -3,10 +3,11 @@ interface InputLabelProps {
     id: string
     type: string
     placeholder?: string
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
     classNameLABEL?: string
     classNameINPUT?: string
 }
-export default function InputLabel({label, id, type, placeholder, classNameLABEL, classNameINPUT}: InputLabelProps) {
+export default function InputLabel({label, id, type, placeholder, classNameLABEL, classNameINPUT, onChange}: InputLabelProps) {
     return (
         <div>
             <div className="flex flex-col">
@@ -16,6 +17,7 @@ export default function InputLabel({label, id, type, placeholder, classNameLABEL
                     type={type}
                     placeholder={placeholder}
                     className={classNameINPUT}
+                    onChange={onChange}
                 />
             </div>
         </div>

@@ -2,7 +2,7 @@ import Button from "../../components/buttons/Button";
 import NavBarDashboard from "../../components/navbar/NavBarDashboard";
 import TabelaLista from "../../components/tabelas/TabelaLista";
 import { useState, useCallback, useEffect } from "react";
-import { BanknoteArrowDown, BanknoteArrowUp, Package, PackagePlus, Plus, X } from "lucide-react";
+import { BanknoteArrowDown, BanknoteArrowUp, PackagePlus, X } from "lucide-react";
 import Cropper from "react-easy-crop";
 import FormGenerator from "../../components/forms/FormGenerator";
 

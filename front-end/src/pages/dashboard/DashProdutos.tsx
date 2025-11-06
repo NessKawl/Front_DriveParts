@@ -2,7 +2,7 @@ import Button from "../../components/buttons/Button";
 import NavBarDashboard from "../../components/navbar/NavBarDashboard";
 import TabelaLista from "../../components/tabelas/TabelaLista";
 import { useState, useCallback, useEffect } from "react";
-import { X } from "lucide-react";
+import { BanknoteArrowDown, BanknoteArrowUp, Package, PackagePlus, Plus, X } from "lucide-react";
 import Cropper from "react-easy-crop";
 import FormGenerator from "../../components/forms/FormGenerator";
 
@@ -29,6 +29,38 @@ export default function DashProdutos() {
             ],
         },
     ];
+    const [isOpenEstoque, setIsOpenEstoque] = useState(false);
+    const [tipoEstoque, setTipoEstoque] = useState<"Entrada" | "Saida" | null>(null);
+    const abrirModal = (tipo: "Entrada" | "Saida") => {
+        setTipoEstoque(tipo);
+        setIsOpenEstoque(true);
+        setFormEstoque({ tipo: "", descricao: "", valor: "", data: "" });
+    };
+    const [formEstoque, setFormEstoque] = useState({
+        tipo: "",
+        descricao: "",
+        valor: "",
+        data: "",
+    })
+    const fieldsEstoque = [
+        {
+            name: "tipo",
+            type: "select",
+            placeholder: "Selecione o tipo de movimentação",
+            options:
+                tipoEstoque === "Saida" ? [
+                    { label: "Venda", value: "Venda" },
+                    { label: "Defeito", value: "Defeito" },
+                ] : [
+                    { label: "Compra", value: "Compra" },
+                    { label: "Devolução", value: "Devolucao" },
+                    { label: "Outros", value: "Outros" },
+                ],
+        },
+        { name: "descricao", type: "text", placeholder: "Descrição da movimentação" },
+        { name: "valor", type: "number", placeholder: "Valor da movimentação (R$)" },
+        { name: "data", type: "date", placeholder: "Data da movimentação" },
+    ]
     const [images, setImages] = useState<File[]>([]);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -38,8 +70,9 @@ export default function DashProdutos() {
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
     const [isOpen, setIsOpen] = useState(false);
 
-    const [produtoEditando, setProdutoEditando] = useState<any>(null); // novo estado
+    const [produtoEditando, setProdutoEditando] = useState<any>(null);
     const [isOpenEdit, setIsOpenEdit] = useState(false);
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files) return;
@@ -71,7 +104,16 @@ export default function DashProdutos() {
         alert("Produto cadastrado com sucesso!");
         setIsOpen(false);
     };
-    // Função utilitária para recortar imagem
+    const handleSubmitEstoque = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!formEstoque.tipo || !formEstoque.descricao || !formEstoque.data || !formEstoque.valor) {
+            alert("Preencha todos os campos obrigatórios");
+            return;
+        }
+        console.log("Estoque cadastrado:", formEstoque);
+        alert("Estoque cadastrado com sucesso");
+        setIsOpenEstoque(false);
+    };
     const getCroppedImg = useCallback(async (imageSrc: string, crop: any) => {
         const image = new Image();
         image.src = imageSrc;
@@ -120,16 +162,16 @@ export default function DashProdutos() {
     };
 
     useEffect(() => {
-    if (produtoEditando) {
-      setForm({
-        nome: produtoEditando.produto || "",
-        descricao: produtoEditando.descricao || "",
-        valor: produtoEditando.valor?.replace("R$", "").replace(",", ".") || "",
-        estoque: produtoEditando.estoque || "",
-        status: produtoEditando.status || "Ativo",
-      });
-    }
-  }, [produtoEditando]);
+        if (produtoEditando) {
+            setForm({
+                nome: produtoEditando.produto || "",
+                descricao: produtoEditando.descricao || "",
+                valor: produtoEditando.valor?.replace("R$", "").replace(",", ".") || "",
+                estoque: produtoEditando.estoque || "",
+                status: produtoEditando.status || "Ativo",
+            });
+        }
+    }, [produtoEditando]);
     return (
         <div className="flex bg-black-smooth/95">
             <NavBarDashboard page="Produtos" />
@@ -139,10 +181,13 @@ export default function DashProdutos() {
                         Gestão de Produtos
                     </h1>
                     <Button
-                        children="Adicionar Produto"
-                        className="bg-pear-green hover:bg-orange-300 w-48 h-full text-ice text-xl font-semibold rounded-md"
+                        className="bg-pear-green hover:bg-orange-300 w-54 h-full text-ice text-xl font-semibold rounded-md flex flex-row justify-center items-center"
                         onClick={() => setIsOpen(true)}
-                    />
+                    >   
+                        <PackagePlus className="w-6 h-6 mr-2" />
+                        Adicionar Produto
+                    </Button>
+                    
                 </div>
                 <div>
                     <TabelaLista
@@ -175,8 +220,128 @@ export default function DashProdutos() {
                                 estoque: 2,
                                 status: "Ativo",
                             },
+                            {
+                                codigo: 2,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 3,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 4,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 5,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 6,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 7,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 8,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 9,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 10,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 11,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 12,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 13,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 14,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 15,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
+                            {
+                                codigo: 16,
+                                produto: "Pneu Goodyear",
+                                descricao: "Pneu Goodyear Direction Touring",
+                                valor: "R$120,00",
+                                estoque: 2,
+                                status: "Ativo",
+                            },
                         ]}
-                        alturaMax="max-h-[550px]"
+                        alturaMax="max-h-[500px]"
                         acoes={[
                             {
                                 label: "Editar",
@@ -188,6 +353,24 @@ export default function DashProdutos() {
                             },
                         ]}
                     />
+                </div>
+                <div className="flex lfex-row justify-between gap-5 mx-5">
+                    <Button
+                        type="button"
+                        onClick={() => abrirModal("Saida")}
+                        className="bg-primary-orange hover:bg-primary-orange/80 text-xl font-semibold hover:text-ice flex flex-row justify-center items-center p-2 rounded-lg"
+                    >
+                        <BanknoteArrowUp size={20} className="mr-2" />
+                        Registrar saída de estoque
+                    </Button>
+                    <Button
+                        type="button"
+                        onClick={() => abrirModal("Entrada")}
+                        className="bg-pear-green text-xl font-semibold hover:text-ice flex flex-row justify-center items-center p-2 rounded-lg"
+                    >
+                        <BanknoteArrowDown size={20} className="mr-2" />
+                        Registrar entrada de estoque
+                    </Button>
                 </div>
             </div>
             {/* === Modal de Cadastro === */}
@@ -363,6 +546,41 @@ export default function DashProdutos() {
                                 className="bg-pear-green hover:bg-orange-300 w-48 py-2 text-ice text-xl font-semibold rounded-md self-end"
                             >
                                 Salvar alterações
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
+            {/* === MODAL DE ENTRADA/SAIDA === */}
+            {isOpenEstoque && (
+                <div className="absolute flex justify-center items-center w-full h-full bg-black/50 z-50">
+                    <div className="bg-black-smooth h-[90%] w-[60%] rounded-md p-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+                        <div className="flex flex-row justify-between mb-4">
+                            <h1 className="text-2xl font-semibold text-primary-orange">
+                                Cadastrar nova movimentação de{" "}
+                                {tipoEstoque === "Saida" ? "Saída" : "Entrada"}
+                            </h1>
+                            <X
+                                size={30}
+                                color="#FFF"
+                                onClick={() => setIsOpenEstoque(false)}
+                                className="cursor-pointer hover:scale-110 transition-transform"
+                            />
+                        </div>
+
+                        <form className="flex flex-col gap-5 w-full" onSubmit={handleSubmitEstoque}>
+                            <FormGenerator
+                                fields={fieldsEstoque}
+                                form={formEstoque}
+                                setForm={setFormEstoque}
+                                className="grid grid-cols-1 gap-4 w-full"
+                            />
+
+                            <button
+                                type="submit"
+                                className="bg-primary-orange hover:bg-orange-300 w-48 py-2 text-ice hover:text-black-smooth text-xl font-semibold rounded-md self-end"
+                            >
+                                Registrar
                             </button>
                         </form>
                     </div>

@@ -66,12 +66,12 @@ export default function DashNovaVenda() {
                             </Button>
                         </div>
                     </div>
-                    <div className="max-h-150">
+                    <div className="max-h-140">
                         <TabelaLista
                             titulo="Lista de Itens"
                             colunas={colunas}
                             fetchData={listaItens}
-                            alturaMax="md:max-h-125"
+                            alturaMax="md:max-h-120"
                             acoes={[
                                 { label: "Remover", cor: "bg-red-alert hover:bg-red-700" },
                             ]}

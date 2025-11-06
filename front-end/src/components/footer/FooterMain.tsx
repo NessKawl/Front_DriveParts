@@ -29,7 +29,7 @@ export default function footerMain() {
                     onClick={() => navigate("/termos-de-uso")}>Termos de uso</p>
                 <p>Protótipo do PI grupo Drive Parts</p>
                 <p>© 2025 DriveParts. Todos os direitos reservados.</p>
-                <p>Versão: 2.1.1</p> 
+                <p>Versão: 2.2.0</p> 
             </div>
             
         </div>

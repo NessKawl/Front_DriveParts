@@ -7,7 +7,7 @@ import { VerifyLogin } from "../services/dataService"
 
 export default function Login() {
   const navigate = useNavigate()
-  //const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({
     telefone: "",

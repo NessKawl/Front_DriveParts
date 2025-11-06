@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Button from "../components/buttons/Button";
 import FooterMain from "../components/footer/FooterMain";
-import InputLabel from "../components/inputs/InputLabel";
 import NavBarSimples from "../components/navbar/NavbarSimples";
 import { useNavigate } from "react-router-dom"
 

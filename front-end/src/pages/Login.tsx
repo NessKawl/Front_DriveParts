@@ -3,7 +3,7 @@ import Button from "../components/buttons/Button"
 import NavBarSimples from "../components/navbar/NavbarSimples"
 import FooterMain from "../components/footer/FooterMain"
 import { useState } from "react"
-
+import { VerifyLogin } from "../services/dataService"
 
 export default function Login() {
   const navigate = useNavigate()
@@ -25,20 +25,21 @@ export default function Login() {
       setError("Preencha todos os campos obrigatórios.");
       return;
     }
-    /*
-    esboço de conexão com api q n funciona kk
-    
+
+
     try {
       setLoading(true);
-      const response = await api.post("/auth/login", form);
-      localStorage.setItem("token", response.data.token);
+      const response = await VerifyLogin(form.telefone, form.senha);
+      localStorage.setItem("token", response.data.access_token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      console.log(localStorage.getItem("user"));
 
       navigate("/catalogo");
     } catch (err: any) {
       setError(err.response?.data?.message || "Erro ao fazer login.");
     } finally {
       setLoading(false);
-    }*/
+    }
   }
   return (
     <div className="bg-ice h-screen flex flex-col justify-between">

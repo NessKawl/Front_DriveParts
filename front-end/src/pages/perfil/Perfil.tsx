@@ -2,7 +2,9 @@ import ProductsGrid from "../../components/cards/ProductsGrid";
 import NavBarSimples from "../../components/navbar/NavbarSimples";
 import FooterMain from "../../components/footer/FooterMain";
 import { useNavigate } from "react-router-dom";
-import {  Edit, LogOut, Phone, User } from "lucide-react";
+import { Edit, LogOut, Phone, User } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getUserProfile } from "../../services/dataService";
 
 export default function Perfil() {
     const navigate = useNavigate()
@@ -16,10 +18,35 @@ export default function Perfil() {
         { value: "Finalizado", children: "Finalizado" },
         { value: "Cancelado", children: "Cancelado" },
     ];
+
+    const [nome, setNome] = useState<any>(null);
+    const [tel, setTel] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) return; // usuário não logado, sai da função
+
+                const response = await getUserProfile();
+                setNome(response.data.usu_nome); // O Nest retorna req.user
+                setTel(response.data.usu_tel)
+            } catch (err) {
+                console.error("Erro ao obter perfil:", err);
+                // Token inválido ou expirado → limpa storage
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+            }
+        };
+
+        fetchUser();
+    }, []);
+
     const user = {
-        nome: "Fulano da Silva",
-        telefone: "(11) 98765-4321",
+        nome: nome,
+        telefone: tel
     }
+
     return (
         <div className="bg-ice min-h-screen ">
             <NavBarSimples rota={"catalogo"} />
@@ -32,7 +59,7 @@ export default function Perfil() {
                 <div className="flex justify-center my-10">
                     <div className="bg-white shadow-xl rounded-xl p-4 w-[350px] text-center">
                         <div className=" flex justify-end">
-                            <button 
+                            <button
                                 className="flex items-center gap-2 bg-white hover:bg-primary-orange border hover:border-primary-orange px-3 py-1 rounded transition"
                                 onClick={() => navigate("/editar-perfil")}
                             >
@@ -48,7 +75,7 @@ export default function Perfil() {
                                 <Phone size={16} /> {user.telefone}
                             </p>
                         </div>
-                        <button 
+                        <button
                             className="mt-6 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition px-4 py-2 rounded-lg flex items-center justify-center gap-2 w-full"
                             onClick={() => {
                                 // Lógica de logout aqui

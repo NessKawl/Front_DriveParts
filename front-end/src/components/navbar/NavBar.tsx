@@ -1,13 +1,35 @@
 import Search from "../inputs/Search.tsx";
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Menu, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import Profile from "../buttons/Profile.tsx";
 import Categoria from "../buttons/Categoria.tsx";
 import Avatar from "../imagens/Avatar.tsx";
 import { useNavigate } from "react-router-dom";
+import { getUserProfile } from "../../services/dataService.tsx";
 export default function navbar() {
+
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return; // usuário não logado, sai da função
+
+        const response = await getUserProfile();
+        setUser(response.data); // O Nest retorna req.user
+      } catch (err) {
+        console.error("Erro ao obter perfil:", err);
+        // Token inválido ou expirado → limpa storage
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const [open, setOpen] = useState(false)
   const navigate = useNavigate();
@@ -54,7 +76,7 @@ export default function navbar() {
                     onClick={() => navigate("/perfil")}
                   >
                     <div className="text-right mr-3">
-                      <p className="text-sm text-black-smooth/80">Bem vindo(a)</p>
+                      <p className="text-sm text-black-smooth/80">Bem vindo(a), {user.usu_nome}</p>
                       <p className="text-base font-bold text-black-smooth">Mare Autopeças</p>
                     </div>
                     <div className="relative">

@@ -18,7 +18,7 @@ export default function Profile({ name }: ProfileProps) {
           onClick={() => name ? navigate("/perfil") : handleLogin()} 
           className="flex flex-row items-center gap-1 cursor-pointer">
           <div className="text-right border-r border-gray pr-2">
-            {name ? <p className="font-light text-sm md:text-lg ">Bem vindo(a)</p> : <p className="font-light text-sm md:text-lg">Acessar conta</p>}
+            {name ? <p className="font-light text-sm md:text-lg ">Bem vindo(a) </p> : <p className="font-light text-sm md:text-lg">Acessar conta</p>}
             <p className="font-bold text-sm md:text-lg">{name}</p>
           </div>
           <div className="hidden md:block border border-light-gray p-1 rounded-full">

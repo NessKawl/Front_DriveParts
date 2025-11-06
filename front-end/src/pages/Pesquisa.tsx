@@ -1,8 +1,8 @@
 import { useLocation } from "react-router-dom";
-import Filter from "../components/buttons/Filter";
 import NavBar from "../components/navbar/NavBar";
 import PesquisaGrid from "../components/cards/PesquisaGrid";
 import FooterMain from "../components/footer/FooterMain";
+import FilterTable from "../components/buttons/FilterTable";
 
 export default function Pesquisa() {
   const location = useLocation()
@@ -55,7 +55,17 @@ export default function Pesquisa() {
             </span>
             </p>
           </div>
-          <Filter />
+          <FilterTable
+            titulo="Filtrar por:"
+            FilterTableProps={[
+              { value: "a-z", children: "De A - Z" },
+              { value: "z-a", children: "De Z - A" },
+              { value: "menor", children: "Preço Menor" },
+              { value: "maior", children: "Preço Maior" }, 
+            ]}
+            color="orange"
+          />
+          
         </div>
         <div>
           <PesquisaGrid

@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect } from "react";
 import { BanknoteArrowDown, BanknoteArrowUp, PackagePlus, X } from "lucide-react";
 import Cropper from "react-easy-crop";
 import FormGenerator from "../../components/forms/FormGenerator";
-import { CadProduto } from "../../services/dataService";
+import { CadProduto, GetProdutos, EditProduto } from "../../services/dataService";
 import { tr } from "framer-motion/client";
 
 export default function DashProdutos() {
@@ -155,6 +155,71 @@ export default function DashProdutos() {
         }
     };
 
+    const handleUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!form.nome || !form.valor) {
+            alert("Preencha todos os campos obrigatórios.");
+            return;
+        }
+
+        let uploadedUrl = produtoEditando?.pro_caminho_img || ""; // mantém imagem antiga se não trocar
+
+        try {
+            // Se o usuário enviou novas imagens, faz upload
+            if (images.length > 0) {
+                for (const image of images) {
+                    const formData = new FormData();
+                    formData.append("file", image);
+
+                    const res = await fetch("http://localhost:3000/upload", {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    if (!res.ok) throw new Error("Erro ao enviar imagem");
+
+                    const data = await res.json();
+                    uploadedUrl = data.url.imageUrl;
+                }
+            }
+
+            const valor = Number(form.valor);
+
+            const resProduto = await EditProduto(
+                produtoEditando?.codigo, 
+                form.nome,
+                valor,
+                form.marca,
+                form.cod,
+                form.status,
+                uploadedUrl
+            );
+
+            if (!resProduto) {
+                throw new Error("Erro ao atualizar produto");
+            }
+
+            alert("Produto atualizado com sucesso!");
+            setIsOpenEdit(false);
+            setProdutoEditando(null);
+            setImages([]);
+            setPreviewUrls([]);
+            setForm({
+                nome: "",
+                valor: 0,
+                marca: "",
+                cod: "",
+                estoque: "",
+                status: true,
+            });
+        } catch (error) {
+            console.error(error);
+            alert("Ocorreu um erro ao atualizar o produto.");
+        }
+    };
+
+
     const handleSubmitEstoque = (e: React.FormEvent) => {
         e.preventDefault();
         if (!formEstoque.tipo || !formEstoque.descricao || !formEstoque.data || !formEstoque.valor) {
@@ -265,136 +330,18 @@ export default function DashProdutos() {
                             { chave: "estoque", titulo: "Estoque", size: "sm" },
                             { chave: "status", titulo: "Status", size: "sm" },
                         ]}
-                        fetchData={async () => [
-                            {
-                                codigo: 1,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 2,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 3,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 4,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 5,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 6,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 7,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 8,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 9,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 10,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 11,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 12,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 13,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 14,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 15,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                            {
-                                codigo: 16,
-                                produto: "Pneu Goodyear",
-                                descricao: "Pneu Goodyear Direction Touring",
-                                valor: "R$120,00",
-                                estoque: 2,
-                                status: "Ativo",
-                            },
-                        ]}
+                        fetchData={async () => {
+                            const produtos = await GetProdutos();
+
+                            return produtos.map((p: any) => ({
+                                codigo: p.pro_id || p.pro_cod,
+                                produto: p.pro_nome,
+                                marca: p.pro_marca,
+                                valor: `R$${Number(p.valor).toFixed(2).replace(".", ",")}`,
+                                // estoque: p.estoque ?? 0,
+                                status: p.pro_status ? "Ativo" : "Inativo",
+                            }));
+                        }}
                         alturaMax="max-h-[500px]"
                         acoes={[
                             {
@@ -549,7 +496,7 @@ export default function DashProdutos() {
                             />
                         </div>
 
-                        <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+                        <form className="flex flex-col gap-5" onSubmit={handleUpdate}>
                             {/* Upload de imagens */}
                             <div>
                                 <label className="text-md font-medium text-ice block mb-2">

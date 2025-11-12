@@ -5,10 +5,9 @@ import TabelaLista from "../../components/tabelas/TabelaLista";
 
 export default function DashNovaVenda() {
     const colunas = [
-        { chave: "numero", titulo: "N° Item", size: "sm" },
-        { chave: "codigo", titulo: "Código", size: "sm" },
-        { chave: "produto", titulo: "Produto", size: "auto" },
-        { chave: "valor", titulo: "Valor", size: "sm" },
+        { chave: "codigo", titulo: "", size: "sm" },
+        { chave: "produto", titulo: "", size: "auto" },
+        { chave: "valor", titulo: "", size: "sm" },
     ];
     const listaItens = async () => [
         { numero: 1, codigo: "001", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$120,00" },
@@ -32,66 +31,22 @@ export default function DashNovaVenda() {
     const quantidadeItens = 10;
     const [formaPagamento, setFormaPagamento] = useState("");
     return (
-        <div className="flex bg-black-smooth/95">
-            <NavBarDashboard page="Vendas" />
-            <form action="" className="w-full flex flex-row justify-center  p-2 gap-5">
+        <div className="flex-1 h-screen bg-black-smooth/95">
+            <form action="" className="w-full flex flex-col justify-center  p-2 gap-5">
                 <div className="flex flex-col gap-5 w-full">
-                    <div className="flex flex-col gap-5 w-full">
-                        <div className="flex flex-col">
-                            <label htmlFor="" className="font-light text-lg text-ice">Nome do Cliente</label>
-                            <input
-                                type="text"
-                                id="cliente"
-                                name="clienteName"
-                                placeholder="Buscar Cliente"
-                                className="bg-ice/80 rounded-md p-1 w-full h-10 font-semibold text-lg" />
-                        </div>
-
-                        <div className="flex flex-row w-full gap-2 items-end">
-                            <div className="flex flex-col w-full">
-                                <label htmlFor="" className="font-light text-lg text-ice">Telefone do Cliente</label>
-                                <input
-                                    type="text"
-                                    id="telefone"
-                                    name="clientePhone"
-                                    placeholder="Buscar Telefone"
-                                    className="bg-ice/80 rounded-md p-1 w-full h-10 font-semibold text-lg" />
-                            </div>
-
-                            <Button
-                                type="button"
-                                className="bg-primary-orange hover:bg-orange-600 text-black-smooth font-bold px-4 py-2 rounded-md ml-2 transition duration-200 w-50"
-                            >
-                                Selecionar Reserva
-                            </Button>
-                        </div>
-                    </div>
-                    <div className="max-h-140">
+                    <div className="h-120">
                         <TabelaLista
-                            titulo="Lista de Itens"
+                            titulo=""
                             colunas={colunas}
                             fetchData={listaItens}
-                            alturaMax="md:max-h-120"
-                            acoes={[
-                                { label: "Remover", cor: "bg-red-alert hover:bg-red-700" },
-                            ]}
+                            alturaMax="md:max-h-100"
                         />
                     </div>
                 </div>
                 <div className="flex flex-col w-full gap-3 ">
                     <div className="flex flex-row gap-5 border-b border-primary-orange/100 pb-4">
                         <div className="flex flex-col gap-6">
-                            <img src="/produtos/pneu.png" alt="" className="w-40 h-40 bg-ice/90" />
-                            <div className="flex flex-col">
-                                <label htmlFor="" className="font-light text-lg text-ice">Valor Unitário</label>
-                                <input
-                                    type="text"
-                                    id="valorUnidade"
-                                    name="valorUnidade"
-                                    placeholder="R$ 0,00"
-                                    className="bg-ice/80 rounded-md p-1 w-40 h-10 font-semibold text-lg "
-                                />
-                            </div>
+                          
                         </div>
                         <div className="flex flex-col gap-6 w-full">
                             <div className="flex flex-col">
@@ -103,27 +58,19 @@ export default function DashNovaVenda() {
                                     placeholder="Buscar Produto"
                                     className="bg-ice/80 rounded-md p-1 w-full h-10 font-semibold text-lg" />
                             </div>
-                            <div className="flex flex-row gap-5 w-full">
-                                <div className="flex flex-col w-40">
-                                    <label htmlFor="" className="font-light text-lg text-ice">Código do Produto</label>
-                                    <input
-                                        type="text"
-                                        id="codigo"
-                                        name="codigo"
-                                        placeholder="000"
-                                        className="bg-ice/80 rounded-md p-1 w-40 h-10 font-semibold text-lg" />
-                                </div>
-                                <div className="flex flex-col w-full">
-                                    <label htmlFor="" className="font-light text-lg text-ice">Código de Barras</label>
-                                    <input
-                                        type="text"
-                                        id="codigoBarras"
-                                        name="codigoBarras"
-                                        placeholder="000000000  000000000"
-                                        className="bg-ice/80 rounded-md p-1 w-full h-10 font-semibold text-lg" />
-                                </div>
-                            </div>
+                            
+                            
                             <div className="flex flex-row gap-5 justify-between">
+                                  <div className="flex flex-col">
+                                <label htmlFor="" className="font-light text-lg text-ice">Valor Unitário</label>
+                                <input
+                                    type="text"
+                                    id="valorUnidade"
+                                    name="valorUnidade"
+                                    placeholder="R$ 0,00"
+                                    className="bg-ice/80 rounded-md p-1 w-40 h-10 font-semibold text-lg "
+                                />
+                            </div>
                                 <div className="flex flex-col w-full">
                                     <label htmlFor="" className="font-light text-lg text-ice">Valor Total</label>
                                     <input
@@ -157,26 +104,6 @@ export default function DashNovaVenda() {
                             name="subTotal"
                             placeholder="R$ 0,00"
                             className="bg-ice/80 rounded-md p-1 w-full h-15 font-semibold text-3xl" />
-                    </div>
-                    <div className="flex flex-col w-full">
-                        <label htmlFor="formaPagamento" className="font-md text-lg text-ice">
-                            Forma de Pagamento
-                        </label>
-                        <select
-                            id="formaPagamento"
-                            name="formaPagamento"
-                            value={formaPagamento}
-                            onChange={(e) => setFormaPagamento(e.target.value)}
-                            className="bg-ice/80 rounded-md p-1 w-75 h-12 font-semibold text-xl"
-                        >
-                            <option hidden value="">
-                                Selecione forma de pagamento
-                            </option>
-                            <option value="dinheiro">Dinheiro</option>
-                            <option value="cartaoCredito">Cartão de Crédito</option>
-                            <option value="cartaoDebito">Cartão de Débito</option>
-                            <option value="pix">Pix</option>
-                        </select>
                     </div>
                     {formaPagamento === "dinheiro" && (
                         <div className="flex flex-row w-full gap-4">
@@ -226,13 +153,6 @@ export default function DashNovaVenda() {
                             </select>
                         </div>
                     )}
-                    <div className="flex justify-center items-end w-full h-full p-5">
-                        <Button
-                            type="submit"
-                            className="bg-pear-green/80 hover:bg-pear-green text-ice font-bold text-3xl px-4 py-2  transition duration-200 w-full hover:shadow-lg hover:shadow-pear-green/50 rounded-md"
-                            children="Finalizar Venda"
-                        />
-                    </div>    
                 </div>
             </form>
         </div>

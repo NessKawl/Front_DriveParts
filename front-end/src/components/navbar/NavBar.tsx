@@ -47,9 +47,20 @@ export default function NavBar() {
           <Search />
         </div>
         <div className="flex gap-2 mb-2">
-          <div className="text-right border-r border-black-smooth pr-3 items-center">
+          <div className="flex text-right border-r border-black-smooth pr-3 items-center justify-center cursor-pointer">
             {userName ? <p className="font-light text-sm md:text-lg">Bem vindo(a)</p> : <p className="font-semibold text-md" onClick={() => navigate("/login")}>Acessar conta</p>}
             <p className="font-bold text-sm md:text-lg">{userName}</p>
+
+          </div>
+          <div className="relative hidden md:block">
+            <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />
+
+            <Avatar
+              src="/icons/avatar.png"
+              alt="Avatar do usuário"
+              size="md"
+              className="relative shadow-lg"
+            />
           </div>
           <button onClick={() => setOpen(!open)} className="md:hidden ">
             <Menu size={30} className="text-black-smooth" />

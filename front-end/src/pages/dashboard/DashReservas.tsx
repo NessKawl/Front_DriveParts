@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import CardEstatistica from "../../components/cards/CardEstatistica";
 import GraficoLinhas from "../../components/graficos/GraficoLinhas";
 import NavBarDashboard from "../../components/navbar/NavBarDashboard";
@@ -7,47 +7,208 @@ import { X } from "lucide-react";
 import Button from "../../components/buttons/Button";
 import { useNavigate } from "react-router-dom";
 
+type StatusReserva = "RESERVA" | "CONCLUIDA" | "CANCELADA" | "EXPIRADA";
+
+interface UsuarioAPI {
+    usu_nome?: string;
+    usu_tel?: string;
+}
+
+interface ProdutoAPI {
+    pro_id: number;
+    pro_nome: string;
+    pro_valor?: number;
+}
+
+interface ItemVendaAPI {
+    ite_qtd: number;
+    pro_produto: ProdutoAPI;
+}
+
+interface ReservaAPI {
+    ven_id: number;
+    ven_data_criacao?: string;
+    ven_status?: StatusReserva;
+    ven_valor?: number;
+    ven_periodo?: string;
+    usu_usuario?: UsuarioAPI;
+    ite_itemVenda?: ItemVendaAPI[];
+}
+
+interface ProdutoFormatado {
+    codigo: number;
+    produto: string;
+    valor: string;
+}
+
+interface ReservaFormatada {
+    id: number;
+    cliente: string;
+    telefone: string;
+    quantidade: number;
+    total: string;
+    periodo: string;
+    status: StatusReserva | string; 
+    produtos: ProdutoFormatado[];
+}
+
+interface DadosGrafico {
+    name: string;
+    vendidas: number;
+    canceladas: number;
+    [key: string]: string | number; 
+}
+
+const formatarTelefone = (telefone?: string): string => {
+    if (!telefone) return "—";
+    const apenasNumeros = telefone.replace(/\D/g, "");
+    const match = apenasNumeros.match(/^(\d{2})(\d{4,5})(\d{4})$/);
+    if (match) {
+        const [, ddd, prefixo, sufixo] = match;
+        return `(${ddd}) ${prefixo}-${sufixo}`;
+    }
+    return telefone;
+};
+
+const gerarDataReservas = (reservas: ReservaAPI[]): DadosGrafico[] => {
+    const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+    const data: DadosGrafico[] = meses.map((m) => ({ name: m, vendidas: 0, canceladas: 0 }));
+
+    reservas.forEach((r) => {
+        const statusReserva = r.ven_status;
+        const dataCriacaoStr = r.ven_data_criacao;
+
+        if (!dataCriacaoStr) return;
+
+        const dataCriacao = new Date(dataCriacaoStr);
+        if (isNaN(dataCriacao.getTime())) return;
+
+        const mesIndex = dataCriacao.getMonth();
+
+        if (statusReserva === "CONCLUIDA") data[mesIndex].vendidas += 1;
+        else if (statusReserva === "CANCELADA") data[mesIndex].canceladas += 1;
+    });
+
+    return data;
+};
+
+const formatarReservasParaTabela = (data: ReservaAPI[]): ReservaFormatada[] => {
+    return data.map((r) => {
+        const quantidade = r.ite_itemVenda?.reduce((acc, i) => acc + i.ite_qtd, 0) ?? 0;
+        const total = r.ven_valor?.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+        }) ?? "—";
+
+        const produtos: ProdutoFormatado[] = r.ite_itemVenda?.map((i) => {
+            const produtoData = i.pro_produto;
+
+            return {
+                codigo: i.pro_produto.pro_id,
+                produto: i.pro_produto.pro_nome,
+                valor: produtoData?.pro_valor?.toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                }) ?? "—",
+            };
+        }) ?? [];
+
+        return {
+            id: r.ven_id,
+            cliente: r.usu_usuario?.usu_nome || "—",
+            telefone: formatarTelefone(r.usu_usuario?.usu_tel),
+            quantidade,
+            total,
+            periodo: r.ven_periodo || "—",
+            status: r.ven_status || "—",
+            produtos,
+        };
+    });
+};
+
 export default function DashReservas() {
     const navigate = useNavigate();
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedReserva, setSelectedReserva] = useState<any | null>(null);
-    const dataReservas = [
-        { name: "Jan", vendidas: 45, canceladas: 10 },
-        { name: "Fev", vendidas: 60, canceladas: 15 },
-        { name: "Mar", vendidas: 55, canceladas: 8 },
-        { name: "Abr", vendidas: 70, canceladas: 12 },
-        { name: "Mai", vendidas: 50, canceladas: 10 },
-        { name: "Jun", vendidas: 65, canceladas: 15 },
-        { name: "Jul", vendidas: 75, canceladas: 18 },
-        { name: "Ago", vendidas: 80, canceladas: 20 },
-        { name: "Set", vendidas: 85, canceladas: 22 },
-        { name: "Out", vendidas: 90, canceladas: 25 },
-        { name: "Nov", vendidas: 95, canceladas: 28 },
-        { name: "Dez", vendidas: 100, canceladas: 30 },
-    ];
-    const colunasReservas = [
-        { chave: "cliente", titulo: "Cliente", size: "md" },
-        { chave: "telefone", titulo: "Telefone", size: "md" },
-        { chave: "quantidade", titulo: "Quantidade", size: "md" },
-        { chave: "total", titulo: "Total-(R$)", size: "md" },
-        { chave: "periodo", titulo: "Período", size: "lg" },
-        { chave: "status", titulo: "Status", size: "sm" },
 
-    ];
-    const buscarReservas = async () => [
-        { cliente: "Maria", telefone: "1234-5678", quantidade: 1, total: "1.500,00", periodo: "01/01/2025 - manhã", status: "cancelada" },
-        { cliente: "João", telefone: "1234-5678", quantidade: 2, total: "240,00", periodo: "02/01/2025 - tarde", status: "vendida" },
-        { cliente: "João", telefone: "1234-5678", quantidade: 2, total: "240,00", periodo: "03/01/2025 - manhã", status: "vendida" },
-        { cliente: "Maria", telefone: "1234-5678", quantidade: 1, total: "75,00", periodo: "04/01/2025 - tarde", status: "ativa" },
-        { cliente: "Maria", telefone: "1234-5678", quantidade: 1, total: "75,00", periodo: "05/01/2025 - manhã", status: "ativa" },
-        { cliente: "Maria", telefone: "1234-5678", quantidade: 1, total: "75,00", periodo: "03/01/2025 - tarde", status: "expirada" },
-        { cliente: "Maria", telefone: "1234-5678", quantidade: 1, total: "75,00", periodo: "01/01/2025 - manhã", status: "cancelada" },
-        { cliente: "João", telefone: "1234-5678", quantidade: 2, total: "240,00", periodo: "02/01/2025 - tarde", status: "vendida" },
-        { cliente: "Maria", telefone: "1234-5678", quantidade: 1, total: "75,00", periodo: "04/01/2025 - manhã", status: "ativa" },
-        { cliente: "João", telefone: "1234-5678", quantidade: 2, total: "240,00", periodo: "05/01/2025 - tarde", status: "vendida" },
-        { cliente: "Maria", telefone: "1234-5678", quantidade: 1, total: "75,00", periodo: "06/01/2025 - manhã", status: "ativa" },
-        { cliente: "Maria", telefone: "1234-5678", quantidade: 1, total: "75,00", periodo: "03/01/2025 - tarde", status: "expirada" },
-    ];
+    const [reservasAPI, setReservasAPI] = useState<ReservaAPI[]>([]);
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedReserva, setSelectedReserva] = useState<ReservaFormatada | null>(null);
+    const [filtroSelecionado, setFiltroSelecionado] = useState("todos");
+    const [loading, setLoading] = useState(true);
+    const [erro, setErro] = useState<string | null>(null);
+
+    const carregarReservas = useCallback(async () => {
+        setLoading(true);
+        setErro(null);
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setErro("Usuário não autenticado.");
+                return;
+            }
+
+            const response = await fetch("http://localhost:3000/dashboard/reservas", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
+
+            const data: ReservaAPI[] = await response.json();
+            setReservasAPI(data); 
+            setErro(null);
+        } catch (error) {
+            console.error("❌ Erro ao carregar reservas:", error);
+            setErro("Falha ao carregar reservas.");
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    const atualizarStatus = useCallback(async (id: number, status: "CANCELADA" | "EXPIRADA") => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) { alert("Usuário não autenticado."); return; }
+
+            const response = await fetch(
+                `http://localhost:3000/dashboard/reservas/${id}/status`,
+                {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                    body: JSON.stringify({ status }),
+                }
+            );
+
+            if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
+            alert(`Reserva ${status.toLowerCase()} com sucesso!`);
+            carregarReservas();
+        } catch (error) {
+            console.error("❌ Erro ao atualizar status:", error);
+            alert("Erro ao atualizar status.");
+        }
+    }, [carregarReservas]); 
+
+    useEffect(() => {
+        carregarReservas();
+    }, [carregarReservas]);
+
+    const reservasFormatadas = useMemo(() => formatarReservasParaTabela(reservasAPI), [reservasAPI]);
+
+    const reservasFiltradas = useMemo(() => {
+        switch (filtroSelecionado) {
+            case "ativas":
+                return reservasFormatadas.filter(r => r.status === "RESERVA");
+            case "vendidas":
+                return reservasFormatadas.filter(r => r.status === "CONCLUIDA");
+            case "canceladas":
+                return reservasFormatadas.filter(r => r.status === "CANCELADA");
+            case "expiradas":
+                return reservasFormatadas.filter(r => r.status === "EXPIRADA");
+            default:
+                return reservasFormatadas;
+        }
+    }, [filtroSelecionado, reservasFormatadas]); 
+    
+    const dadosGrafico = useMemo(() => gerarDataReservas(reservasAPI), [reservasAPI]);
 
     const filtros = [
         { value: "Todos", children: "todos" },
@@ -57,136 +218,141 @@ export default function DashReservas() {
         { value: "Expiradas", children: "expiradas" },
     ];
 
+    const colunasReservas = [
+        { chave: "cliente", titulo: "Cliente", size: "md" },
+        { chave: "telefone", titulo: "Telefone", size: "md" },
+        { chave: "quantidade", titulo: "Quantidade", size: "md" },
+        { chave: "total", titulo: "Total (R$)", size: "md" },
+        { chave: "periodo", titulo: "Período", size: "lg" },
+        { chave: "status", titulo: "Status", size: "md" },
+    ];
+
     const colunasListaProdutos = [
         { chave: "codigo", titulo: "Código", size: "sm" },
         { chave: "produto", titulo: "Produto", size: "auto" },
         { chave: "valor", titulo: "Valor", size: "md" },
-    ]
-    const buscarProdutos = async () => [
-        { codigo: "1", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$ 75,00" },
-        { codigo: "2", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$ 75,00" },
-        { codigo: "3", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$ 75,00" },
-        { codigo: "4", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$ 75,00" },
-        { codigo: "5", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$ 75,00" },
-        { codigo: "6", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$ 75,00" },
-        { codigo: "7", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$ 75,00" },
-        { codigo: "8", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$ 75,00" },
-        { codigo: "9", produto: "Pneu Goodyear Direction Touring 2 185/70 R14 88H", valor: "R$ 75,00" },
-    ]
+    ];
+
+
     return (
         <div className="flex bg-black-smooth/95">
             <NavBarDashboard page="Reservas" />
             <div className="flex flex-col justify-center gap-2 py-5 px-5 w-screen">
-                <div className="flex flex-row w-ful gap-5">
+
+                <div className="flex flex-row w-full gap-5">
                     <CardEstatistica
                         className="bg-black-smooth flex flex-col border-l border-primary-orange p-2 w-60 h-full"
                         titulo="RESERVAS ATIVAS"
-                        valor="14"
+                        valor={reservasFormatadas.filter(r => r.status === "RESERVA").length.toString()}
                     />
                     <GraficoLinhas
                         titulo="Reservas Mensais"
-                        data={dataReservas}
+                        data={dadosGrafico}
                         series={[
                             { key: "vendidas", color: "#22C55E", label: "Reservas Vendidas" },
                             { key: "canceladas", color: "#EF4444", label: "Reservas Canceladas" },
                         ]}
                     />
                 </div>
-                <TabelaLista
-                    titulo="Reservas"
-                    pesquisa={true}
-                    filtro={true}
-                    tituloFiltro="Filtar"
-                    filtroChildren={filtros}
-                    colunas={colunasReservas}
-                    fetchData={buscarReservas}
-                    acoes={[
-                        {
-                            label: "Ver detalhes",
-                            cor: "bg-primary-orange hover:bg-orange-400 hover:shadow-orange-400/50 hover:text-white",
-                            onClick: (item: any) => {
-                                setSelectedReserva(item);
-                                setIsOpen(true);
-                            }
-                        },
-                    ]}
-                />
 
+                {loading ? (
+                    <p className="text-gray-400">Carregando reservas...</p>
+                ) : erro ? (
+                    <p className="text-red-500">{erro}</p>
+                ) : (
+                    <>
+                        <select
+                            value={filtroSelecionado}
+                            onChange={(e) => setFiltroSelecionado(e.target.value)}
+                            className="bg-black-smooth text-white border border-gray-600 rounded px-2 py-1 w-40 mb-2"
+                        >
+                            {filtros.map(f => (
+                                <option key={f.children} value={f.children}>{f.value}</option>
+                            ))}
+                        </select>
+
+                        <TabelaLista
+                            titulo="Reservas"
+                            pesquisa={true}
+                            filtro={true} 
+                            tituloFiltro="Filtrar"
+                            filtroChildren={filtros}
+                            colunas={colunasReservas}
+                            fetchData={async () => reservasFiltradas}
+                            acoes={[
+                                {
+                                    label: "Ver detalhes",
+                                    cor: "bg-primary-orange hover:bg-orange-400 hover:shadow-orange-400/50 hover:text-white",
+                                    onClick: (item: ReservaFormatada) => {
+                                        setSelectedReserva(item);
+                                        setIsOpen(true);
+                                    },
+                                },
+                            ]}
+                        />
+                    </>
+                )}
             </div>
-            {isOpen && (
+
+            {isOpen && selectedReserva && ( 
                 <div className="absolute flex justify-center items-center w-full h-full bg-black/50 z-50">
                     <div className="flex flex-col justify-between bg-black-smooth h-[90%] w-[60%] rounded-md p-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+
                         <div className="flex flex-col w-full">
                             <div className="flex flex-row justify-between">
-                                <h1 className="text-xl font-light text-ice ">
-                                    Detalhes da Reserva de <span className="text-2xl font-semibold text-primary-orange">{selectedReserva?.cliente}</span>
+                                <h1 className="text-xl font-light text-ice">
+                                    Detalhes da Reserva de <span className="text-2xl font-semibold text-primary-orange">{selectedReserva.cliente}</span>
                                 </h1>
                                 <X
                                     size={30}
                                     color="#FFF"
-                                    onClick={() => {
-                                        setIsOpen(false);
-                                        setSelectedReserva(null);
-                                    }}
+                                    onClick={() => { setIsOpen(false); setSelectedReserva(null); }}
                                     className="cursor-pointer hover:scale-110 transition-transform"
                                 />
                             </div>
-                            <div className="flex flex-row gap-2 items-end ">
+                            <div className="flex flex-row gap-2 items-end">
                                 <p className="font-light text-ice text-lg">Telefone:</p>
-                                <p className="text-xl font-semibold text-primary-orange">{selectedReserva?.telefone}</p>
+                                <p className="text-xl font-semibold text-primary-orange">{selectedReserva.telefone}</p>
                             </div>
                             <div className="flex flex-row gap-2 items-end border-b border-gray-500 pb-4">
-                                <p className="font-light text-ice text-lg">Valido até:</p>
-                                <p className="text-xl font-semibold text-primary-orange">{selectedReserva?.periodo}</p>
+                                <p className="font-light text-ice text-lg">Período:</p>
+                                <p className="text-xl font-semibold text-primary-orange">{selectedReserva.periodo}</p>
                             </div>
-                            <div className=" mt-5 border border-primary-orange">
+
+                            <div className="mt-5 border border-primary-orange">
                                 <TabelaLista
-                                    titulo="lista de produtos"
+                                    titulo="Lista de produtos"
                                     pesquisa={false}
                                     filtro={false}
-                                    tituloFiltro="Filtar"
-                                    filtroChildren={filtros}
                                     colunas={colunasListaProdutos}
-                                    fetchData={buscarProdutos}
-                                    acoes={[
-                                        {
-                                            label: "remover",
-                                            cor: "bg-primary-orange hover:bg-orange-400 hover:shadow-orange-400/50 hover:text-white",
-                                            onClick: (item: any) => {
-                                                setSelectedReserva(item);
-                                                setIsOpen(true);
-                                            }
-                                        },
-                                    ]}
+                                    fetchData={async () => selectedReserva.produtos}
                                 />
                             </div>
                         </div>
-                        <div className="flex flex-col gap-2 items-end border-t border-gray-500 pb-4 mt-5">
+
+                        <div className="flex flex-col gap-2 items-end border-t border-gray-500 pt-4 mt-5">
                             <div className="flex flex-row gap-2 items-end w-full">
                                 <p className="font-light text-ice text-xl">Total:</p>
-                                <p className="text-2xl font-semibold text-primary-orange">R$ {selectedReserva?.total}</p>
+                                <p className="text-2xl font-semibold text-primary-orange">{selectedReserva.total}</p>
                             </div>
-                            <div className="flex flex-row justify-around items-center  w-full text-xl">
+                            <div className="flex flex-row justify-around items-center w-full text-xl">
+                                {selectedReserva.status === "RESERVA" && (
+                                    <Button
+                                        onClick={() => atualizarStatus(selectedReserva.id, "CANCELADA")}
+                                        children="Cancelar reserva"
+                                        className="border border-red-alert text-red-alert font-semibold py-2 px-6 rounded-xl hover:bg-red-alert hover:text-white hover:shadow-red-alert/50 hover:shadow-md transition-shadow duration-300 cursor-pointer"
+                                    />
+                                )}
                                 <Button
                                     onClick={() => {
                                         setIsOpen(false);
                                         setSelectedReserva(null);
-                                    }}
-                                    children="Cancelar reserva"
-                                    className="border border-red-alert text-red-alert font-semibold py-2 px-6 rounded-xl hover:bg-red-alert hover:text-white hover:shadow-red-alert/50 hover:shadow-md transition-shadow duration-300"
-                                />
-                                <Button
-                                    onClick={() => {
-                                        setIsOpen(false);
-                                        setSelectedReserva(null);
-                                        navigate(`/dashboard/vendas/nova-venda?reserva=${selectedReserva?.id}`);
+                                        navigate(`/dashboard/vendas/nova-venda?reserva=${selectedReserva.id}`);
                                     }}
                                     children="Ir para venda"
                                     className="bg-pear-green/80 text-white font-semibold px-6 py-2 rounded-xl hover:bg-pear-green hover:shadow-pear-green/50 hover:shadow-md transition-shadow duration-300 hover:text-shadow-2xs"
                                 />
-                                
                             </div>
-
                         </div>
                     </div>
                 </div>

@@ -1,10 +1,11 @@
-import ProductsGrid from "../../components/cards/ProductsGrid";
+import ProductsGrid from "../../components/cards/ProductsGridHistorico";
 import NavBarSimples from "../../components/navbar/NavbarSimples";
 import FooterMain from "../../components/footer/FooterMain";
 import { useNavigate } from "react-router-dom";
 import { Edit, LogOut, Phone, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getUserProfile } from "../../services/dataService";
+import { getReservasAtivas, getHistoricoGeral } from "../../services/historicoService";
 
 export default function Perfil() {
     const navigate = useNavigate()
@@ -18,47 +19,67 @@ export default function Perfil() {
         { value: "Finalizado", children: "Finalizado" },
         { value: "Cancelado", children: "Cancelado" },
     ];
-    const products = [
-        {
-            image: "/produtos/cabecote.png",
-            name: "JUNTA CABECOTE - HISTÓRICO",
-            reserva: "Reservado em 20/10/2025",
-            status: "Finalizado",
-        },
-        {
-            image: "/produtos/cabecote.png",
-            name: "JUNTA CABECOTE - HISTÓRICO",
-            reserva: "Reservado em 20/10/2025",
-            status: "Cancelado",
-        },
-        {
-            image: "/produtos/cabecote.png",
-            name: "JUNTA CABECOTE - ATIVA",
-            praso: "Reservado até as 18:00 de 13/10/2025",
-        },
-    ]
+    // const products = [
+    //     {
+    //         image: "/produtos/cabecote.png",
+    //         name: "JUNTA CABECOTE - HISTÓRICO",
+    //         reserva: "Reservado em 20/10/2025",
+    //         status: "Finalizado",
+    //     },
+    //     {
+    //         image: "/produtos/cabecote.png",
+    //         name: "JUNTA CABECOTE - HISTÓRICO",
+    //         reserva: "Reservado em 20/10/2025",
+    //         status: "Cancelado",
+    //     },
+    //     {
+    //         image: "/produtos/cabecote.png",
+    //         name: "JUNTA CABECOTE - ATIVA",
+    //         praso: "Reservado até as 18:00 de 13/10/2025",
+    //     },
+    // ]
     const [nome, setNome] = useState<any>(null);
     const [tel, setTel] = useState<any>(null);
+    const [reservasAtivas, setReservasAtivas] = useState<any[]>([]);
+    const [historico, setHistorico] = useState<any[]>([]);
 
     useEffect(() => {
-        const fetchUser = async () => {
+        const fetchUserAndReservas = async () => {
             try {
                 const token = localStorage.getItem("token");
-                if (!token) return; // usuário não logado, sai da função
+                if (!token) return;
+
 
                 const response = await getUserProfile();
-                setNome(response.data.usu_nome); // O Nest retorna req.user
-                setTel(response.data.usu_tel)
+                setNome(response.data.usu_nome);
+                setTel(response.data.usu_tel);
+
+
+                const reservasAtivasRaw = await getReservasAtivas(token);
+                const historicoRaw = await getHistoricoGeral(token);
+
+                // Mapear para ProductsGrid
+                const mapearReservas = (lista: any[]) =>
+                    lista.map((reserva) => ({
+                        image: "/produtos/cabecote.png",
+                        name: reserva.ite_itemVenda[0]?.pro_produto?.pro_nome || `Reserva #${reserva.ven_id}`,
+                        reserva: new Date(reserva.ven_data_criacao).toLocaleDateString("pt-BR"),
+                        status: reserva.ven_status,
+                    }));
+
+                setReservasAtivas(mapearReservas(reservasAtivasRaw));
+                setHistorico(mapearReservas(historicoRaw));
+
             } catch (err) {
-                console.error("Erro ao obter perfil:", err);
-                // Token inválido ou expirado → limpa storage
+                console.error("Erro ao carregar perfil/reservas:", err);
                 localStorage.removeItem("token");
                 localStorage.removeItem("user");
             }
         };
 
-        fetchUser();
+        fetchUserAndReservas();
     }, []);
+
 
     const user = {
         nome: nome,
@@ -69,11 +90,9 @@ export default function Perfil() {
         <div className="bg-ice min-h-screen ">
             <NavBarSimples rota={"catalogo"} />
             <main>
-                {/* Header */}
                 <header className=" flex justify-center items-center px-6 py-3 shadow">
                     <h1 className="text-2xl font-bold">Seu Perfil</h1>
                 </header>
-                {/* Card de informações */}
                 <div className="flex justify-center my-10">
                     <div className="bg-white shadow-xl rounded-xl p-4 w-[350px] text-center">
                         <div className=" flex justify-end">
@@ -104,12 +123,13 @@ export default function Perfil() {
                         </button>
                     </div>
                 </div>
+
                 <div className="md:px-10 mb-2">
                     <ProductsGrid
                         filtro={false}
                         title="Suas Reservas Ativas"
                         tipo="reservasAtivas"
-                        products={products}
+                        products={reservasAtivas}
                     />
                 </div>
                 <div className="md:px-10">
@@ -119,7 +139,7 @@ export default function Perfil() {
                         tituloFiltro="Período"
                         title="Histórico de Reservas"
                         tipo="historico"
-                        products={products}
+                        products={historico}
                     />
                 </div>
             </main>

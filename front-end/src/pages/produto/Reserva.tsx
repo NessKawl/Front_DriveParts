@@ -3,11 +3,12 @@ import Button from "../../components/buttons/Button";
 import { useNavigate } from "react-router-dom"
 import clsx from "clsx";
 import { useState } from "react";
+import { criarReservaBackend } from "../../services/reservaService";
 
 
 export default function Reserva() {
   const navigate = useNavigate();
-  const [selecionarPeriodo, setSelecionarPeriodo] = useState("");
+  const [selecionarPeriodo, setSelecionarPeriodo] = useState<"MANHA" | "TARDE" >();
   const [slecionaQuantidade, setSelecionarQuantidade] = useState<number>(1);
   const informacoes = {
     imagensProduto: [
@@ -66,17 +67,17 @@ export default function Reserva() {
                 <Button
                   children="MANHÃ"
                   type="button"
-                  onClick={() => setSelecionarPeriodo("Manhã")}
+                  onClick={() => setSelecionarPeriodo("MANHA")}
                   className={clsx("rounded-xl bg-primary-orange px-10 py-1 lg:px-25 lg:py-2 text-black-smooth font-bold sm:rounded-none",
-                    selecionarPeriodo === "Tarde" ? "bg-primary-orange/50 text-black-smooth/50" : "bg-primary-orange "
+                    selecionarPeriodo === "TARDE" ? "bg-primary-orange/50 text-black-smooth/50" : "bg-primary-orange "
                   )}
                 />
                 <Button
                   children="TARDE"
                   type="button"
-                  onClick={() => setSelecionarPeriodo("Tarde")}
+                  onClick={() => setSelecionarPeriodo("TARDE")}
                   className={clsx("rounded-xl bg-primary-orange px-10 py-1 lg:px-25 lg:py-2 text-black-smooth font-bold sm:rounded-none",
-                    selecionarPeriodo === "Manhã" ? "bg-primary-orange/50 text-black-smooth/50" : "bg-primary-orange "
+                    selecionarPeriodo === "MANHA" ? "bg-primary-orange/50 text-black-smooth/50" : "bg-primary-orange "
                   )}
                 />
               </div>
@@ -92,10 +93,25 @@ export default function Reserva() {
               <div className="flex justify-center">
                 <Button
                   children="Reservar"
-                  type="submit"
+                  type="button"
                   className="rounded-xl text-2xl font-semibold bg-pear-green px-15 py-1 lg:px-25 lg:py-2 text-ice sm:rounded-none"
-                  onClick={() => navigate("/catalogo")}
+                  onClick={async () => {
+                    if (!selecionarPeriodo) {
+                      alert("Selecione um período antes de continuar.");
+                      return; 
+                    }
+
+                    try {
+                      const resultado = await criarReservaBackend(1, slecionaQuantidade, selecionarPeriodo);
+                      alert(`Reserva criada com sucesso! ID: ${resultado.ven_id}`);
+                      navigate("/catalogo"); 
+                    } catch (err: any) {
+                      alert(err.response?.data?.message || "Erro ao criar reserva");
+                    }
+                  }}
                 />
+
+
               </div>
             </div>
           </form>

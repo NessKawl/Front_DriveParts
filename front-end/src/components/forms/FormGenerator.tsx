@@ -11,7 +11,7 @@ interface Field {
 
 interface FormGeneratorProps {
   fields: Field[];
-  form: Record<string, string>;
+  form: Record<any, any>;
   setForm: React.Dispatch<React.SetStateAction<any>>;
   className: string;
 }
@@ -25,7 +25,11 @@ export default function FormGenerator({ fields, form, setForm, className }: Form
             <select
               key={field.name}
               value={form[field.name]}
-              onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
+              onChange={(e) => {
+                const value = field.type === "number" ? Number(e.target.value) : e.target.value
+                setForm({ ...form, [field.name]: value })
+              }
+              }
               className="border border-gray-300 p-2 bg-ice text-black-smooth rounded-md col-span-2"
             >
               {field.options?.map((option) => (

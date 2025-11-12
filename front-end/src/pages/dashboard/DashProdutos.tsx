@@ -5,18 +5,22 @@ import { useState, useCallback, useEffect } from "react";
 import { BanknoteArrowDown, BanknoteArrowUp, PackagePlus, X } from "lucide-react";
 import Cropper from "react-easy-crop";
 import FormGenerator from "../../components/forms/FormGenerator";
+import { CadProduto } from "../../services/dataService";
+import { tr } from "framer-motion/client";
 
 export default function DashProdutos() {
     const [form, setForm] = useState({
         nome: "",
-        descricao: "",
-        valor: "",
+        valor: 0,
+        marca: "",
+        cod: "",
         estoque: "",
-        status: "Ativo",
+        status: true,
     });
     const fields = [
         { name: "nome", type: "text", placeholder: "Nome do produto", required: true },
-        { name: "descricao", type: "text", placeholder: "Descrição do produto" },
+        { name: "cod", type: "text", placeholder: "codigo do produto", required: true },
+        { name: "marca", type: "text", placeholder: "Marca do produto", required: true },
         { name: "valor", type: "number", placeholder: "Valor do produto (R$)", required: true },
         { name: "estoque", type: "number", placeholder: "Estoque disponível" },
         {
@@ -94,16 +98,63 @@ export default function DashProdutos() {
             };
         });
     };
-    const handleSubmit = (e: React.FormEvent) => {
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!form.nome || !form.valor || images.length === 0) {
             alert("Preencha todos os campos obrigatórios e adicione pelo menos uma imagem.");
             return;
         }
-        console.log("Produto cadastrado:", form, images);
-        alert("Produto cadastrado com sucesso!");
-        setIsOpen(false);
+
+        let uploadedUrl = "";
+
+        try {
+            for (const image of images) {
+                const formData = new FormData();
+                formData.append("file", image);
+
+                const res = await fetch("http://localhost:3000/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (!res.ok) {
+                    throw new Error("Erro ao enviar imagem");
+                }
+
+                const data = await res.json();
+                uploadedUrl = data.url.imageUrl;
+
+            }
+
+            const valor = Number(form.valor)
+
+            const resProduto = await CadProduto(form.nome, valor, form.marca, form.cod, form.status, uploadedUrl)
+
+            if (!resProduto) {
+                throw new Error("Erro ao cadastrar produto");
+            }
+
+            alert("Produto cadastrado com sucesso!");
+            setIsOpen(false);
+            setImages([]);
+            setPreviewUrls([]);
+            setForm({
+                nome: "",
+                valor: 0,
+                marca: "",
+                cod: "",
+                estoque: "",
+                status: true,
+            });
+
+        } catch (error) {
+            console.error(error);
+            alert("Ocorreu um erro ao enviar o produto.");
+        }
     };
+
     const handleSubmitEstoque = (e: React.FormEvent) => {
         e.preventDefault();
         if (!formEstoque.tipo || !formEstoque.descricao || !formEstoque.data || !formEstoque.valor) {
@@ -165,11 +216,14 @@ export default function DashProdutos() {
         if (produtoEditando) {
             setForm({
                 nome: produtoEditando.produto || "",
-                descricao: produtoEditando.descricao || "",
                 valor: produtoEditando.valor?.replace("R$", "").replace(",", ".") || "",
+                marca: produtoEditando.descricao || "",
+                cod: produtoEditando.descricao || "",
                 estoque: produtoEditando.estoque || "",
                 status: produtoEditando.status || "Ativo",
             });
+
+
         }
     }, [produtoEditando]);
     return (
@@ -183,11 +237,11 @@ export default function DashProdutos() {
                     <Button
                         className="bg-pear-green hover:bg-orange-300 w-54 h-full text-ice text-xl font-semibold rounded-md flex flex-row justify-center items-center"
                         onClick={() => setIsOpen(true)}
-                    >   
+                    >
                         <PackagePlus className="w-6 h-6 mr-2" />
                         Adicionar Produto
                     </Button>
-                    
+
                 </div>
                 <div>
                     <TabelaLista

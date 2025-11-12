@@ -163,31 +163,14 @@ export default function DashProdutos() {
             return;
         }
 
-        let uploadedUrl = produtoEditando?.pro_caminho_img || ""; // mantém imagem antiga se não trocar
+        let uploadedUrl = produtoEditando?.pro_caminho_img;
 
         try {
-            // Se o usuário enviou novas imagens, faz upload
-            if (images.length > 0) {
-                for (const image of images) {
-                    const formData = new FormData();
-                    formData.append("file", image);
-
-                    const res = await fetch("http://localhost:3000/upload", {
-                        method: "POST",
-                        body: formData,
-                    });
-
-                    if (!res.ok) throw new Error("Erro ao enviar imagem");
-
-                    const data = await res.json();
-                    uploadedUrl = data.url.imageUrl;
-                }
-            }
 
             const valor = Number(form.valor);
 
             const resProduto = await EditProduto(
-                produtoEditando?.codigo, 
+                produtoEditando?.codigo,
                 form.nome,
                 valor,
                 form.marca,

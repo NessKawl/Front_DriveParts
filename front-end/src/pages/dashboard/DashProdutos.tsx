@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect } from "react";
 import { BanknoteArrowDown, BanknoteArrowUp, PackagePlus, X } from "lucide-react";
 import Cropper from "react-easy-crop";
 import FormGenerator from "../../components/forms/FormGenerator";
-import { CadProduto, GetProdutos, EditProduto } from "../../services/dataService";
+import { CadProduto, GetProdutos, EditProduto, CriarMovimentacaoProduto } from "../../services/dataService";
 import { tr } from "framer-motion/client";
 
 export default function DashProdutos() {
@@ -14,7 +14,7 @@ export default function DashProdutos() {
         valor: 0,
         marca: "",
         cod: "",
-        estoque: "",
+        estoque: 0,
         status: true,
     });
     const fields = [
@@ -22,7 +22,7 @@ export default function DashProdutos() {
         { name: "cod", type: "text", placeholder: "codigo do produto", required: true },
         { name: "marca", type: "text", placeholder: "Marca do produto", required: true },
         { name: "valor", type: "number", placeholder: "Valor do produto (R$)", required: true },
-        { name: "estoque", type: "number", placeholder: "Estoque disponível" },
+        { name: "estoque", type: "number", placeholder: "Quantidade em estoque", required: true },
         {
             name: "status",
             type: "select",
@@ -129,11 +129,15 @@ export default function DashProdutos() {
             }
 
             const valor = Number(form.valor)
-
             const resProduto = await CadProduto(form.nome, valor, form.marca, form.cod, form.status, uploadedUrl)
 
-            if (!resProduto) {
+            if (!resProduto || !resProduto.pro_id) {
                 throw new Error("Erro ao cadastrar produto");
+            }
+
+            if (form.estoque && form.estoque > 0) {
+                const idNumber = Number(resProduto.pro_id)
+                await CriarMovimentacaoProduto(idNumber, form.estoque, "COMPRA");
             }
 
             alert("Produto cadastrado com sucesso!");
@@ -145,7 +149,7 @@ export default function DashProdutos() {
                 valor: 0,
                 marca: "",
                 cod: "",
-                estoque: "",
+                estoque: 0,
                 status: true,
             });
 
@@ -170,7 +174,7 @@ export default function DashProdutos() {
             const valor = Number(form.valor);
 
             const resProduto = await EditProduto(
-                produtoEditando?.codigo,
+                produtoEditando?.id,
                 form.nome,
                 valor,
                 form.marca,
@@ -178,6 +182,17 @@ export default function DashProdutos() {
                 form.status,
                 uploadedUrl
             );
+
+            const estoqueAnterior = produtoEditando.estoque || 0;
+            const estoqueNovo = Number(form.estoque);
+
+            if (estoqueNovo !== estoqueAnterior) {
+                const tipo = estoqueNovo > estoqueAnterior ? "COMPRA" : "VENDA";
+                const diferenca = Math.abs(estoqueNovo - estoqueAnterior);
+
+                await CriarMovimentacaoProduto(produtoEditando.id, diferenca, tipo);
+            }
+
 
             if (!resProduto) {
                 throw new Error("Erro ao atualizar produto");
@@ -193,7 +208,7 @@ export default function DashProdutos() {
                 valor: 0,
                 marca: "",
                 cod: "",
-                estoque: "",
+                estoque: 0,
                 status: true,
             });
         } catch (error) {
@@ -264,16 +279,15 @@ export default function DashProdutos() {
         if (produtoEditando) {
             setForm({
                 nome: produtoEditando.produto || "",
-                valor: produtoEditando.valor?.replace("R$", "").replace(",", ".") || "",
-                marca: produtoEditando.descricao || "",
-                cod: produtoEditando.descricao || "",
+                valor: produtoEditando.valor || "",
+                marca: produtoEditando.marca || "",
+                cod: produtoEditando.codigo || "",
                 estoque: produtoEditando.estoque || "",
-                status: produtoEditando.status || "Ativo",
+                status: produtoEditando.status || "Ativo"
             });
-
-
         }
     }, [produtoEditando]);
+
     return (
         <div className="flex bg-black-smooth/95">
             <NavBarDashboard page="Produtos" />
@@ -284,7 +298,18 @@ export default function DashProdutos() {
                     </h1>
                     <Button
                         className="bg-pear-green hover:bg-orange-300 w-54 h-full text-ice text-xl font-semibold rounded-md flex flex-row justify-center items-center"
-                        onClick={() => setIsOpen(true)}
+                        onClick={() => {
+
+                            setForm({
+                                nome: "",
+                                valor: 0,
+                                marca: "",
+                                cod: "",
+                                estoque: 0,
+                                status: true,
+                            })
+                            setIsOpen(true)
+                        }}
                     >
                         <PackagePlus className="w-6 h-6 mr-2" />
                         Adicionar Produto
@@ -317,11 +342,12 @@ export default function DashProdutos() {
                             const produtos = await GetProdutos();
 
                             return produtos.map((p: any) => ({
-                                codigo: p.pro_id || p.pro_cod,
+                                codigo: p.pro_cod, // <-- sempre usar o código de produto (string)
+                                id: p.pro_id, // opcional: guardar o ID separado
                                 produto: p.pro_nome,
                                 marca: p.pro_marca,
-                                valor: `R$${Number(p.valor).toFixed(2).replace(".", ",")}`,
-                                // estoque: p.estoque ?? 0,
+                                valor: p.pro_valor,
+                                estoque: p.estoque ?? 0,
                                 status: p.pro_status ? "Ativo" : "Inativo",
                             }));
                         }}

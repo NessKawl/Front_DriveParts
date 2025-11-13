@@ -3,14 +3,8 @@ import api from "./api";
 // Autenticação
 
 export const VerifyLogin = async (usu_tel: string, usu_senha: string) => {
-    try {
-        console.log("Enviando login:", { usu_tel, usu_senha });
-        const response = await api.post("/auth/login", { usu_tel, usu_senha });
-        return response.data;
-    } catch (error) {
-        console.error("Erro no login:", error);
-        throw error;
-    }
+    console.log("Enviando login:", { usu_tel, usu_senha });
+    return await api.post("/auth/login", { usu_tel, usu_senha });
 };
 
 export const Register = async (usu_nome: string, usu_tel: string, usu_senha: string) => {
@@ -25,13 +19,7 @@ export const Register = async (usu_nome: string, usu_tel: string, usu_senha: str
 };
 
 export const getUserProfile = async () => {
-    try {
-        const response = await api.get("/auth/me");
-        return response.data;
-    } catch (error) {
-        console.error("Erro ao buscar perfil:", error);
-        throw error;
-    }
+    return await api.get("/auth/me");
 };
 
 // Produtos
@@ -41,8 +29,10 @@ export const CadProduto = async (
     pro_valor: number,
     pro_marca: string,
     pro_cod: string,
-    pro_status: boolean,
-    pro_caminho_img: string
+    pro_status: any,
+    pro_caminho_img: string,
+    pro_estoque?: number
+
 ) => {
     try {
         console.log("Dados do produto:", {
@@ -52,6 +42,8 @@ export const CadProduto = async (
             pro_cod,
             pro_status,
             pro_caminho_img,
+            pro_estoque
+
         });
 
         const response = await api.post("/produto/cadastro", {
@@ -59,9 +51,11 @@ export const CadProduto = async (
             pro_valor,
             pro_marca,
             pro_cod,
-            pro_status,
+            pro_status: pro_status === true || pro_status === "true",
             pro_caminho_img,
+            pro_estoque
         });
+
 
         return response.data;
     } catch (error) {
@@ -115,3 +109,17 @@ export const GetProdutos = async () => {
         throw error;
     }
 };
+
+export const GetProdutosId = async (pro_id: number) => {
+    const response = await api.get(`/produto/${pro_id}`);
+    return response;
+}
+
+export const CriarMovimentacaoProduto = async (pro_id: number, mov_qtd: number, mov_tipo: "COMPRA" | "VENDA") => {
+    const response = await api.post("/estoque/movimentacao", {
+        pro_id,
+        mov_qtd,
+        mov_tipo
+    })
+    return response.data
+}

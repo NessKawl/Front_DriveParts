@@ -2,16 +2,17 @@ import clsx from "clsx"
 interface ProductCardProps {
   image: string
   name: string
+  id: number
   price?: string
   parcelas?: string
   praso?: string
   reserva?: string
   status?: string
 }
-export default function CardProduto({ image, name, price, parcelas,praso, reserva, status }: ProductCardProps) {
+export default function CardProduto({ image, name, price, parcelas,praso, reserva, status, id }: ProductCardProps) {
   return (
     <div
-      onClick={() => window.location.href = `/detalhe-produto?produto=${name}`}
+      onClick={() => window.location.href = `/detalhe-produto?id=${id}`}
       className="bg-white md:w-60 h-70 md:h-96 p-2 flex flex-col items-left justify-between rounded-lg md:rounded-sm shadow-md hover:shadow-lg hover:shadow-primary-orange/40 transition-shadow duration-300 cursor-pointer">
       <div className="flex flex-col md:w-full items-center">
         <img

@@ -102,7 +102,7 @@ export default function Reserva() {
                     }
 
                     try {
-                      const resultado = await criarReservaBackend(1, slecionaQuantidade, selecionarPeriodo);
+                      const resultado = await criarReservaBackend(17, slecionaQuantidade, selecionarPeriodo);
                       alert(`Reserva criada com sucesso! ID: ${resultado.ven_id}`);
                       navigate("/catalogo"); 
                     } catch (err: any) {

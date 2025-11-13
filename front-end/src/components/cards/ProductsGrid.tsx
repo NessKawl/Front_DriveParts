@@ -15,6 +15,7 @@ interface Product {
   praso?: string;
   reserva?: string;
   status?: string;
+  id: number;
 }
 interface GridProps {
   title: string
@@ -60,6 +61,7 @@ export default function ProductsGrid({ title, filtro, tituloFiltro, filtroChildr
             praso={product.praso}
             reserva={product.reserva}
             status={product.status}
+            id={product.id}
           />
         ))}
       </div>

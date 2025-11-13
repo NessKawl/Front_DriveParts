@@ -21,6 +21,7 @@ export default function NavBar() {
         const response = await getUserProfile();
         setUser(response.data); // O Nest retorna req.user
         setUserName(response.data.usu_nome)
+        console.log("Nome do usuario: ", userName);
       } catch (err) {
         console.error("Erro ao obter perfil:", err);
         // Token inválido ou expirado → limpa storage

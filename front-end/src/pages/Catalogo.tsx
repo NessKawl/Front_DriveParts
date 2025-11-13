@@ -46,6 +46,7 @@ export default function Catalogo() {
     const productsGridMaisVendidos = produtos.map((p) => ({
         image: p.pro_caminho_img || "/sem-imagem.jpg",
         name: p.pro_nome,
+        id: p.pro_id,
         price: `R$ ${p.pro_valor.toFixed(2).replace(".", ",")}`,
         parcelas: "ou 6x sem juros",
     }));

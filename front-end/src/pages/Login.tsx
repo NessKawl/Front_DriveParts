@@ -29,8 +29,10 @@ export default function Login() {
 
     try {
       setLoading(true);
+      localStorage.setItem("token", "")
       const response = await VerifyLogin(form.telefone, form.senha);
       localStorage.setItem("token", response.data.access_token);
+      console.log("TOKEN: ", localStorage.getItem("token"));
       localStorage.setItem("user", JSON.stringify(response.data.user));
       console.log(localStorage.getItem("user"));
 

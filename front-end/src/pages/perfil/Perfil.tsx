@@ -60,12 +60,17 @@ export default function Perfil() {
 
                 // Mapear para ProductsGrid
                 const mapearReservas = (lista: any[]) =>
-                    lista.map((reserva) => ({
-                        image: "/produtos/cabecote.png",
-                        name: reserva.ite_itemVenda[0]?.pro_produto?.pro_nome || `Reserva #${reserva.ven_id}`,
-                        reserva: new Date(reserva.ven_data_criacao).toLocaleDateString("pt-BR"),
-                        status: reserva.ven_status,
-                    }));
+                    lista.map((reserva) => {
+                        const produto = reserva.ite_itemVenda?.[0]?.pro_produto;
+
+                        return {
+                            image: produto?.pro_caminho_img || "/produtos/sem-imagem.png",
+                            name: produto?.pro_nome || `Reserva #${reserva.ven_id}`,
+                            reserva: `Reservado em ${new Date(reserva.ven_data_criacao).toLocaleDateString("pt-BR")}`,
+                            status: reserva.ven_status,
+                        };
+                    });
+
 
                 setReservasAtivas(mapearReservas(reservasAtivasRaw));
                 setHistorico(mapearReservas(historicoRaw));

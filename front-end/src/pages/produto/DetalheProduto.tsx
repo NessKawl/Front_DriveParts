@@ -107,7 +107,7 @@ export default function DetalheProduto() {
             <Button
               children="Reservar"
               className="rounded-lg text-xl font-semibold bg-primary-orange px-15 py-1 lg:px-25 lg:py-2 text-ice sm:rounded-none"
-              onClick={() => navigate(`/reserva?produto=${pro_nome}`)}
+              onClick={() => navigate(`/reserva?id=${pro_id}`)}
             />
           </div>
 

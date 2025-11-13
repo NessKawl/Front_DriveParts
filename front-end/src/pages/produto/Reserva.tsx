@@ -1,41 +1,67 @@
 import NavBar from "../../components/navbar/NavBar";
 import Button from "../../components/buttons/Button";
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { criarReservaBackend } from "../../services/reservaService";
+import { GetProdutosId } from "../../services/dataService";
 
+interface Produto {
+  pro_nome: string;
+  pro_valor: number;
+  pro_marca?: string;
+  pro_cod?: string;
+  pro_status?: boolean;
+  pro_caminho_img?: string;
+  estoque?: number;
+}
 
 export default function Reserva() {
   const navigate = useNavigate();
-  const [selecionarPeriodo, setSelecionarPeriodo] = useState<"MANHA" | "TARDE" >();
+  const [selecionarPeriodo, setSelecionarPeriodo] = useState<"MANHA" | "TARDE">();
   const [slecionaQuantidade, setSelecionarQuantidade] = useState<number>(1);
-  const informacoes = {
-    imagensProduto: [
-      "/produtos/pneu.png",
-      "/produtos/oleo.png",
-      "/produtos/cabecote.png",
-    ],
-    nome: "Pneu Goodyear Direction Touring 2 185/70 R14 88H",
-    preco: 424.90,
-    parcelas: () => `ou 3x de R$ ${parcelas.toFixed(2)} sem juros`,
-    detalhes: [
-      "Marca: Goodyear",
-      "Modelo: Kelly Edge",
-      "Índice de carga: 88",
-      "Velocidade máxima: 210 km/h",
-      "Design da banda de rodagem simétrico"
-    ],
-    quantidade: 10
+
+  const [searchParam] = useSearchParams();
+
+  const pro_id = searchParam.get("id");
+  const [produto, setProduto] = useState<Produto | null>(null)
+
+  useEffect(() => {
+    if (!pro_id) return
+
+    const produtoIdNumber = parseInt(pro_id);
+
+    if (isNaN(produtoIdNumber)) {
+      console.error("ID do produto na URL não é um número válido.");
+      return;
+    }
+
+    const fetchProdutos = async () => {
+      const response = await GetProdutosId(produtoIdNumber)
+      if (response && response.data) {
+        setProduto(response.data as Produto)
+      } else {
+        setProduto(null)
+        console.error("Dados do produto vieram vazios ou nulos da API")
+      }
+    }
+    fetchProdutos()
+  }, [pro_id])
+
+  if (!produto) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Carregando produto...</p>
+      </div>
+    )
   }
-  const parcelas = informacoes.preco / 3;
-  const precoTotal = informacoes.preco * slecionaQuantidade;
-  const clacularparcelasTotal = parcelas * slecionaQuantidade;
-  const total = () => `R$ ${precoTotal.toFixed(2)}`
-  const parcelasTotal = () => `ou 3x de R$ ${clacularparcelasTotal.toFixed(2)} sem juros`
+
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     setSelecionarQuantidade(Number(e.target.value))
   }
+
+  const { pro_caminho_img, pro_nome, pro_valor } = produto;
+  const precoTotal = pro_valor * slecionaQuantidade;
 
 
   return (
@@ -46,8 +72,8 @@ export default function Reserva() {
         <div className="w-full max-w-md md:max-w-lg lg:max-w-xl bg-white rounded-lg shadow-md p-6 md:p-8 min-h-[500px] md:min-h-[600px] flex flex-col">
           <form className="flex-1 flex flex-col space-y-8">
             <div className="flex flex-row items-start border-b border-b-gray-300 pb-4">
-              <img src={informacoes.imagensProduto[0]} alt={informacoes.nome} className="w-32 h-32 md:w-48 md:h-48" />
-              <p className="font-bold text-base lg:text-2xl">{informacoes.nome}</p>
+              <img src={pro_caminho_img} alt={pro_nome} className="w-32 h-32 md:w-48 md:h-48" />
+              <p className="font-bold text-base lg:text-2xl">{pro_nome}</p>
             </div>
             <div className="flex flex-row items-end gap-2 ">
               <label className="text-lg sm:text-xl font-semibold text-black-smooth" htmlFor="">Selecione a quantidade:</label>
@@ -57,7 +83,7 @@ export default function Reserva() {
                 value={slecionaQuantidade}
                 onChange={handleChange}
                 className=" bg-primary-orange text-black-smooth font-bold px-4 py-2 rounded-md sm:rounded-none sm:w-42 outline-none border-none cursor-pointer focus:ring-2 focus:ring-white transition duration-200">
-                {Array(informacoes.quantidade).fill(0).map((_, index) => (<option className="font-semibold text-black-smooth bg-ice" value={index + 1}>{index + 1}</option>))}
+                {Array(produto.estoque).fill(0).map((_, index) => (<option className="font-semibold text-black-smooth bg-ice" value={index + 1}>{index + 1}</option>))}
               </select>
             </div>
 
@@ -85,8 +111,9 @@ export default function Reserva() {
             <div className="flex flex-col ">
               <h3>Total:</h3>
               <div className="border-t border-t-black-smooth flex flex-row items-end gap-2" >
-                <p className="text-lg sm:text-3xl font-bold text-black-smooth">{total()}</p>
-                <p className="text-sm sm:text-xl  text-black-smooth">{parcelasTotal()}</p>
+                <p className="text-lg sm:text-3xl font-bold text-black-smooth">  R$ {precoTotal.toFixed(2).replace(".", ",")}
+                </p>
+                {/* <p className="text-sm sm:text-xl  text-black-smooth">{parcelasTotal()}</p> */}
               </div>
             </div>
             <div className="mt-auto flex flex-col space-y-4 pt-4">
@@ -98,13 +125,16 @@ export default function Reserva() {
                   onClick={async () => {
                     if (!selecionarPeriodo) {
                       alert("Selecione um período antes de continuar.");
-                      return; 
+                      return;
                     }
 
                     try {
-                      const resultado = await criarReservaBackend(17, slecionaQuantidade, selecionarPeriodo);
+
+                      const produtoIdNumber = Number(pro_id)
+
+                      const resultado = await criarReservaBackend(produtoIdNumber, slecionaQuantidade, selecionarPeriodo);
                       alert(`Reserva criada com sucesso! ID: ${resultado.ven_id}`);
-                      navigate("/catalogo"); 
+                      navigate("/catalogo");
                     } catch (err: any) {
                       alert(err.response?.data?.message || "Erro ao criar reserva");
                     }

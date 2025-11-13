@@ -40,7 +40,7 @@ export const CadProduto = async (
             pro_valor,
             pro_marca,
             pro_cod,
-            pro_status,
+            pro_status: pro_status === "Ativo",
             pro_caminho_img,
             pro_estoque
 
@@ -51,7 +51,7 @@ export const CadProduto = async (
             pro_valor,
             pro_marca,
             pro_cod,
-            pro_status: pro_status === true || pro_status === "true",
+            pro_status: pro_status === "Ativo",
             pro_caminho_img,
             pro_estoque
         });
@@ -80,7 +80,7 @@ export const EditProduto = async (
             pro_valor,
             pro_marca,
             pro_cod,
-            pro_status,
+            pro_status: pro_status === "Ativo",
             pro_caminho_img,
         });
 
@@ -89,7 +89,7 @@ export const EditProduto = async (
             pro_valor,
             pro_marca,
             pro_cod,
-            pro_status: pro_status === true || pro_status === "true",
+            pro_status: pro_status === "Ativo",
             pro_caminho_img,
         });
 

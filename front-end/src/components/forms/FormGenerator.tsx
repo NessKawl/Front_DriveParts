@@ -6,7 +6,7 @@ interface Field {
   type: string;
   placeholder: string;
   required?: boolean;
-  options?: { label: string; value: string }[]; // usado para selects
+  options?: { label: string; value: any }[]; // usado para selects
 }
 
 interface FormGeneratorProps {

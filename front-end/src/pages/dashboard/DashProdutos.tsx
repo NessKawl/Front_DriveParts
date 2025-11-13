@@ -15,7 +15,7 @@ export default function DashProdutos() {
         marca: "",
         cod: "",
         estoque: 0,
-        status: true,
+        status: "Ativo",
     });
     const fields = [
         { name: "nome", type: "text", placeholder: "Nome do produto", required: true },
@@ -28,8 +28,8 @@ export default function DashProdutos() {
             type: "select",
             placeholder: "Status do produto",
             options: [
-                { label: "Ativo", value: "Ativo" },
-                { label: "Inativo", value: "Inativo" },
+                { label: "Ativo", value: true },
+                { label: "Inativo", value: false },
             ],
         },
     ];
@@ -137,7 +137,8 @@ export default function DashProdutos() {
 
             if (form.estoque && form.estoque > 0) {
                 const idNumber = Number(resProduto.pro_id)
-                await CriarMovimentacaoProduto(idNumber, form.estoque, "COMPRA");
+                const estoque = Number(form.estoque)
+                await CriarMovimentacaoProduto(idNumber, estoque, "COMPRA");
             }
 
             alert("Produto cadastrado com sucesso!");
@@ -150,7 +151,7 @@ export default function DashProdutos() {
                 marca: "",
                 cod: "",
                 estoque: 0,
-                status: true,
+                status: "Ativo",
             });
 
         } catch (error) {
@@ -209,7 +210,7 @@ export default function DashProdutos() {
                 marca: "",
                 cod: "",
                 estoque: 0,
-                status: true,
+                status: "Ativo",
             });
         } catch (error) {
             console.error(error);
@@ -283,7 +284,7 @@ export default function DashProdutos() {
                 marca: produtoEditando.marca || "",
                 cod: produtoEditando.codigo || "",
                 estoque: produtoEditando.estoque || "",
-                status: produtoEditando.status || "Ativo"
+                status: produtoEditando.status ? "Ativo" : "Inativo"
             });
         }
     }, [produtoEditando]);
@@ -306,7 +307,7 @@ export default function DashProdutos() {
                                 marca: "",
                                 cod: "",
                                 estoque: 0,
-                                status: true,
+                                status: "Ativo",
                             })
                             setIsOpen(true)
                         }}

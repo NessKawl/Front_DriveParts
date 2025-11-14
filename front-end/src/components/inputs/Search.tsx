@@ -1,5 +1,5 @@
 import { Search as SearchIcon } from "lucide-react"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"
 export default function Search() {
   const [query, setQuery] = useState("");
@@ -11,12 +11,13 @@ export default function Search() {
   };
   function handleSearch(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+
     navigate(`/pesquisa?produto=${encodeURIComponent(query)}`)
   }
   return (
     <div className="bg-ice px-2 py-1 rounded-xl md:rounded-none ">
-      <form 
-        onSubmit={handleSearch} 
+      <form
+        onSubmit={handleSearch}
         className="flex flex-row items-center justify-between">
         <input
           type="text"

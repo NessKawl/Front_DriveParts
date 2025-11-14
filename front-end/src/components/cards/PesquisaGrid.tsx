@@ -1,14 +1,18 @@
 import { useNavigate } from "react-router-dom";
 
-interface Product {
-    image: string;
-    name: string;
-    price: string;
-    parcelas?: string;
+interface Produto {
+    pro_id: number;
+    pro_nome: string;
+    pro_valor: number;
+    pro_marca?: string;
+    pro_cod?: string;
+    pro_status?: boolean;
+    pro_caminho_img?: string;
 }
-export default function PesquisaGrid({ products }: { products: Product[] }) {
+
+export default function PesquisaGrid({ products }: { products: Produto[] }) {
     const navigate = useNavigate()
-   
+
     return (
         <div className="w-full flex justify-center">
             <div className="
@@ -17,10 +21,10 @@ export default function PesquisaGrid({ products }: { products: Product[] }) {
                 gap-2 md:gap-4 xl:gap-8 
                 mx-2 mt-5"
             >
-                {[...products, ...products].map((product, i) => (
+                {products.map((product) => (
                     <div
-                        key={i}
-                        onClick={() => navigate(`/detalhe-produto?prodoto=${product.name}`)}
+                        key={product.pro_id}
+                        onClick={() => navigate(`/detalhe-produto?id=${product.pro_id}`)}
                         className="
                             w-full h-44 sm:w-56 sm:h-76 
                             bg-white 
@@ -32,27 +36,27 @@ export default function PesquisaGrid({ products }: { products: Product[] }) {
                     >
                         <div className="hidden sm:flex flex-col items-center">
                             <img
-                                src={product.image}
-                                alt={product.name}
+                                src={product.pro_caminho_img}
+                                alt={product.pro_nome}
                                 className="w-40 h-full sm:h-40 "
                             />
                             <div>
-                                <p className="text-sm font-medium">{product.name}</p>
+                                <p className="text-sm font-medium">{product.pro_nome}</p>
                             </div>
-                            
+
                         </div>
                         <img
-                            src={product.image}
-                            alt={product.name}
+                            src={product.pro_caminho_img}
+                            alt={product.pro_nome}
                             className="w-40 h-full sm:h-40 sm:hidden"
                         />
                         <div className="flex flex-col justify-between items-start w-full mt-2">
-                            <p className="text-md font-medium sm:hidden line-clamp-3">{product.name}</p>
+                            <p className="text-md font-medium sm:hidden line-clamp-3">{product.pro_nome}</p>
                             <div>
                                 <p className="text-2xl text-pear-green font-bold">
-                                    {product.price}
+                                    R$ {product.pro_valor.toFixed(2).replace(".", ",")}
                                 </p>
-                                <p className="text-sm font-light">{product.parcelas}</p>
+                                {/* <p className="text-sm font-light">{product.parcelas}</p> */}
                             </div>
 
                         </div>

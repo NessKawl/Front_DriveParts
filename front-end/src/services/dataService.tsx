@@ -123,3 +123,12 @@ export const CriarMovimentacaoProduto = async (pro_id: number, mov_qtd: number, 
     })
     return response.data
 }
+
+export const BuscaProdutoPorNome = async (termo: string | null) => {
+    return await api.get(`/produto/search?termo=${termo}`)
+}
+
+export async function BuscaProdutoPorCategoria(categoria: string | null) {
+    console.log("Essa é a categoria: ", categoria);
+    return api.get(`/produto/categoria?categoria=${categoria}`);
+}

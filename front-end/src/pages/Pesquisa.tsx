@@ -3,43 +3,135 @@ import NavBar from "../components/navbar/NavBar";
 import PesquisaGrid from "../components/cards/PesquisaGrid";
 import FooterMain from "../components/footer/FooterMain";
 import FilterTable from "../components/buttons/FilterTable";
+import { useCallback, useEffect, useState } from "react";
+import { BuscaProdutoPorCategoria, BuscaProdutoPorNome } from "../services/dataService";
+
+interface Produto {
+  pro_id: number;
+  pro_nome: string;
+  pro_valor: number;
+  pro_marca?: string;
+  pro_cod?: string;
+  pro_status?: boolean;
+  pro_caminho_img?: string;
+}
+
+interface FilterState {
+  campo: 'pro_nome' | 'pro_valor' | null;
+  direcao: 'asc' | 'desc' | null;
+}
 
 export default function Pesquisa() {
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
   const produto = queryParams.get("produto")
   const categoria = queryParams.get("categoria");
-  const products = [
-    {
-      image: "/produtos/pneu.png",
-      name: "Pneu Aro 13 Goodyear 165/70R13 Assurance Maxlife 83T",
-      price: "R$ 424,90",
-      parcelas: "ou 6x de R$ 70,82 sem juros",
-    },
-    {
-      image: "/produtos/oleo.png",
-      name: "ÓLEO DE MOTOR - LUBRAX MINERAL DIESEL 15W40 (1 LITRO)",
-      price: "R$ 35,90",
-    },
-    {
-      image: "/produtos/cabecote.png",
-      name: "JUNTA CABECOTE (5 PICS) - AMIANTO - L200 GL/ GLS - AJUSA - AJU10070330",
-      price: "R$ 308,34",
-      parcelas: "ou 6x de R$ 51,39",
-    },
-    {
-      image: "/produtos/cabecote.png",
-      name: "JUNTA CABECOTE - HISTÓRICO",
-      price: "R$ 308,34",
-      parcelas: "ou 6x de R$ 51,39",
-    },
-    {
-      image: "/produtos/cabecote.png",
-      name: "JUNTA CABECOTE - ATIVA",
-      price: "R$ 308,34",
-      parcelas: "ou 6x de R$ 51,39",
-    },
-  ]
+
+  const [originalProducts, setOriginalProducts] = useState<Produto[]>([]);
+  const [products, setProducts] = useState<Produto[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const [filter, setFilter] = useState<FilterState>({ campo: null, direcao: null });
+
+  const sortProducts = useCallback((produtos: Produto[], currentFilter: FilterState) => {
+    const { campo, direcao } = currentFilter;
+
+    if (!campo || !direcao) {
+      return [...produtos];
+    }
+
+    const sorted = [...produtos].sort((a, b) => {
+      let valorA: string | number;
+      let valorB: string | number;
+
+      // Tratamento de tipos para ordenação
+      if (campo === 'pro_nome') {
+        valorA = a.pro_nome.toLowerCase();
+        valorB = b.pro_nome.toLowerCase();
+      } else if (campo === 'pro_valor') {
+        valorA = a.pro_valor;
+        valorB = b.pro_valor;
+      } else {
+        return 0;
+      }
+
+      if (valorA < valorB) {
+        return direcao === 'asc' ? -1 : 1;
+      }
+      if (valorA > valorB) {
+        return direcao === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+
+    return sorted;
+  }, []);
+
+  useEffect(() => {
+
+    async function carregarProdutos() {
+      if (!produto && !categoria) return;
+      setLoading(true);
+
+      try {
+        let resultados: any = null;
+
+        if (produto) {
+          resultados = await BuscaProdutoPorNome(produto);
+        }
+
+        if (categoria) {
+          resultados = await BuscaProdutoPorCategoria(categoria);
+        }
+        const fetchedProducts: Produto[] = resultados.data;
+
+        // Armazena os produtos originais e aplica a ordenação atual
+        setOriginalProducts(fetchedProducts);
+        const sortedProducts = sortProducts(fetchedProducts, filter);
+        setProducts(sortedProducts);
+      } catch (error) {
+        setOriginalProducts([]);
+        setProducts([]);
+        console.error("Erro ao buscar produtos:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    carregarProdutos();
+  }, [produto, categoria, sortProducts, filter]);
+
+
+  useEffect(() => {
+    if (!loading && originalProducts.length > 0) {
+      const sortedProducts = sortProducts(originalProducts, filter);
+      setProducts(sortedProducts);
+    }
+  }, [filter, originalProducts, loading, sortProducts]);
+
+  const handleFilterChange = (value: string) => {
+    let newFilter: FilterState = { campo: null, direcao: null };
+
+    switch (value) {
+      case "a-z":
+        newFilter = { campo: 'pro_nome', direcao: 'asc' };
+        break;
+      case "z-a":
+        newFilter = { campo: 'pro_nome', direcao: 'desc' };
+        break;
+      case "menor":
+        newFilter = { campo: 'pro_valor', direcao: 'asc' };
+        break;
+      case "maior":
+        newFilter = { campo: 'pro_valor', direcao: 'desc' };
+        break;
+      default:
+        newFilter = { campo: null, direcao: null };
+        break;
+    }
+    setFilter(newFilter);
+  };
+
   return (
     <div className="bg-ice min-h-screen">
       <div>
@@ -61,11 +153,12 @@ export default function Pesquisa() {
               { value: "a-z", children: "De A - Z" },
               { value: "z-a", children: "De Z - A" },
               { value: "menor", children: "Preço Menor" },
-              { value: "maior", children: "Preço Maior" }, 
+              { value: "maior", children: "Preço Maior" },
             ]}
             color="orange"
+            onChange={handleFilterChange}
           />
-          
+
         </div>
         <div>
           <PesquisaGrid

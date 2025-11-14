@@ -5,16 +5,25 @@ interface FilterTableProps {
 }
 
 
-export default function FilterTable({ titulo, FilterTableProps = [], color = "black"}: {
+export default function FilterTable({ titulo, FilterTableProps = [], color = "black", onChange }: {
     titulo: any,
     color?: "black" | "orange",
     FilterTableProps?: FilterTableProps[],
+    onChange?: (value: string) => void
 }) {
+
+    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        if (onChange) {
+            onChange(event.target.value);
+        }
+    };
+
     return (
         <div className="flex justify-end md:m-1 relative">
             <select
                 defaultValue=""
                 className={clsx("appearance-none  font-bold px-2 rounded-md sm:rounded-none w-32 lg:w-44 outline-none border cursor-pointer transition duration-200 h-8", color === "black" ? "bg-black-smooth text-primary-orange" : "bg-primary-orange text-black-smooth border-none")}
+                onChange={handleChange}
             >
                 <option value="" disabled hidden>
                     {titulo}

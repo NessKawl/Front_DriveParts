@@ -110,6 +110,17 @@ export const GetProdutos = async () => {
     }
 };
 
+export const BuscaTodosProdutos = async () => {
+    try {
+        const response = await api.get("/produto/all");
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao buscar produtos:", error);
+        throw error;
+    }
+};
+
+
 export const GetProdutosId = async (pro_id: number) => {
     const response = await api.get(`/produto/${pro_id}`);
     return response;

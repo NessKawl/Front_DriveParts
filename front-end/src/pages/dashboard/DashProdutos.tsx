@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect } from "react";
 import { BanknoteArrowDown, BanknoteArrowUp, PackagePlus, X } from "lucide-react";
 import Cropper from "react-easy-crop";
 import FormGenerator from "../../components/forms/FormGenerator";
-import { CadProduto, GetProdutos, EditProduto, CriarMovimentacaoProduto } from "../../services/dataService";
+import { CadProduto, BuscaTodosProdutos, EditProduto, CriarMovimentacaoProduto } from "../../services/dataService";
 import { tr } from "framer-motion/client";
 
 export default function DashProdutos() {
@@ -340,7 +340,7 @@ export default function DashProdutos() {
                             { chave: "status", titulo: "Status", size: "sm" },
                         ]}
                         fetchData={async () => {
-                            const produtos = await GetProdutos();
+                            const produtos = await BuscaTodosProdutos();
 
                             return produtos.map((p: any) => ({
                                 codigo: p.pro_cod, // <-- sempre usar o código de produto (string)

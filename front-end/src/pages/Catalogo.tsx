@@ -1,25 +1,13 @@
 //import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import ProductsGrid from "../components/cards/ProductsGrid.tsx"
 import InfiniteProductCarousel from "../components/carrosel/InfiniteProductCarousel.tsx"
 import FooterMain from "../components/footer/FooterMain.tsx"
 import Banner from "../components/imagens/Banner.tsx"
 import NavBar from "../components/navbar/NavBar.tsx"
-import { GetProdutos } from "../services/dataService.tsx"
+import { BuscaProdutoPorCategoria, GetProdutos } from "../services/dataService.tsx"
 
-
-const products = [
-    { id: 1, name: "1Capa de Banco", price: "R$ 79,90", image: "/produtos/capa.jpg" },
-    { id: 2, name: "2Cheirinho", price: "R$ 19,90", image: "/produtos/cheirinho.jpg" },
-    { id: 3, name: "3Tapete", price: "R$ 129,90", image: "/produtos/tapete.jpg" },
-    { id: 4, name: "4Volante Esportivo", price: "R$ 249,90", image: "/produtos/volante.jpg" },
-    { id: 5, name: "5Protetor de Cinto", price: "R$ 39,90", image: "/produtos/cinto.jpg" },
-    { id: 6, name: "6Capa de Banco", price: "R$ 79,90", image: "/produtos/capa.jpg" },
-    { id: 7, name: "7Cheirinho", price: "R$ 19,90", image: "/produtos/cheirinho.jpg" },
-    { id: 8, name: "8Tapete", price: "R$ 129,90", image: "/produtos/tapete.jpg" },
-    { id: 9, name: "9Volante Esportivo", price: "R$ 249,90", image: "/produtos/volante.jpg" },
-    { id: 10, name: "10Protetor de Cinto", price: "R$ 39,90", image: "/produtos/cinto.jpg" },
-];
 
 interface Produto {
     pro_id: number;
@@ -33,6 +21,8 @@ interface Produto {
 
 export default function Catalogo() {
 
+    const navigate = useNavigate()
+    const [produtosAcessorios, setProdutosAcessorios] = useState<Produto[]>([])
     const [produtos, setProdutos] = useState<Produto[]>([])
 
     useEffect(() => {
@@ -43,6 +33,19 @@ export default function Catalogo() {
         fetchProdutos();
     }, []);
 
+    useEffect(() => {
+        const fetchProdutosAcessorios = async () => {
+            try {
+                const resultados = await BuscaProdutoPorCategoria("Acessórios");
+                setProdutosAcessorios(resultados.data || []);
+            } catch (error) {
+                console.error("Erro ao buscar acessórios:", error);
+                setProdutosAcessorios([]);
+            }
+        };
+        fetchProdutosAcessorios();
+    }, []); // E
+
     const productsGridMaisVendidos = produtos.map((p) => ({
         image: p.pro_caminho_img || "/sem-imagem.jpg",
         name: p.pro_nome,
@@ -51,7 +54,17 @@ export default function Catalogo() {
         parcelas: "ou 6x sem juros",
     }));
 
-    //const navigate = useNavigate()
+    const produtosCarrossel = produtosAcessorios.map((p) => ({
+        image: p.pro_caminho_img || "/sem-imagem.jpg",
+        name: p.pro_nome,
+        id: p.pro_id,
+        price: `R$ ${p.pro_valor.toFixed(2).replace(".", ",")}`,
+    }))
+
+    const handleCardClick = (id: number) => {
+        navigate(`/detalhe-produto?id=${id}`)
+    }
+
     return (
         <div className="bg-ice min-h-screen ">
             <aside >
@@ -63,7 +76,7 @@ export default function Catalogo() {
                     <Banner />
                 </div>
                 <div >
-                    <InfiniteProductCarousel products={products} speed={35} />
+                    <InfiniteProductCarousel products={produtosCarrossel} speed={35} onCardClick={handleCardClick} />
                 </div>
 
                 <div className="md:mt-10 mx-4 flex justify-center">

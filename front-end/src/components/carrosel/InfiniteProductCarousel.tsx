@@ -1,20 +1,22 @@
 import React, { useRef, useEffect } from "react";
 
-interface Product {
-  id: number;
-  name: string;
-  price: string;
-  image: string;
+interface Produto {
+  image: string,
+  name: string,
+  id: number,
+  price: string,
 }
 
 interface InfiniteProductCarouselProps {
-  products: Product[];
+  products: Produto[];
   speed?: number; // em pixels por segundo
+  onCardClick: (id: number) => void;
 }
 
 const InfiniteProductCarousel: React.FC<InfiniteProductCarouselProps> = ({
   products,
   speed = 50,
+  onCardClick,
 }) => {
   const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -51,6 +53,7 @@ const InfiniteProductCarousel: React.FC<InfiniteProductCarouselProps> = ({
           <div
             key={i}
             className="flex-shrink-0 w-48 h-48 sm:w-56 bg-white rounded-xl shadow-md p-3 hover:scale-105 transition"
+            onClick={() => onCardClick(product.id)}
           >
             <img
               src={product.image}

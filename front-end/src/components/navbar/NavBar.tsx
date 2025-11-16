@@ -64,19 +64,17 @@ export default function NavBar() {
               {userName ? <p className="font-light text-sm md:text-lg">Bem vindo(a)</p> : <p className="font-semibold text-md">Acessar conta</p>}
               <p className="font-bold text-sm md:text-lg">{userName}</p>
 
-            </div>
-            <div className="relative hidden md:block">
-              <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />
-
-              <Avatar
-                src="/icons/avatar.png"
-                alt="Avatar do usuário"
-                size="md"
-                className="relative shadow-lg"
-              />
-            </div>
           </div>
+          <div className="relative hidden md:block">
+            <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />
 
+            <Avatar
+              src="/icons/avatar.png"
+              alt="Avatar do usuário"
+              size="md"
+              className="relative shadow-lg"
+            />
+          </div>
           <button onClick={() => setOpen(!open)} className="md:hidden ">
             <Menu size={30} className="text-black-smooth" />
           </button>

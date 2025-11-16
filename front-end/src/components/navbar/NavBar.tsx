@@ -34,10 +34,10 @@ export default function NavBar() {
     fetchUser();
   }, []);
 
-  function action(){
-    if(userName){
+  function action() {
+    if (userName) {
       navigate("/perfil")
-    }else{
+    } else {
       navigate("/login")
     }
   }
@@ -56,14 +56,14 @@ export default function NavBar() {
           <Search />
         </div>
         <div className="flex gap-2 mb-2">
-          <div 
+          <div
             className="flex flex-row gap-2"
             onClick={() => (action())}
           >
             <div className="flex flex-col text-right border-r border-black-smooth pr-3 items-center justify-center cursor-pointer">
               {userName ? <p className="font-light text-sm md:text-lg">Bem vindo(a)</p> : <p className="font-semibold text-md">Acessar conta</p>}
               <p className="font-bold text-sm md:text-lg">{userName}</p>
-
+            </div>
           </div>
           <div className="relative hidden md:block">
             <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />

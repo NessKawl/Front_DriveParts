@@ -50,7 +50,7 @@ export default function ProductsGrid({ title, filtro, tituloFiltro, filtroChildr
           />
         }
       </div>
-      <div className="p-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-2 sm:gap-6 md:gap-10">
+      <div className="p-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-2 sm:gap-5 md:gap-10 lg:gap-5 2xl:gap-5">
         {filteredProducts.map((product, index) => (
           <ProductCard
             key={index}

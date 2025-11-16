@@ -52,13 +52,13 @@ const InfiniteProductCarousel: React.FC<InfiniteProductCarouselProps> = ({
         {[...products, ...products].map((product, i) => (
           <div
             key={i}
-            className="flex-shrink-0 w-48 h-48 sm:w-56 bg-white rounded-xl shadow-md p-3 hover:scale-105 transition"
+            className="flex flex-col justify-center items-center  w-48 h-48 sm:w-56 bg-white rounded-xl shadow-md p-3 hover:scale-105 transition"
             onClick={() => onCardClick(product.id)}
           >
             <img
               src={product.image}
               alt={product.name}
-              className="w-full h-32 object-cover rounded-xl"
+              className="w-32 h-32 object-cover rounded-xl"
             />
             <div className="mt-2 text-center">
               <p className="text-sm font-medium truncate">{product.name}</p>

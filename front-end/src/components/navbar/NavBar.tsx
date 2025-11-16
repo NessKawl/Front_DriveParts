@@ -7,6 +7,7 @@ import Avatar from "../imagens/Avatar.tsx";
 import { useNavigate } from "react-router-dom";
 import { getUserProfile } from "../../services/dataService.tsx";
 import clsx from "clsx";
+
 export default function NavBar() {
 
   const [user, setUser] = useState<any>(null);
@@ -33,6 +34,13 @@ export default function NavBar() {
     fetchUser();
   }, []);
 
+  function action(){
+    if(userName){
+      navigate("/perfil")
+    }else{
+      navigate("/login")
+    }
+  }
   const [open, setOpen] = useState(false)
   const navigate = useNavigate();
   return (
@@ -48,21 +56,27 @@ export default function NavBar() {
           <Search />
         </div>
         <div className="flex gap-2 mb-2">
-          <div className="flex text-right border-r border-black-smooth pr-3 items-center justify-center cursor-pointer">
-            {userName ? <p className="font-light text-sm md:text-lg">Bem vindo(a)</p> : <p className="font-semibold text-md" onClick={() => navigate("/login")}>Acessar conta</p>}
-            <p className="font-bold text-sm md:text-lg">{userName}</p>
+          <div 
+            className="flex flex-row gap-2"
+            onClick={() => (action())}
+          >
+            <div className="flex flex-col text-right border-r border-black-smooth pr-3 items-center justify-center cursor-pointer">
+              {userName ? <p className="font-light text-sm md:text-lg">Bem vindo(a)</p> : <p className="font-semibold text-md">Acessar conta</p>}
+              <p className="font-bold text-sm md:text-lg">{userName}</p>
 
-          </div>
-          <div className="relative hidden md:block">
-            <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />
+            </div>
+            <div className="relative hidden md:block">
+              <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />
 
-            <Avatar
-              src="/icons/avatar.png"
-              alt="Avatar do usuário"
-              size="md"
-              className="relative shadow-lg"
-            />
+              <Avatar
+                src="/icons/avatar.png"
+                alt="Avatar do usuário"
+                size="md"
+                className="relative shadow-lg"
+              />
+            </div>
           </div>
+
           <button onClick={() => setOpen(!open)} className="md:hidden ">
             <Menu size={30} className="text-black-smooth" />
           </button>

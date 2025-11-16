@@ -53,10 +53,11 @@ export default function NavBar() {
             <p className="font-bold text-sm md:text-lg">{userName}</p>
 
           </div>
-          <div className="relative hidden md:block">
+          <div className="relative hidden md:block cursor-pointer" onClick={() => (userName ? navigate("/perfil") : navigate("/login"))}>
             <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />
-
+            
             <Avatar
+            
               src="/icons/avatar.png"
               alt="Avatar do usuário"
               size="md"

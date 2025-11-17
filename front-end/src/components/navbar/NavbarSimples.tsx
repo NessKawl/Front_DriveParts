@@ -18,7 +18,7 @@ export default function NavBarSimples({rota}: Props) {
             </div>
             <div>
                 <button onClick={() => window.location.href = "/"} >
-                    <p className="text-black-smooth text-lg md:text-2xl font-bold">DriveParts</p>
+                    <img src="/logo-black-mini.png" alt="" className="w-40" />
                 </button>
             </div>
         </div>

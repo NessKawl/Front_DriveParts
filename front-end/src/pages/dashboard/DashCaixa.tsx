@@ -1,69 +1,63 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../../components/buttons/Button";
 import CardEstatistica from "../../components/cards/CardEstatistica";
-//import GraficoBarras from "../../components/graficos/GraficoBarras";
 import GraficoLinhas from "../../components/graficos/GraficoLinhas";
 import GraficoPizza from "../../components/graficos/GraficoPizza";
 import NavBarDashboard from "../../components/navbar/NavBarDashboard";
 import TabelaLista from "../../components/tabelas/TabelaLista";
 import { X } from "lucide-react";
 import FormGenerator from "../../components/forms/FormGenerator";
+import { dashboardCaixaService } from "../../services/dashboardCaixaService";
 
-const dataVendasPizza = [
-  { name: "Dinheiro", value: 600 },
-  { name: "Pix", value: 250 },
-  { name: "Cartão de Crédito", value: 105 },
-  { name: "Cartão de Débito", value: 100 },
-];
-/*const dataFluxoEntradaSaida = [
-  { mes: "Jan", entrada: 5000, saida: 3200 },
-  { mes: "Fev", entrada: 4200, saida: 1800 },
-  { mes: "Mar", entrada: 6100, saida: 4500 },
-  { mes: "Abr", entrada: 3000, saida: 2800 },
-  { mes: "Mai", entrada: 8000, saida: 5200 },
-  { mes: "Jun", entrada: 9000, saida: 6200 },
-  { mes: "Jul", entrada: 11000, saida: 7200 },
-  { mes: "Ago", entrada: 12000, saida: 8200 },
-  { mes: "Set", entrada: 13000, saida: 9200 },
-  { mes: "Out", entrada: 14000, saida: 10200 },
-];*/
-const dataFluxoMovimentacao = [
-  { name: "Jan", caixa: 5000 },
-  { name: "Fev", caixa: -420 },
-  { name: "Mar", caixa: 6100 },
-  { name: "Abr", caixa: 3000 },
-  { name: "Mai", caixa: 8000 },
-  { name: "Jun", caixa: 9000 },
-  { name: "Jul", caixa: 1100 },
-  { name: "Ago", caixa: 1200 },
-  { name: "Set", caixa: 13000 },
-  { name: "Out", caixa: 1400 },
-];
-const filtros = [
-  { value: "Diario", children: "Diario" },
-  { value: "Semanal", children: "Semanal" },
-  { value: "Mensal", children: "Mensal" },
-  { value: "Semestral", children: "Semestral" },
-  { value: "Anual", children: "Anual" },
-];
-const colunasHistoricoCaixa = [
-  { chave: "tipo", titulo: "Tipo", size: "sm" },
-  { chave: "descricao", titulo: "Descrição", size: "auto" },
-  { chave: "data", titulo: "Data", size: "md" },
-  { chave: "valor", titulo: "Valor", size: "sm" },
-];
-const historicoDeMovimentacoes = [
-  {
-    tipo: "Entrada",
-    descricao: "Venda de pneus - João Silva",
-    data: "01/10/2023",
-    valor: "R$ 500,00",
-  },
-];
+// ==== TIPOS ====
+interface Movimentacao {
+  tipo: "Entrada" | "Saida";
+  descricao: string;
+  valor: number;
+  data: Date;
+}
+
+interface VendaPorPagamento {
+  formaPagamento: string;
+  valor: number; // em vez de quantidade
+}
+
+
+interface FluxoMov {
+  name: string;
+  [key: string]: string | number; // permite outras chaves dinâmicas
+}
+
+
+// ==== FUNÇÃO CRUCIAL PARA CORRIGIR A DATA (FUSO HORÁRIO) ====
+function normalizarData(dataStr: string): Date {
+  const fix = dataStr.replace(" ", "T");
+  const d = new Date(fix);
+  d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+  return d;
+}
+
+function formatReaisSinalDepois(valor: number) {
+  const fmt = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+
+  if (valor < 0) {
+    return fmt.format(Math.abs(valor)).replace("R$", "R$ -");
+  }
+
+  return fmt.format(valor);
+}
 
 export default function DashCaixa() {
   const [isOpen, setIsOpen] = useState(false);
   const [tipoMovimentacao, setTipoMovimentacao] = useState<"Entrada" | "Saida" | null>(null);
+  const [caixaAtual, setCaixaAtual] = useState<number>(0);
+  const [vendasPorPagamento, setVendasPorPagamento] = useState<{ name: string; value: number }[]>([]);
+  const [filtroMov, setFiltroMov] = useState("Mensal");
+  const [fluxoMovimentacao, setFluxoMovimentacao] = useState<FluxoMov[]>([]);
+  const [movsRaw, setMovsRaw] = useState<Movimentacao[]>([]);
 
   const [form, setForm] = useState({
     tipo: "",
@@ -72,6 +66,196 @@ export default function DashCaixa() {
     data: "",
   });
 
+  // ===== CARREGAR VENDAS POR FORMA DE PAGAMENTO =====
+  useEffect(() => {
+    dashboardCaixaService
+      .getVendasPorPagamento()
+      .then((data: VendaPorPagamento[]) => {
+        const formatado = data.map((item: VendaPorPagamento) => ({
+  name: item.formaPagamento,
+  value: item.valor,
+}));
+
+        setVendasPorPagamento(formatado);
+      })
+      .catch((err) => console.error("Erro ao carregar vendas por pagamento:", err));
+  }, []);
+
+  // ===== BUSCAR MOVIMENTAÇÕES SÓ UMA VEZ =====
+  useEffect(() => {
+    let mounted = true;
+
+    dashboardCaixaService
+      .getMovimentacoes()
+      .then((movs: Movimentacao[]) => {
+        if (!mounted) return;
+
+        const normalized = movs.map((m: Movimentacao) => ({
+          ...m,
+          valor: Number(m.valor),
+          data: normalizarData(m.data.toString()),
+        }));
+
+        setMovsRaw(normalized);
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar movimentações:", err);
+        setMovsRaw([]);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // ===================== CÁLCULO DOS GRÁFICOS =====================
+  useEffect(() => {
+    const hoje = new Date();
+    const hojeISO = hoje.toISOString().slice(0, 10);
+    const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+
+    function formatDia(d: Date) {
+      const ano = d.getFullYear();
+      const mes = String(d.getMonth() + 1).padStart(2, "0");
+      const dia = String(d.getDate()).padStart(2, "0");
+      return `${ano}-${mes}-${dia}`;
+    }
+
+    if (movsRaw.length === 0) {
+      gerarGraficoZerado();
+      return;
+    }
+
+    function gerarGraficoZerado() {
+      if (filtroMov === "Diario") {
+        setFluxoMovimentacao([{ name: "Hoje", caixa: 0 }]);
+        return;
+      }
+
+      if (filtroMov === "Semanal") {
+        const dias: FluxoMov[] = [];
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(hoje.getDate() - i);
+          dias.push({
+            name: d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+            caixa: 0,
+          });
+        }
+        setFluxoMovimentacao(dias);
+        return;
+      }
+
+      if (filtroMov === "Mensal") {
+        const ultimoDia = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
+        const dias: FluxoMov[] = [];
+        for (let d = 1; d <= ultimoDia; d++) dias.push({ name: String(d).padStart(2, "0"), caixa: 0 });
+        setFluxoMovimentacao(dias);
+        return;
+      }
+
+      if (filtroMov === "Semestral") {
+        const inicio = hoje.getMonth() < 6 ? 0 : 6;
+        const fim = inicio + 5;
+        const arr: FluxoMov[] = [];
+        for (let m = inicio; m <= fim; m++) arr.push({ name: meses[m], caixa: 0 });
+        setFluxoMovimentacao(arr);
+        return;
+      }
+
+      if (filtroMov === "Anual") {
+        setFluxoMovimentacao(meses.map((m) => ({ name: m, caixa: 0 })));
+        return;
+      }
+    }
+
+    // ==== FILTRO DIÁRIO ====
+    if (filtroMov === "Diario") {
+      const filtrados = movsRaw.filter((m) => formatDia(m.data) === hojeISO);
+      const total = filtrados.reduce((acc, m) => acc + (m.tipo === "Entrada" ? m.valor : -m.valor), 0);
+      setFluxoMovimentacao([{ name: "Hoje", caixa: total }]);
+      return;
+    }
+
+    // ==== FILTRO SEMANAL ====
+    if (filtroMov === "Semanal") {
+      const mapa: Record<string, number> = {};
+      const dias: string[] = [];
+
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(hoje.getDate() - i);
+        const key = formatDia(d);
+        dias.push(key);
+        mapa[key] = 0;
+      }
+
+      movsRaw.forEach((m) => {
+        const key = formatDia(m.data);
+        if (key in mapa) mapa[key] += m.tipo === "Entrada" ? m.valor : -m.valor;
+      });
+
+      setFluxoMovimentacao(dias.map((key) => ({ name: key.slice(5), caixa: mapa[key] })));
+      return;
+    }
+
+    // ==== FILTRO MENSAL ====
+    if (filtroMov === "Mensal") {
+      const ultimoDia = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
+      const dias: Record<number, number> = {};
+      for (let d = 1; d <= ultimoDia; d++) dias[d] = 0;
+
+      movsRaw.forEach((m) => {
+        if (m.data.getMonth() === hoje.getMonth() && m.data.getFullYear() === hoje.getFullYear()) {
+          const d = m.data.getDate();
+          dias[d] += m.tipo === "Entrada" ? m.valor : -m.valor;
+        }
+      });
+
+      setFluxoMovimentacao(Object.keys(dias).map((d) => ({ name: d.padStart(2, "0"), caixa: dias[Number(d)] })));
+      return;
+    }
+
+    // ==== FILTRO SEMESTRAL ====
+    if (filtroMov === "Semestral") {
+      const inicio = hoje.getMonth() < 6 ? 0 : 6;
+      const fim = inicio + 5;
+      const grupo: Record<number, number> = {};
+      for (let m = inicio; m <= fim; m++) grupo[m] = 0;
+
+      movsRaw.forEach((m) => {
+        const mes = m.data.getMonth();
+        if (mes >= inicio && mes <= fim) grupo[mes] += m.tipo === "Entrada" ? m.valor : -m.valor;
+      });
+
+      setFluxoMovimentacao(Object.keys(grupo).map((m) => ({ name: meses[Number(m)], caixa: grupo[Number(m)] })));
+      return;
+    }
+
+    // ==== FILTRO ANUAL ====
+    if (filtroMov === "Anual") {
+      const grupo: Record<number, number> = {};
+      for (let m = 0; m < 12; m++) grupo[m] = 0;
+
+      movsRaw.forEach((m) => {
+        if (m.data.getFullYear() === hoje.getFullYear()) {
+          grupo[m.data.getMonth()] += m.tipo === "Entrada" ? m.valor : -m.valor;
+        }
+      });
+
+      setFluxoMovimentacao(Object.keys(grupo).map((m) => ({ name: meses[Number(m)], caixa: grupo[Number(m)] })));
+    }
+  }, [movsRaw, filtroMov]);
+
+  // ===== CARREGAR CAIXA ATUAL =====
+  useEffect(() => {
+    dashboardCaixaService
+      .getCaixaAtual()
+      .then((data: { caixa: number }) => setCaixaAtual(data.caixa))
+      .catch((err) => console.error(err));
+  }, []);
+
+  // ===== CAMPOS DO FORM =====
   const fields = [
     {
       name: "tipo",
@@ -103,7 +287,6 @@ export default function DashCaixa() {
       return;
     }
 
-    console.log(`${tipoMovimentacao} cadastrada:`, form);
     alert(`${tipoMovimentacao} registrada com sucesso!`);
     setIsOpen(false);
   };
@@ -114,6 +297,13 @@ export default function DashCaixa() {
     setForm({ tipo: "", descricao: "", valor: "", data: "" });
   };
 
+  const colunasHistoricoCaixa = [
+    { chave: "tipo", titulo: "Tipo", size: "sm" },
+    { chave: "descricao", titulo: "Descrição", size: "auto" },
+    { chave: "data", titulo: "Data", size: "md" },
+    { chave: "valor", titulo: "Valor", size: "sm" },
+  ];
+
   return (
     <div className="flex bg-black-smooth/95">
       <NavBarDashboard page="Caixa" />
@@ -122,32 +312,37 @@ export default function DashCaixa() {
         <div className="flex flex-col gap-2">
           <div className="flex flex-row w-full gap-2">
             <CardEstatistica
-              className="bg-black-smooth flex flex-col border-l border-primary-orange p-2 min-w-80 "
+              className="bg-black-smooth flex flex-col border-l border-primary-orange p-2 min-w-80"
               titulo="CAIXA ATUAL (R$)"
-              valor="32.192,19"
+              valor={formatReaisSinalDepois(caixaAtual)}
             />
+
             <GraficoPizza
               titulo="Principais formas de pagamento"
-              data={dataVendasPizza}
+              data={vendasPorPagamento.map((item) => ({ name: item.name, value: item.value }))}
               height="h-47"
             />
           </div>
-          {/*
-          <div className="w-full h-50">
-            <GraficoBarras data={dataFluxoEntradaSaida} />
-          </div>*/
-          }
+
+          <div className="flex justify-end mb-2">
+            <select
+              value={filtroMov}
+              onChange={(e) => setFiltroMov(e.target.value)}
+              className="bg-zinc-900 text-white border border-zinc-700 px-2 py-1 rounded"
+            >
+              <option value="Diario">Diário</option>
+              <option value="Semanal">Semanal</option>
+              <option value="Mensal">Mensal</option>
+              <option value="Semestral">Semestral</option>
+              <option value="Anual">Anual</option>
+            </select>
+          </div>
 
           <div className="w-full h-80">
             <GraficoLinhas
               titulo="Fluxo de movimentação"
-              filtro={true}
-              tituloFiltro="Filtar"
-              filtroChildren={filtros}
-              data={dataFluxoMovimentacao}
-              series={[
-                { key: "caixa", color: "#FF961F", label: "Fluxo de caixa do mês" },
-              ]}
+              data={fluxoMovimentacao}
+              series={[{ key: "caixa", color: "#FF961F", label: "Fluxo de caixa" }]}
             />
           </div>
         </div>
@@ -156,16 +351,32 @@ export default function DashCaixa() {
           <TabelaLista
             titulo="HISTÓRICO DE MOVIMENTAÇÕES DO CAIXA"
             colunas={colunasHistoricoCaixa}
-            fetchData={async () => historicoDeMovimentacoes}
-            alturaMax="md:max-h-33"
+            fetchData={async () => {
+              try {
+                const data: Movimentacao[] = await dashboardCaixaService.getMovimentacoes();
+
+                return data
+                  .map((item: Movimentacao) => ({
+                    ...item,
+                    valor: formatReaisSinalDepois(item.valor),
+                    data: normalizarData(item.data.toString()).toLocaleDateString("pt-BR"),
+                  }))
+                  .sort((a: { data: string }, b: { data: string }) => new Date(b.data).getTime() - new Date(a.data).getTime());
+              } catch (err) {
+                console.error("Erro ao buscar movimentações:", err);
+                return [];
+              }
+            }}
+            alturaMax="md:max-h-150"
           />
 
-          <div className="flex justify-between items-center w-ful mb-13 mt-2">
+          <div className="flex justify-between items-center w-full mb-13 mt-2">
             <Button
               className="bg-red-alert text-black font-semibold px-4 py-2 rounded hover:text-ice"
               children="Nova movimentação de saída"
               onClick={() => abrirModal("Saida")}
             />
+
             <Button
               className="bg-pear-green text-black font-semibold px-4 py-2 rounded hover:text-ice"
               children="Nova movimentação de entrada"
@@ -180,8 +391,7 @@ export default function DashCaixa() {
           <div className="bg-black-smooth h-[90%] w-[60%] rounded-md p-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
             <div className="flex flex-row justify-between mb-4">
               <h1 className="text-2xl font-semibold text-primary-orange">
-                Cadastrar nova movimentação de{" "}
-                {tipoMovimentacao === "Saida" ? "Saída" : "Entrada"}
+                Cadastrar nova movimentação de {tipoMovimentacao === "Saida" ? "Saída" : "Entrada"}
               </h1>
               <X
                 size={30}
@@ -192,12 +402,7 @@ export default function DashCaixa() {
             </div>
 
             <form className="flex flex-col gap-5 w-full" onSubmit={handleSubmit}>
-              <FormGenerator
-                fields={fields}
-                form={form}
-                setForm={setForm}
-                className="grid grid-cols-1 gap-4 w-full"
-              />
+              <FormGenerator fields={fields} form={form} setForm={setForm} className="grid grid-cols-1 gap-4 w-full" />
 
               <button
                 type="submit"

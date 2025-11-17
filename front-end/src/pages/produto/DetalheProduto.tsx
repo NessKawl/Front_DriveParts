@@ -6,6 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom"
 import ProductsGridReco from "../../components/cards/ProductsGridReco";
 import { useEffect, useState } from "react";
 import { GetProdutosId } from "../../services/dataService";
+import clsx from "clsx";
 
 
 interface Produto {
@@ -106,8 +107,8 @@ export default function DetalheProduto() {
           <div className="mt-5 flex justify-center md:col-start-2 md:row-start-5 md:mb-10">
             <Button
               children="Reservar"
-              className="rounded-lg text-xl font-semibold bg-primary-orange px-15 py-1 lg:px-25 lg:py-2 text-ice sm:rounded-none"
-              onClick={() => navigate(`/reserva?id=${pro_id}`)}
+              className={clsx("rounded-lg text-xl font-semibold bg-primary-orange px-15 py-1 lg:px-25 lg:py-2 text-ice sm:rounded-none", quantidade === 0 && "bg-primary-orange/50 "  )}
+              onClick={() => quantidade === 0 ? alert("Produto fora de estoque") : navigate(`/reserva?id=${pro_id}`)}
             />
           </div>
 

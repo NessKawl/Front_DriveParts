@@ -6,7 +6,6 @@ import { BanknoteArrowDown, BanknoteArrowUp, PackagePlus, X } from "lucide-react
 import Cropper from "react-easy-crop";
 import FormGenerator from "../../components/forms/FormGenerator";
 import { CadProduto, BuscaTodosProdutos, EditProduto, CriarMovimentacaoProduto } from "../../services/dataService";
-import { tr } from "framer-motion/client";
 
 export default function DashProdutos() {
     const [form, setForm] = useState({
@@ -16,6 +15,7 @@ export default function DashProdutos() {
         cod: "",
         estoque: 0,
         status: "Ativo",
+        categoria: "",
     });
     const fields = [
         { name: "nome", type: "text", placeholder: "Nome do produto", required: true },
@@ -30,6 +30,22 @@ export default function DashProdutos() {
             options: [
                 { label: "Ativo", value: true },
                 { label: "Inativo", value: false },
+            ],
+        },
+        {
+            name: "Categoria",
+            type: "select",
+            placeholder: "Categoria do produto",
+            options: [
+                { label: "Motor", value: "motor" },
+                { label: "Freios", value: "freios" },
+                { label: "Suspensão", value: "suspensao" },
+                { label: "Pneus", value: "pneus" },
+                { label: "Acessorios", value: "acessorios" },
+                { label: "Elétrica", value: "eletrica" },
+                { label: "Filtros", value: "Filtros" },
+                { label: "Óleos e Lubrificantes", value: "oleos" },
+                { label: "Outros", value: "Outros" },
             ],
         },
     ];
@@ -152,6 +168,7 @@ export default function DashProdutos() {
                 cod: "",
                 estoque: 0,
                 status: "Ativo",
+                categoria: "",
             });
 
         } catch (error) {
@@ -211,6 +228,7 @@ export default function DashProdutos() {
                 cod: "",
                 estoque: 0,
                 status: "Ativo",
+                categoria: "",
             });
         } catch (error) {
             console.error(error);
@@ -284,7 +302,8 @@ export default function DashProdutos() {
                 marca: produtoEditando.marca || "",
                 cod: produtoEditando.codigo || "",
                 estoque: produtoEditando.estoque || "",
-                status: produtoEditando.status ? "Ativo" : "Inativo"
+                status: produtoEditando.status ? "Ativo" : "Inativo",
+                categoria: produtoEditando.categoria || "",
             });
         }
     }, [produtoEditando]);
@@ -308,6 +327,7 @@ export default function DashProdutos() {
                                 cod: "",
                                 estoque: 0,
                                 status: "Ativo",
+                                categoria: "",
                             })
                             setIsOpen(true)
                         }}

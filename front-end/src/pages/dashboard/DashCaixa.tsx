@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "../../components/buttons/Button";
 import CardEstatistica from "../../components/cards/CardEstatistica";
-import GraficoBarras from "../../components/graficos/GraficoBarras";
+//import GraficoBarras from "../../components/graficos/GraficoBarras";
 import GraficoLinhas from "../../components/graficos/GraficoLinhas";
 import GraficoPizza from "../../components/graficos/GraficoPizza";
 import NavBarDashboard from "../../components/navbar/NavBarDashboard";
@@ -15,7 +15,7 @@ const dataVendasPizza = [
   { name: "Cartão de Crédito", value: 105 },
   { name: "Cartão de Débito", value: 100 },
 ];
-const dataFluxoEntradaSaida = [
+/*const dataFluxoEntradaSaida = [
   { mes: "Jan", entrada: 5000, saida: 3200 },
   { mes: "Fev", entrada: 4200, saida: 1800 },
   { mes: "Mar", entrada: 6100, saida: 4500 },
@@ -26,7 +26,7 @@ const dataFluxoEntradaSaida = [
   { mes: "Ago", entrada: 12000, saida: 8200 },
   { mes: "Set", entrada: 13000, saida: 9200 },
   { mes: "Out", entrada: 14000, saida: 10200 },
-];
+];*/
 const dataFluxoMovimentacao = [
   { name: "Jan", caixa: 5000 },
   { name: "Fev", caixa: -420 },
@@ -132,10 +132,11 @@ export default function DashCaixa() {
               height="h-47"
             />
           </div>
-
+          {/*
           <div className="w-full h-50">
             <GraficoBarras data={dataFluxoEntradaSaida} />
-          </div>
+          </div>*/
+          }
 
           <div className="w-full h-80">
             <GraficoLinhas

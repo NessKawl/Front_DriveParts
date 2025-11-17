@@ -6,34 +6,15 @@ interface ProductCardProps {
 }
 export default function CardProduto({ image, name, reserva, status }: ProductCardProps) {
     let statusColor = "text-gray-700";
-    if (status === "CONCLUIDA") statusColor = "text-green-600";
-    if (status === "CANCELADA") statusColor = "text-red-800";
-    if (status === "RESERVA") statusColor = "text-orange-500";
+    const nowstate = status === "CONCLUIDA" ? "Finalizado" : status === "CANCELADA" ? "RESERVA CANCELADA" : "EM RESERVA";
+    if (status === "CONCLUIDA") statusColor = "text-pear-green";
+    if (status === "CANCELADA") statusColor = "text-red-alert";
+    if (status === "RESERVA") statusColor = "text-primary-orange";
 
     return (
-        // <div
-        //     onClick={() => window.location.href = `/detalhe-produto?produto=${name}`}
-        //     className="bg-white md:w-60 h-70 md:h-96 p-2 flex flex-col items-left justify-between rounded-lg md:rounded-sm shadow-md hover:shadow-lg hover:shadow-primary-orange/40 transition-shadow duration-300 cursor-pointer">
-        //     <div className="flex flex-col md:w-full items-center">
-        //         <img
-        //             src={image}
-        //             alt={name}
-        //             onLoad={(e) => {
-        //                 e.currentTarget.style.filter = "none"
-        //                 e.currentTarget.style.opacity = "1"
-        //             }}
-        //             loading="lazy"
-        //             className="w-32 h-32 md:w-48 md:h-48 mb-2 items-center" />
-        //         <h3 className="text-sm md:text-lg font-semibold text-left line-clamp-3 md:line-clamp-4">{name}</h3>
-        //     </div>
-        //     <div className="flex flex-col items-left justify-left">
-        //         <p className="text-pear-green font-bold text-2xl md:text-3xl">{name}</p>
-        //         <p className="text-black-smooth font-light text-xs md:text-md">{reserva}</p>
-        //         <p className="text-black-smooth font-semibold text-md">{reserva}</p>
-        //         <p className={clsx("text-black-smooth font-semibold text-lg", status === "Finalizado" ? "text-pear-green" : "text-red-alert")}>{status}</p>
-        //     </div>
-        // </div>
-        <div onClick={() => window.location.href = `/detalhe-produto?produto=${name}`} className="bg-white md:w-60 h-70 md:h-70 p-2 flex flex-col items-left justify-between rounded-lg md:rounded-sm shadow-md hover:shadow-lg hover:shadow-primary-orange/40 transition-shadow duration-300 cursor-pointer text-center">
+        <div 
+            onClick={() => window.location.href = `/detalhe-produto?produto=${name}`} 
+            className="bg-white md:w-60 h-70 md:h-80 p-2 flex flex-col items-left justify-between items-start rounded-lg md:rounded-sm shadow-md hover:shadow-lg hover:shadow-primary-orange/40 transition-shadow duration-300 cursor-pointer text-center">
 
             <div className="flex flex-col md:w-full items-center">
                 <img src={image} alt={name} className="w-32 h-32 md:w-40 md:h-40 mb-2 items-center" />
@@ -42,7 +23,7 @@ export default function CardProduto({ image, name, reserva, status }: ProductCar
             <h3 className="text-sm md:text-lg font-semibold line-clamp-3 md:line-clamp-4">{name}</h3>
             
             {reserva && <p className="text-black-smooth font-normal text-md">{reserva}</p>}
-            {status && <p className={`${statusColor} text-black-smooth font-semibold text-lg`}>{status}</p>}
+            {status && <p className={`${statusColor} text-black-smooth font-semibold text-lg`}>{nowstate}</p>}
         </div>
 
     );

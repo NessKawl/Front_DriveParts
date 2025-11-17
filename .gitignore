@@ -1,6 +1,3 @@
-    # Created by https://www.toptal.com/developers/gitignore/api/react
-# Edit at https://www.toptal.com/developers/gitignore?templates=react
-
 ### react ###
 .DS_*
 *.log
@@ -17,9 +14,6 @@ psd
 thumb
 sketch
 
-# End of https://www.toptal.com/developers/gitignore/api/react
-
-
 # compiled output
 /dist
 /node_modules
@@ -29,6 +23,7 @@ sketch
 logs
 *.log
 npm-debug.log*
+<<<<<<< HEAD
 pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -78,3 +73,4 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 /generated/prisma
+

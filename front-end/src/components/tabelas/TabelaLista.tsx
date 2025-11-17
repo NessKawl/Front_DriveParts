@@ -4,7 +4,7 @@ import TabelaHeader from "./TabelaHeader";
 import TabelaLinha from "./TabelaLinha";
 import TabelaSkeleton from "./TabelaSkeleton";
 import FilterTable from "../buttons/FilterTable";
-import Search from "../inputs/Search";
+import SearchDashboard from "../inputs/SearchDashboard";
 
 type SizeKey = "sm" | "md" | "lg" | "auto" | string;
 
@@ -84,7 +84,7 @@ export default function TabelaLista({
       <div className="flex flex-row justify-between items-center">
         <h2 className="text-lg font-semibold text-primary-orange mb-2">{titulo}</h2>
         <div className="flex flex-row gap-5 h-8 items-center justify-end">
-          {pesquisa && <Search />}
+          {pesquisa && <SearchDashboard />}
           {filtro && (
             <FilterTable
               titulo={tituloFiltro}

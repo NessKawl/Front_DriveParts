@@ -32,7 +32,7 @@ export default function NavBarDashboard({ page }: NavBarDashboardProps) {
 
   return (
     <div className="bg-black-smooth border-r border-gray-100/20 w-50 text-center text-white flex flex-col justify-between max-h-screen lg:min-h-screen font-bold">
-      <h2 className="p-2 text-xl">Mare Auto Peças</h2>
+      <img src="/logo-orange-full.png" alt=""  className="w-10/12 mx-auto " onClick={() => navigate("/catalogo")}/>
 
       <div className="flex flex-col">
         {/* Botões comuns */}

@@ -46,39 +46,43 @@ export default function NavBar() {
   return (
     <div className=" bg-primary-orange py-4 px-2 flex flex-col justify-between items-center ">
       <div className="flex justify-between items-center w-full">
-        <div>
-          <button onClick={() => window.location.href = "/"} >
-            <p className="text-black-smooth text-xl md:text-2xl font-bold">DriveParts</p>
+        <div className="h-20 w-5/12">
+          <button onClick={() => window.location.href = "/"} className=" cursor-pointer ">
+            <img src="/logo-black-full.png" alt="" className="absolute  md:block hidden md:w-30 lg:w-40 top-0 " />
+            <img src="/logo-black-mini.png" alt="" className="absolute md:hidden block w-40 top-10" />
           </button>
 
         </div>
-        <div className="hidden md:block md:w-6/12">
-          <Search />
-        </div>
-        <div className="flex gap-2 mb-2">
-          <div
-            className="flex flex-row gap-2"
-            onClick={() => (action())}
-          >
-            <div className="flex flex-col text-right border-r border-black-smooth pr-3 items-center justify-center cursor-pointer">
-              {userName ? <p className="font-light text-sm md:text-lg">Bem vindo(a)</p> : <p className="font-semibold text-md">Acessar conta</p>}
-              <p className="font-bold text-sm md:text-lg">{userName}</p>
+        <div className="flex justify-between items-end gap-20 w-full">
+          <div className="hidden md:block w-full">
+            <Search />
+          </div>
+          <div className="flex justify-end gap-2 mb-2 md:w-6/12  w-full">
+            <div
+              className="flex flex-row gap-2"
+              onClick={() => (action())}
+            >
+              <div className="flex flex-col text-right border-r border-black-smooth pr-3 items-center justify-center cursor-pointer">
+                {userName ? <p className="font-light text-sm md:text-lg">Bem vindo(a)</p> : <p className="font-semibold text-md">Acessar conta</p>}
+                <p className="font-bold text-sm md:text-lg">{userName}</p>
+              </div>
             </div>
-          </div>
-          <div className="relative hidden md:block">
-            <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />
+            <div className="relative hidden md:block">
+              <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />
 
-            <Avatar
-              src="/icons/avatar.png"
-              alt="Avatar do usuário"
-              size="md"
-              className="relative shadow-lg"
-            />
+              <Avatar
+                src="/icons/avatar.png"
+                alt="Avatar do usuário"
+                size="md"
+                className="relative shadow-lg"
+              />
+            </div>
+            <button onClick={() => setOpen(!open)} className="md:hidden ">
+              <Menu size={30} className="text-black-smooth" />
+            </button>
           </div>
-          <button onClick={() => setOpen(!open)} className="md:hidden ">
-            <Menu size={30} className="text-black-smooth" />
-          </button>
         </div>
+
 
         <AnimatePresence>
           {open && (
@@ -95,7 +99,7 @@ export default function NavBar() {
                     <button onClick={() => setOpen(!open)}>
                       <X size={28} className="text-black-smooth" />
                     </button>
-                    <p className="text-black-smooth text-lg font-bold tracking-tight">DriveParts</p>
+                    <img src="/logo-black-mini.png" alt="" className="md:hidden block w-35 " />
                   </div>
                   <div
                     className={clsx("flex justify-end items-center mt-4 cursor-pointer hover:opacity-80 transition")}

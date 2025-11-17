@@ -84,8 +84,8 @@ export default function DetalheProduto() {
             <ProductCarousel images={pro_caminho_img} />
           </div> */}
 
-          <div className="my-3 md:m-1 lg:col-start-1 md:row-span-5 lg:max-w-[500px] lg:max-h-[500px]  bg-white ">
-            <img src={pro_caminho_img} alt="" />
+          <div className="flex justify-center items-center my-3 md:m-1 lg:col-start-1 md:row-span-5 h-auto  bg-white ">
+            <img src={pro_caminho_img} alt="" className="" />
           </div>
 
           <div className=" md:mt-5 md:col-start-2 md:row-start-2  md:mr-6">

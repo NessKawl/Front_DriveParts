@@ -10,9 +10,10 @@ const Reserva = lazy(() => import("../pages/produto/Reserva"));
 const DetalheProduto = lazy(() => import("../pages/produto/DetalheProduto"));
 const Pesquisa = lazy(() => import("../pages/Pesquisa"));
 const Perfil = lazy(() => import("../pages/perfil/Perfil"));
-const Verificacao = lazy(() => import("../pages/Verificacao"));
+const Verificacao = lazy(() => import("../pages/verificacao"));
 const TermosDeUso = lazy(() => import("../pages/TermosDeUso"));
 const EditarPerfil = lazy(() => import("../pages/perfil/EditarPerfil"));
+const RecuperarSenha = lazy(() => import("../pages/RecuperarSenha"))
 
 function Loader() {
   return (
@@ -59,6 +60,7 @@ export default function AppRoutes() {
           <Route path="/detalhe-produto" element={<DetalheProduto />} />
           <Route path="/termos-de-uso" element={<TermosDeUso />} />
           <Route path="/editar-perfil" element={<EditarPerfil />} />
+          <Route path="/recuperar-senha" element={<RecuperarSenha />} />
           {/* rotas do dashboard importadas diretamente */}
           {dashboardRoutes}
           <Route path="*" element={<h1>404</h1>} />

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Button from "../../components/buttons/Button";
 import CardEstatistica from "../../components/cards/CardEstatistica";
 import GraficoLinhas from "../../components/graficos/GraficoLinhas";
 import GraficoPizza from "../../components/graficos/GraficoPizza";
@@ -9,7 +8,6 @@ import { X } from "lucide-react";
 import FormGenerator from "../../components/forms/FormGenerator";
 import { dashboardCaixaService } from "../../services/dashboardCaixaService";
 
-// ==== TIPOS ====
 interface Movimentacao {
   tipo: "Entrada" | "Saida";
   descricao: string;
@@ -19,17 +17,14 @@ interface Movimentacao {
 
 interface VendaPorPagamento {
   formaPagamento: string;
-  valor: number; // em vez de quantidade
+  valor: number;
 }
-
 
 interface FluxoMov {
   name: string;
-  [key: string]: string | number; // permite outras chaves dinâmicas
+  [key: string]: string | number;
 }
 
-
-// ==== FUNÇÃO CRUCIAL PARA CORRIGIR A DATA (FUSO HORÁRIO) ====
 function normalizarData(dataStr: string): Date {
   const fix = dataStr.replace(" ", "T");
   const d = new Date(fix);
@@ -66,22 +61,19 @@ export default function DashCaixa() {
     data: "",
   });
 
-  // ===== CARREGAR VENDAS POR FORMA DE PAGAMENTO =====
   useEffect(() => {
     dashboardCaixaService
       .getVendasPorPagamento()
       .then((data: VendaPorPagamento[]) => {
         const formatado = data.map((item: VendaPorPagamento) => ({
-  name: item.formaPagamento,
-  value: item.valor,
-}));
-
+          name: item.formaPagamento,
+          value: item.valor,
+        }));
         setVendasPorPagamento(formatado);
       })
       .catch((err) => console.error("Erro ao carregar vendas por pagamento:", err));
   }, []);
 
-  // ===== BUSCAR MOVIMENTAÇÕES SÓ UMA VEZ =====
   useEffect(() => {
     let mounted = true;
 
@@ -95,20 +87,17 @@ export default function DashCaixa() {
           valor: Number(m.valor),
           data: normalizarData(m.data.toString()),
         }));
-
         setMovsRaw(normalized);
       })
       .catch((err) => {
         console.error("Erro ao buscar movimentações:", err);
         setMovsRaw([]);
       });
-
     return () => {
       mounted = false;
     };
   }, []);
 
-  // ===================== CÁLCULO DOS GRÁFICOS =====================
   useEffect(() => {
     const hoje = new Date();
     const hojeISO = hoje.toISOString().slice(0, 10);
@@ -169,7 +158,6 @@ export default function DashCaixa() {
       }
     }
 
-    // ==== FILTRO DIÁRIO ====
     if (filtroMov === "Diario") {
       const filtrados = movsRaw.filter((m) => formatDia(m.data) === hojeISO);
       const total = filtrados.reduce((acc, m) => acc + (m.tipo === "Entrada" ? m.valor : -m.valor), 0);
@@ -177,7 +165,6 @@ export default function DashCaixa() {
       return;
     }
 
-    // ==== FILTRO SEMANAL ====
     if (filtroMov === "Semanal") {
       const mapa: Record<string, number> = {};
       const dias: string[] = [];
@@ -199,7 +186,6 @@ export default function DashCaixa() {
       return;
     }
 
-    // ==== FILTRO MENSAL ====
     if (filtroMov === "Mensal") {
       const ultimoDia = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
       const dias: Record<number, number> = {};
@@ -216,7 +202,6 @@ export default function DashCaixa() {
       return;
     }
 
-    // ==== FILTRO SEMESTRAL ====
     if (filtroMov === "Semestral") {
       const inicio = hoje.getMonth() < 6 ? 0 : 6;
       const fim = inicio + 5;
@@ -232,7 +217,6 @@ export default function DashCaixa() {
       return;
     }
 
-    // ==== FILTRO ANUAL ====
     if (filtroMov === "Anual") {
       const grupo: Record<number, number> = {};
       for (let m = 0; m < 12; m++) grupo[m] = 0;
@@ -247,7 +231,6 @@ export default function DashCaixa() {
     }
   }, [movsRaw, filtroMov]);
 
-  // ===== CARREGAR CAIXA ATUAL =====
   useEffect(() => {
     dashboardCaixaService
       .getCaixaAtual()
@@ -255,7 +238,6 @@ export default function DashCaixa() {
       .catch((err) => console.error(err));
   }, []);
 
-  // ===== CAMPOS DO FORM =====
   const fields = [
     {
       name: "tipo",
@@ -264,16 +246,16 @@ export default function DashCaixa() {
       options:
         tipoMovimentacao === "Saida"
           ? [
-              { label: "Sangria", value: "Sangria" },
-              { label: "Pagamento", value: "Pagamento" },
-              { label: "Outros", value: "Outros" },
-            ]
+            { label: "Sangria", value: "Sangria" },
+            { label: "Pagamento", value: "Pagamento" },
+            { label: "Outros", value: "Outros" },
+          ]
           : [
-              { label: "Venda", value: "Venda" },
-              { label: "Investimento", value: "Investimento" },
-              { label: "Devolução", value: "Devolucao" },
-              { label: "Outros", value: "Outros" },
-            ],
+            { label: "Venda", value: "Venda" },
+            { label: "Investimento", value: "Investimento" },
+            { label: "Devolução", value: "Devolucao" },
+            { label: "Outros", value: "Outros" },
+          ],
     },
     { name: "valor", type: "number", placeholder: "Valor da movimentação (R$)", required: true },
     { name: "data", type: "date", placeholder: "Data da movimentação" },
@@ -289,12 +271,6 @@ export default function DashCaixa() {
 
     alert(`${tipoMovimentacao} registrada com sucesso!`);
     setIsOpen(false);
-  };
-
-  const abrirModal = (tipo: "Entrada" | "Saida") => {
-    setTipoMovimentacao(tipo);
-    setIsOpen(true);
-    setForm({ tipo: "", descricao: "", valor: "", data: "" });
   };
 
   const colunasHistoricoCaixa = [
@@ -354,6 +330,7 @@ export default function DashCaixa() {
             fetchData={async () => {
               try {
                 const data: Movimentacao[] = await dashboardCaixaService.getMovimentacoes();
+                console.log("Vendas por pagamento -> ", data);
 
                 return data
                   .map((item: Movimentacao) => ({
@@ -367,22 +344,8 @@ export default function DashCaixa() {
                 return [];
               }
             }}
-            alturaMax="md:max-h-150"
+            alturaMax="md:max-h-200"
           />
-
-          <div className="flex justify-between items-center w-full mb-13 mt-2">
-            <Button
-              className="bg-red-alert text-black font-semibold px-4 py-2 rounded hover:text-ice"
-              children="Nova movimentação de saída"
-              onClick={() => abrirModal("Saida")}
-            />
-
-            <Button
-              className="bg-pear-green text-black font-semibold px-4 py-2 rounded hover:text-ice"
-              children="Nova movimentação de entrada"
-              onClick={() => abrirModal("Entrada")}
-            />
-          </div>
         </div>
       </div>
 

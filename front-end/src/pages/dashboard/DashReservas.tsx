@@ -81,13 +81,11 @@ const formatarData = (data?: string): string => {
     const dia = String(d.getDate()).padStart(2, "0");
     const mes = String(d.getMonth() + 1).padStart(2, "0");
     const ano = d.getFullYear();
-
     const horas = String(d.getHours()).padStart(2, "0");
     const minutos = String(d.getMinutes()).padStart(2, "0");
 
     return `${dia}/${mes}/${ano} ${horas}:${minutos}`;
 };
-
 
 const gerarDataReservas = (reservas: ReservaAPI[]): DadosGrafico[] => {
     const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
@@ -100,11 +98,9 @@ const gerarDataReservas = (reservas: ReservaAPI[]): DadosGrafico[] => {
         if (isNaN(dataCriacao.getTime())) return;
 
         const mes = dataCriacao.getMonth();
-
         if (r.ven_status === "CONCLUIDA") data[mes].vendidas++;
         if (r.ven_status === "CANCELADA") data[mes].canceladas++;
     });
-
     return data;
 };
 
@@ -140,8 +136,8 @@ const formatarReservasParaTabela = (data: ReservaAPI[]): ReservaFormatada[] => {
 };
 
 export default function DashReservas() {
-    const navigate = useNavigate();
 
+    const navigate = useNavigate();
     const [reservasAPI, setReservasAPI] = useState<ReservaAPI[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [selectedReserva, setSelectedReserva] = useState<ReservaFormatada | null>(null);
@@ -149,7 +145,6 @@ export default function DashReservas() {
     const [loading, setLoading] = useState(true);
     const [erro, setErro] = useState<string | null>(null);
     const [ordenacao, setOrdenacao] = useState<"mais-recentes" | "mais-antigas">("mais-recentes");
-
 
     const carregarReservas = useCallback(async () => {
         try {
@@ -170,12 +165,14 @@ export default function DashReservas() {
             await dashboardReservaService.atualizarStatusReserva(id, status);
             alert(`Reserva ${status.toLowerCase()} com sucesso!`);
             carregarReservas();
+
+            const novasAtivas = await dashboardReservaService.getReservasAtivas();
+            setReservasAtivas(novasAtivas);
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
             alert("Erro ao atualizar status.");
         }
     }, [carregarReservas]);
-
 
     useEffect(() => {
         carregarReservas();
@@ -188,8 +185,9 @@ export default function DashReservas() {
             const dataA = a.data ? new Date(a.data).getTime() : 0;
             const dataB = b.data ? new Date(b.data).getTime() : 0;
 
-            if (ordenacao === "mais-recentes") return dataB - dataA; // do mais recente para o mais antigo
-            return dataA - dataB; // do mais antigo para o mais recente
+
+            if (ordenacao === "mais-recentes") return dataB - dataA; 
+            return dataA - dataB; 
         });
     }, [reservasAPI, ordenacao]);
 
@@ -240,9 +238,7 @@ export default function DashReservas() {
             .catch((err) => console.error(err));
     }, []);
 
-
     return (
-
         <div className="flex bg-black-smooth/95">
             <NavBarDashboard page="Reservas" />
 

@@ -17,12 +17,21 @@ export default function DashProdutos() {
         status: "Ativo",
         categoria: "",
     });
+    const [formEdit, setFormEdit] = useState({
+        nome: "",
+        valor: 0,
+        marca: "",
+        cod: "",
+        status: "Ativo",
+        categoria: "",
+    });
+    const [edit, setEdit] = useState(false);
     const fields = [
         { name: "nome", type: "text", placeholder: "Nome do produto", required: true },
         { name: "cod", type: "text", placeholder: "codigo do produto", required: true },
         { name: "marca", type: "text", placeholder: "Marca do produto", required: true },
         { name: "valor", type: "number", placeholder: "Valor do produto (R$)", required: true },
-        { name: "estoque", type: "number", placeholder: "Quantidade em estoque", required: true },
+        edit == false && { name: "estoque", type: "number", placeholder: "Quantidade em estoque", required: true },
         {
             name: "status",
             type: "select",
@@ -33,7 +42,7 @@ export default function DashProdutos() {
             ],
         },
         {
-            name: "Categoria",
+            name: "categoria",
             type: "select",
             placeholder: "Categoria do produto",
             options: [
@@ -48,7 +57,7 @@ export default function DashProdutos() {
                 { label: "Outros", value: "Outros" },
             ],
         },
-    ];
+    ].filter(Boolean) as any[];
     const [isOpenEstoque, setIsOpenEstoque] = useState(false);
     const [tipoEstoque, setTipoEstoque] = useState<"Entrada" | "Saida" | null>(null);
     const abrirModal = (tipo: "Entrada" | "Saida") => {
@@ -84,10 +93,12 @@ export default function DashProdutos() {
     const [images, setImages] = useState<File[]>([]);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+    
     const [isOpen, setIsOpen] = useState(false);
 
     const [produtoEditando, setProdutoEditando] = useState<any>(null);
@@ -296,12 +307,11 @@ export default function DashProdutos() {
 
     useEffect(() => {
         if (produtoEditando) {
-            setForm({
+            setFormEdit({
                 nome: produtoEditando.produto || "",
                 valor: produtoEditando.valor || "",
                 marca: produtoEditando.marca || "",
                 cod: produtoEditando.codigo || "",
-                estoque: produtoEditando.estoque || "",
                 status: produtoEditando.status ? "Ativo" : "Inativo",
                 categoria: produtoEditando.categoria || "",
             });
@@ -380,6 +390,7 @@ export default function DashProdutos() {
                                 onClick: (item) => {
                                     setProdutoEditando(item); // 🔥 salva o produto
                                     setIsOpenEdit(true);      // abre o modal
+                                    setEdit(true);
                                 },
                             },
                         ]}
@@ -567,8 +578,8 @@ export default function DashProdutos() {
                             {/* Inputs dinâmicos */}
                             <FormGenerator
                                 fields={fields}
-                                form={form}
-                                setForm={setForm}
+                                form={formEdit}
+                                setForm={setFormEdit}
                                 className="grid grid-cols-2 gap-4"
                             />
 

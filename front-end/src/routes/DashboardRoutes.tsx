@@ -5,6 +5,7 @@ import DashProdutos from "../pages/dashboard/DashProdutos";
 import DashReservas from "../pages/dashboard/DashReservas";
 import DashAnalise from "../pages/dashboard/DashAnalise";
 import DashNovaVenda from "../pages/dashboard/DashNovaVenda";
+import ProdfutoForm from "../pages/dashboard/ProdfutoForm";
 
 export const dashboardRoutes = (
   <>
@@ -14,5 +15,6 @@ export const dashboardRoutes = (
     <Route path="/dashboard/reservas" element={<DashReservas />} />
     <Route path="/dashboard/vendas/analise" element={<DashAnalise />} />
     <Route path="/dashboard/vendas/nova-venda" element={<DashNovaVenda />} />
+    <Route path="/dashboard/teste" element={<ProdfutoForm />} />
   </>
 );

@@ -12,6 +12,7 @@ export default function NavBar() {
 
   const [user, setUser] = useState<any>(null);
   const [userName, setUserName] = useState("");
+  const [userPhone, setUserPhone] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -22,6 +23,7 @@ export default function NavBar() {
         const response = await getUserProfile();
         setUser(response.data); // O Nest retorna req.user
         setUserName(response.data.usu_nome)
+        setUserPhone(response.data.usu_tel)
         console.log("Nome do usuario: ", userName);
       } catch (err) {
         console.error("Erro ao obter perfil:", err);
@@ -47,7 +49,7 @@ export default function NavBar() {
     <div className=" bg-primary-orange py-4 px-2 flex flex-col justify-between items-center ">
       <div className="flex justify-between items-center w-full">
         <div className="h-20 w-5/12">
-          <button onClick={() => window.location.href = "/"} className=" cursor-pointer ">
+          <button onClick={() => userPhone == "12987654321" ? navigate("/dashboard/geral") : navigate("")} className=" cursor-pointer ">
             <img src="/logo-black-full.png" alt="" className="absolute  md:block hidden md:w-30 lg:w-40 top-0 " />
             <img src="/logo-black-mini.png" alt="" className="absolute md:hidden block w-40 top-10" />
           </button>

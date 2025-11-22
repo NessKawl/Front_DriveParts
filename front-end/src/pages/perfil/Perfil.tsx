@@ -6,6 +6,7 @@ import { Edit, LogOut, Phone, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getUserProfile } from "../../services/dataService";
 import { getReservasAtivas, getHistoricoGeral } from "../../services/historicoService";
+import { logout } from "../../utils/auth";
 
 export default function Perfil() {
     const navigate = useNavigate()
@@ -121,6 +122,7 @@ export default function Perfil() {
                             className="mt-6 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition px-4 py-2 rounded-lg flex items-center justify-center gap-2 w-full"
                             onClick={() => {
                                 // Lógica de logout aqui
+                                logout();
                                 navigate("/catalogo")
                             }}
                         >

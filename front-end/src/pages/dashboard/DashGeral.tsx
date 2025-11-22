@@ -377,7 +377,7 @@ export default function DashGeral() {
                             <GraficoLinhas
                                 data={dadosGraficoVendas}
                                 titulo="Vendas"
-                                filtro={true}
+                                filtro={false}
                                 tituloFiltro="Filtrar"
                                 filtroChildren={filtros}
                                 series={[{ key: "vendas", color: "#22C55E", label: "Vendas" }]}

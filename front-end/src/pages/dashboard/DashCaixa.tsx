@@ -50,7 +50,7 @@ export default function DashCaixa() {
   const [tipoMovimentacao, setTipoMovimentacao] = useState<"Entrada" | "Saida" | null>(null);
   const [caixaAtual, setCaixaAtual] = useState<number>(0);
   const [vendasPorPagamento, setVendasPorPagamento] = useState<{ name: string; value: number }[]>([]);
-  const [filtroMov, setFiltroMov] = useState("Mensal");
+  const [filtroMov, setFiltroMov] = useState("Semanal");
   const [fluxoMovimentacao, setFluxoMovimentacao] = useState<FluxoMov[]>([]);
   const [movsRaw, setMovsRaw] = useState<Movimentacao[]>([]);
 
@@ -182,7 +182,16 @@ export default function DashCaixa() {
         if (key in mapa) mapa[key] += m.tipo === "Entrada" ? m.valor : -m.valor;
       });
 
-      setFluxoMovimentacao(dias.map((key) => ({ name: key.slice(5), caixa: mapa[key] })));
+      setFluxoMovimentacao(
+        dias.map((key) => {
+          const [ano, mes, dia] = key.split("-");
+          return {
+            name: `${dia}/${mes}`,
+            caixa: mapa[key],
+          };
+        })
+      );
+
       return;
     }
 

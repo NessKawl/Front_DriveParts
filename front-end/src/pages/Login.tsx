@@ -4,19 +4,22 @@ import NavBarSimples from "../components/navbar/NavbarSimples"
 import FooterMain from "../components/footer/FooterMain"
 import { useState } from "react"
 import { VerifyLogin } from "../services/dataService"
+import { useSearchParams } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [form, setForm] = useState({
-    telefone: "",
-    senha: "",
-  });
+  const [form, setForm] = useState({ telefone: "", senha: "", });
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get("redirect");
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (error) setError("");
     setForm({ ...form, [e.target.id]: e.target.value });
   };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
@@ -36,14 +39,25 @@ export default function Login() {
       localStorage.setItem("user", JSON.stringify(response.data.user));
       console.log(localStorage.getItem("user"));
 
-      navigate("/catalogo");
+      if (redirect) {
+        navigate(redirect);
+      } else {
+        navigate("/catalogo");
+      }
     } catch (err: any) {
       console.log(err);
-      setError(err.response?.data?.message || "Erro ao fazer login.");
-    } finally {
+
+      if (err.response?.status === 401 || err.response?.status === 404) {
+        setError("Telefone ou senha incorretos.");
+      } else {
+        setError("Erro ao fazer login. Tente novamente.");
+      }
+    }
+    finally {
       setLoading(false);
     }
   }
+
   return (
     <div className="bg-ice h-screen flex flex-col justify-between">
       <NavBarSimples rota={"catalogo"} />
@@ -61,7 +75,10 @@ export default function Login() {
                 id="telefone"
                 type="text"
                 placeholder="Insira seu Telefone"
-                className="w-full border border-gray-300 rounded-lg p-2 "
+                //className=" ${ error ? 'border-red-500' : 'border-gray-300'}"
+                className={`w-full border border-gray-300 rounded-lg p-2 ${error ? "border-red-500" : "border-gray-300"
+                  }`}
+
                 value={form.telefone}
                 onChange={handleChange}
               />
@@ -74,10 +91,21 @@ export default function Login() {
                   id="senha"
                   type="password"
                   placeholder="Insira sua Senha"
-                  className="w-full border border-gray-300 rounded-lg p-2 "
+                  //className="w-full border border-gray-300 rounded-lg p-2 ${ error ? border-red-500 : border-gray-300 }"
+                  className={`w-full border border-gray-300 rounded-lg p-2 ${error ? "border-red-500" : "border-gray-300"
+                    }`}
+
                   value={form.senha}
                   onChange={handleChange}
                 />
+              </div>
+
+              <div className="flex">
+                {error && (
+                  <p className="text-red-600 font-semibold mb-1">
+                    {error}
+                  </p>
+                )}
               </div>
 
               <div className="font-bold flex justify-end items-end mb-8 w-full">
@@ -86,12 +114,15 @@ export default function Login() {
             </div>
 
           </div>
+
+
           <Button
             children="ACESSAR"
             className="bg-ocean-blue text-ice font-semibold py-2 px-4 md:text-xl hover:bg-primary-orange"
             type="submit"
           />
           <Button
+            type="button"
             onClick={() => navigate("/cadastro")}
             children="Não possui uma conta? Cadastre-se agora!"
             className="font-medium text-black-smooth hover:text-primary-orange mt-5  underline"

@@ -8,6 +8,8 @@ import { Register } from "../services/dataService";
 export default function Cadastro() {
   const navigate = useNavigate()
   const [error, setError] = useState("");
+  const [errorTelefone, setErrorTelefone] = useState("");
+  const [senhaErro, setSenhaErro] = useState("");
   const [form, setForm] = useState({
     Nome: "",
     telefone: "",
@@ -16,8 +18,26 @@ export default function Cadastro() {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+
+    const novoForm = { ...form, [id]: value };
+    setForm(novoForm);
+
+    if (error) setError("");
+
+    if (id === "senha" || id === "confirmarSenha") {
+      if (
+        novoForm.senha &&
+        novoForm.confirmarSenha &&
+        novoForm.senha !== novoForm.confirmarSenha
+      ) {
+        setSenhaErro("As senhas não coincidem!");
+      } else {
+        setSenhaErro("");
+      }
+    }
   };
+
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -25,22 +45,23 @@ export default function Cadastro() {
 
     if (!form.telefone || !form.senha) {
       setError("Preencha todos os campos obrigatórios.");
-      alert("Preencha todos os campos obrigatórios.");
       return;
     }
     if (form.senha !== form.confirmarSenha) {
       setError("As senhas devem ser iguais.");
-      alert("As senhas devem ser iguais.");
       return;
     }
 
     try {
       await Register(form.Nome, form.telefone, form.senha)
-    } catch (err) {
+
+      navigate("/login");
+    } catch (err: any) {
+      if (err.response?.status === 409) {
+        setErrorTelefone("Telefone já cadastrado! Insira um novo ou tente fazer login.");
+      }
       console.error("Erro ao cadastrar: ", err)
     }
-
-    navigate("/verificacao")
   }
   return (
     <div className="bg-ice h-screen flex flex-col justify-between">
@@ -59,7 +80,9 @@ export default function Cadastro() {
                 id="Nome"
                 type="text"
                 placeholder="Insira seu Nome Completo"
-                className="w-full sm:w-full border border-gray-300 rounded-lg p-2 "
+                // className="w-full sm:w-full border border-gray-300 rounded-lg p-2 "
+                className={`w-full sm:w-full border  rounded-lg p-2 ${error ? "border-red-500" : "border-gray-300"}`}
+
                 value={form.Nome}
                 onChange={handleChange}
               />
@@ -70,7 +93,9 @@ export default function Cadastro() {
                 id="telefone"
                 type="text"
                 placeholder="Insira seu Telefone"
-                className="w-full sm:w-full border border-gray-300 rounded-lg p-2 "
+                // className="w-full sm:w-full border border-gray-300 rounded-lg p-2 "
+                className={`w-full sm:w-full rounded-lg p-2 border ${error || errorTelefone ? "border-red-500" : "border-gray-300"}`}
+
                 value={form.telefone}
                 onChange={handleChange}
               />
@@ -81,24 +106,38 @@ export default function Cadastro() {
                 id="senha"
                 type="password"
                 placeholder="Insira sua Senha"
-                className="w-full sm:w-full border border-gray-300 rounded-lg p-2 "
+                // className="w-full sm:w-full border border-gray-300 rounded-lg p-2 "
+                className={`w-full sm:w-full rounded-lg p-2 border ${senhaErro || error ? "border-red-500" : "border-gray-300"}`}
+
                 value={form.senha}
                 onChange={handleChange}
               />
             </div>
             <div>
-              <label htmlFor="" className="font-semibold sm:w-full">Senha</label>
+              <label htmlFor="" className="font-semibold sm:w-full">Confirme sua senha</label>
               <input
                 id="confirmarSenha"
                 type="password"
-                placeholder="Confirme sua Senha"
-                className="w-full sm:w-full border border-gray-300 rounded-lg p-2 "
+                placeholder="Insira novamente sua Senha"
+                // className="w-full sm:w-full border border-gray-300 rounded-lg p-2 "
+                className={`w-full sm:w-full rounded-lg p-2 border ${senhaErro || error ? "border-red-500" : "border-gray-300"}`}
+
                 value={form.confirmarSenha}
                 onChange={handleChange}
               />
             </div>
+
+
+
+            {(error || senhaErro || errorTelefone) && (
+              <p className="text-red-600 font-semibold">
+                {error || senhaErro || errorTelefone}
+              </p>
+            )}
+
+
             <p className="font-light text-md">
-              Ao prosseguir com o cadastro, declaro que li e concordo com a <span className="border-b font-bold text-blue-700 " onClick={() => navigate("/termos-de-uso")}> Política de Privacidade</span>.
+              Ao prosseguir com o cadastro, declaro que li e concordo com a <span className="border-b font-bold text-blue-700 cursor-pointer" onClick={() => navigate("/termos-de-uso")}> Política de Privacidade</span>.
             </p>
           </div>
           <Button

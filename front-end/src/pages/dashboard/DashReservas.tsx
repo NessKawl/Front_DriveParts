@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import Button from "../../components/buttons/Button";
 import { useNavigate } from "react-router-dom";
 import { dashboardReservaService } from "../../services/dashboardReservaService";
+import Modal from "../../components/modal/Modal";
 
 type StatusReserva = "RESERVA" | "CONCLUIDA" | "CANCELADA" | "EXPIRADA";
 
@@ -145,6 +146,18 @@ export default function DashReservas() {
     const [loading, setLoading] = useState(true);
     const [erro, setErro] = useState<string | null>(null);
     const [ordenacao, setOrdenacao] = useState<"mais-recentes" | "mais-antigas">("mais-recentes");
+    const [modalConfirmOpen, setModalConfirmOpen] = useState(false);
+    const [idReservaCancelar, setIdReservaCancelar] = useState<number | null>(null);
+
+    const confirmarCancelamento = async () => {
+        if (!idReservaCancelar) return;
+
+        await atualizarStatus(idReservaCancelar, "CANCELADA");
+
+        setModalConfirmOpen(false);
+        setIdReservaCancelar(null);
+        setIsOpen(false);
+    };
 
     const carregarReservas = useCallback(async () => {
         try {
@@ -186,8 +199,8 @@ export default function DashReservas() {
             const dataB = b.data ? new Date(b.data).getTime() : 0;
 
 
-            if (ordenacao === "mais-recentes") return dataB - dataA; 
-            return dataA - dataB; 
+            if (ordenacao === "mais-recentes") return dataB - dataA;
+            return dataA - dataB;
         });
     }, [reservasAPI, ordenacao]);
 
@@ -363,25 +376,44 @@ export default function DashReservas() {
                             <div className="flex flex-row justify-around items-center w-full text-xl">
                                 {selectedReserva.status === "RESERVA" && (
                                     <Button
-                                        onClick={() => atualizarStatus(selectedReserva.id, "CANCELADA")}
+                                        onClick={() => {
+                                            setIdReservaCancelar(selectedReserva.id);
+                                            setModalConfirmOpen(true);
+                                        }}
                                         children="Cancelar reserva"
                                         className="border border-red-alert text-red-alert font-semibold py-2 px-6 rounded-xl hover:bg-red-alert hover:text-white hover:shadow-red-alert/50 hover:shadow-md transition-shadow duration-300 cursor-pointer"
                                     />
                                 )}
-                                <Button
-                                    onClick={() => {
-                                        setIsOpen(false);
-                                        setSelectedReserva(null);
-                                        navigate(`/dashboard/vendas/nova-venda?reserva=${selectedReserva.id}`);
-                                    }}
-                                    children="Ir para venda"
-                                    className="bg-pear-green/80 text-white font-semibold px-6 py-2 rounded-xl hover:bg-pear-green hover:shadow-pear-green/50 hover:shadow-md transition-shadow duration-300 hover:text-shadow-2xs"
-                                />
+                                {selectedReserva.status === "RESERVA" && (
+                                    <Button
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            setSelectedReserva(null);
+                                            navigate(`/dashboard/vendas/nova-venda?reserva=${selectedReserva.id}`);
+                                        }}
+                                        children="Ir para venda"
+                                        className="bg-pear-green/80 text-white font-semibold px-6 py-2 rounded-xl hover:bg-pear-green hover:shadow-pear-green/50 hover:shadow-md transition-shadow duration-300 hover:text-shadow-2xs"
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
             )}
+
+            <Modal
+                isOpen={modalConfirmOpen}
+                title="Cancelar Reserva"
+                message="Tem certeza que deseja cancelar esta reserva?"
+                actionText="Sim, cancelar"
+                cancelText="Não"
+                onClose={() => setModalConfirmOpen(false)}
+                onAction={confirmarCancelamento}
+                onCancel={() => setModalConfirmOpen(false)}
+            />
+
+
+
         </div>
     );
 }

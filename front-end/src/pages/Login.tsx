@@ -6,6 +6,29 @@ import { useState } from "react"
 import { VerifyLogin } from "../services/dataService"
 import { useSearchParams } from "react-router-dom";
 
+const formatTelefone = (value: string) => {
+  // Remove tudo que não for número (bloqueia letras e símbolos)
+  let numeros = value.replace(/\D/g, "");
+
+  // Limita a 11 dígitos (DDD + celular)
+  if (numeros.length > 11) {
+    numeros = numeros.slice(0, 11);
+  }
+
+  // Fixo: (99) 9999-9999
+  if (numeros.length <= 10) {
+    return numeros
+      .replace(/^(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{4})(\d)/, "$1-$2");
+  }
+
+  // Celular: (99) 99999-9999
+  return numeros
+    .replace(/^(\d{2})(\d)/, "($1) $2")
+    .replace(/(\d{5})(\d)/, "$1-$2");
+};
+
+
 export default function Login() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false);
@@ -17,8 +40,18 @@ export default function Login() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (error) setError("");
-    setForm({ ...form, [e.target.id]: e.target.value });
+
+    if (e.target.id === "telefone") {
+      const somenteNumeros = e.target.value.replace(/\D/g, "");
+      setForm({
+        ...form,
+        telefone: somenteNumeros, // 🔥 valor limpo armazenado
+      });
+    } else {
+      setForm({ ...form, [e.target.id]: e.target.value });
+    }
   };
+
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -73,13 +106,13 @@ export default function Login() {
               <label htmlFor="" className="font-semibold">Telefone</label>
               <input
                 id="telefone"
-                type="text"
+                type="tel"
                 placeholder="Insira seu Telefone"
                 //className=" ${ error ? 'border-red-500' : 'border-gray-300'}"
                 className={`w-full border border-gray-300 rounded-lg p-2 ${error ? "border-red-500" : "border-gray-300"
                   }`}
 
-                value={form.telefone}
+                value={formatTelefone(form.telefone)}
                 onChange={handleChange}
               />
             </div>

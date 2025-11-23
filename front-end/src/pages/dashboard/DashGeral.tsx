@@ -38,6 +38,18 @@ interface Reserva {
     usu_usuario?: any;
 }
 
+const formatarTelefone = (telefone: string) => {
+  if (!telefone) return "";
+  const numeros = telefone.replace(/\D/g, "");
+  if (numeros.length === 11) {
+    return numeros.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+  } else if (numeros.length === 10) {
+    return numeros.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+  } else {
+    return telefone;
+  }
+};
+
 function pad(n: number) {
     return String(n).padStart(2, "0");
 }
@@ -189,7 +201,7 @@ export default function DashGeral() {
 
                         return {
                             cliente: reserva.usu_usuario?.usu_nome ?? "—",
-                            telefone: reserva.usu_usuario?.usu_tel ?? "—",
+                            telefone: formatarTelefone(reserva.usu_usuario?.usu_tel) ?? "—",
                             quantidade: quantidadeTotal,
                             total: valorTotalNumber.toLocaleString("pt-BR", {
                                 style: "currency",

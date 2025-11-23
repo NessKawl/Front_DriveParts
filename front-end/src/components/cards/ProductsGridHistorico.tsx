@@ -21,9 +21,10 @@ interface GridProps {
   tituloFiltro?: string;
   filtroChildren?: Filtro[];
   tipo?: "historico" | "reservasAtivas"
+  onClickItem?: (item: any) => void;
 }
 
-export default function ProductsGrid({ title, filtro, tituloFiltro, filtroChildren, tipo = "historico", products }: GridProps) {
+export default function ProductsGrid({ title, filtro, tituloFiltro, filtroChildren, tipo = "historico", products, onClickItem, }: GridProps) {
   // 🔍 Filtro baseado no tipo de grid
   const filteredProducts = products.filter((product) => {
     if (tipo === "historico") return product.reserva && product.status
@@ -51,6 +52,7 @@ export default function ProductsGrid({ title, filtro, tituloFiltro, filtroChildr
             name={product.name}
             reserva={product.reserva}
             status={product.status}
+            onClick={() => onClickItem?.(product)}
           />
         ))}
       </div>

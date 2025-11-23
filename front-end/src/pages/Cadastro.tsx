@@ -5,6 +5,25 @@ import NavBarSimples from "../components/navbar/NavbarSimples";
 import { useNavigate } from "react-router-dom"
 import { Register } from "../services/dataService";
 
+const formatTelefone = (value: string) => {
+  value = value.replace(/\D/g, ""); // remove tudo que não for número
+
+  if (value.length > 11) value = value.slice(0, 11);
+
+  if (value.length <= 10) {
+    // Fixo: (99) 9999-9999
+    value = value.replace(/(\d{2})(\d)/, "($1) $2");
+    value = value.replace(/(\d{4})(\d)/, "$1-$2");
+  } else {
+    // Celular: (99) 99999-9999
+    value = value.replace(/(\d{2})(\d)/, "($1) $2");
+    value = value.replace(/(\d{5})(\d)/, "$1-$2");
+  }
+
+  return value;
+};
+
+
 export default function Cadastro() {
   const navigate = useNavigate()
   const [error, setError] = useState("");
@@ -52,10 +71,19 @@ export default function Cadastro() {
       return;
     }
 
-    try {
-      await Register(form.Nome, form.telefone, form.senha)
 
-      navigate("/login");
+    try {
+      const telefoneSemMascara = form.telefone.replace(/\D/g, "");
+
+      await Register(form.Nome, telefoneSemMascara, form.senha)
+
+      setError("");
+      setErrorTelefone("");
+      setSenhaErro("");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 100);
     } catch (err: any) {
       if (err.response?.status === 409) {
         setErrorTelefone("Telefone já cadastrado! Insira um novo ou tente fazer login.");
@@ -96,7 +124,7 @@ export default function Cadastro() {
                 // className="w-full sm:w-full border border-gray-300 rounded-lg p-2 "
                 className={`w-full sm:w-full rounded-lg p-2 border ${error || errorTelefone ? "border-red-500" : "border-gray-300"}`}
 
-                value={form.telefone}
+                value={formatTelefone(form.telefone)}
                 onChange={handleChange}
               />
             </div>

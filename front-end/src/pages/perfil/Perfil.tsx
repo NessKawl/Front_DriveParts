@@ -7,6 +7,20 @@ import { useEffect, useState } from "react";
 import { getUserProfile } from "../../services/dataService";
 import { getReservasAtivas, getHistoricoGeral } from "../../services/historicoService";
 import { logout } from "../../utils/auth";
+import ModalReserva from "../../components/modal/ModalHistórico";
+
+const formatarTelefone = (telefone: string) => {
+  if (!telefone) return "";
+  const numeros = telefone.replace(/\D/g, "");
+  if (numeros.length === 11) {
+    return numeros.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+  } else if (numeros.length === 10) {
+    return numeros.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+  } else {
+    return telefone;
+  }
+};
+
 
 export default function Perfil() {
     const navigate = useNavigate()
@@ -43,6 +57,20 @@ export default function Perfil() {
     const [tel, setTel] = useState<any>(null);
     const [reservasAtivas, setReservasAtivas] = useState<any[]>([]);
     const [historico, setHistorico] = useState<any[]>([]);
+    const [reservaSelecionada, setReservaSelecionada] = useState<any>(null);
+    const [modalAberto, setModalAberto] = useState(false);
+
+    const abrirModalReserva = (item: any) => {
+        setReservaSelecionada(item.dadosCompletos);
+        setModalAberto(true);
+    };
+
+
+    const fecharModalReserva = () => {
+        setModalAberto(false);
+        setReservaSelecionada(null);
+    };
+
 
     useEffect(() => {
         const fetchUserAndReservas = async () => {
@@ -50,28 +78,28 @@ export default function Perfil() {
                 const token = localStorage.getItem("token");
                 if (!token) return;
 
-
                 const response = await getUserProfile();
                 setNome(response.data.usu_nome);
                 setTel(response.data.usu_tel);
 
-
                 const reservasAtivasRaw = await getReservasAtivas(token);
                 const historicoRaw = await getHistoricoGeral(token);
 
-                // Mapear para ProductsGrid
                 const mapearReservas = (lista: any[]) =>
-                    lista.map((reserva) => {
-                        const produto = reserva.ite_itemVenda?.[0]?.pro_produto;
-
-                        return {
-                            image: produto?.pro_caminho_img || "/produtos/sem-imagem.png",
-                            name: produto?.pro_nome || `Reserva #${reserva.ven_id}`,
-                            reserva: `Reservado em ${new Date(reserva.ven_data_criacao).toLocaleDateString("pt-BR")}`,
-                            status: reserva.ven_status,
-                        };
-                    });
-
+                    lista.map((reserva) => ({
+                        image: reserva.ite_itemVenda?.[0]?.pro_produto?.pro_caminho_img || "/produtos/sem-imagem.png",
+                        name: reserva.ite_itemVenda?.[0]?.pro_produto?.pro_nome || `Reserva #${reserva.ven_id}`,
+                        reserva: `Reservado em ${new Date(reserva.ven_data_criacao).toLocaleDateString("pt-BR")}`,
+                        status: reserva.ven_status,
+                        dadosCompletos: {
+                            ...reserva,
+                            itens: reserva.ite_itemVenda.map((item: any) => ({
+                                quantidade: item.ite_qtd,
+                                valor: item.ite_valor,
+                                nome: item.pro_produto?.pro_nome || "Produto sem nome",
+                            })),
+                        },
+                    }));
 
                 setReservasAtivas(mapearReservas(reservasAtivasRaw));
                 setHistorico(mapearReservas(historicoRaw));
@@ -85,7 +113,6 @@ export default function Perfil() {
 
         fetchUserAndReservas();
     }, []);
-
 
     const user = {
         nome: nome,
@@ -115,7 +142,7 @@ export default function Perfil() {
                             </div>
                             <h2 className="text-2xl font-bold text-gray-800">{user.nome}</h2>
                             <p className="text-gray-600 flex items-center justify-center gap-1 mt-1">
-                                <Phone size={16} /> {user.telefone}
+                                <Phone size={16} /> {formatarTelefone(user.telefone)}
                             </p>
                         </div>
                         <button
@@ -137,6 +164,7 @@ export default function Perfil() {
                         title="Suas Reservas Ativas"
                         tipo="reservasAtivas"
                         products={reservasAtivas}
+                        onClickItem={abrirModalReserva}
                     />
                 </div>
                 <div className="md:px-10">
@@ -147,8 +175,19 @@ export default function Perfil() {
                         title="Histórico de Reservas"
                         tipo="historico"
                         products={historico}
+                        onClickItem={abrirModalReserva}
                     />
                 </div>
+
+                {modalAberto && reservaSelecionada && (
+                    <ModalReserva
+                        isOpen={modalAberto}
+                        dados={reservaSelecionada}
+                        onClose={fecharModalReserva}
+                    />
+                )}
+
+
             </main>
             <footer>
                 <FooterMain />

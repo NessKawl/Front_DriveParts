@@ -148,6 +148,24 @@ export default function DashReservas() {
     const [ordenacao, setOrdenacao] = useState<"mais-recentes" | "mais-antigas">("mais-recentes");
     const [modalConfirmOpen, setModalConfirmOpen] = useState(false);
     const [idReservaCancelar, setIdReservaCancelar] = useState<number | null>(null);
+    const [modalSucessoOpen, setModalSucessoOpen] = useState(false);
+    const [modalSucessoMensagem, setModalSucessoMensagem] = useState("");
+
+    const abrirModalSucesso = (mensagem: string, onConfirm?: () => void) => {
+        setModalSucessoMensagem(mensagem);
+        setModalSucessoOpen(true);
+        // Se precisar fazer algo quando clicar em OK
+        if (onConfirm) {
+            const originalOnClose = () => {
+                setModalSucessoOpen(false);
+                onConfirm();
+            };
+            setModalSucessoOpen(true);
+            return originalOnClose;
+        }
+    };
+
+
 
     const confirmarCancelamento = async () => {
         if (!idReservaCancelar) return;
@@ -176,14 +194,17 @@ export default function DashReservas() {
     const atualizarStatus = useCallback(async (id: number, status: "CANCELADA") => {
         try {
             await dashboardReservaService.atualizarStatusReserva(id, status);
-            alert(`Reserva ${status.toLowerCase()} com sucesso!`);
+            abrirModalSucesso(`Reserva ${status.toLowerCase()} com sucesso!`, () => {
+                carregarReservas(); // Opcional: recarrega as reservas depois de fechar modal
+            });
+
             carregarReservas();
 
             const novasAtivas = await dashboardReservaService.getReservasAtivas();
             setReservasAtivas(novasAtivas);
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
-            alert("Erro ao atualizar status.");
+
         }
     }, [carregarReservas]);
 
@@ -410,6 +431,15 @@ export default function DashReservas() {
                 onClose={() => setModalConfirmOpen(false)}
                 onAction={confirmarCancelamento}
                 onCancel={() => setModalConfirmOpen(false)}
+            />
+
+            <Modal
+                isOpen={modalSucessoOpen}
+                title="Sucesso"
+                message={modalSucessoMensagem}
+                actionText="OK"
+                onClose={() => setModalSucessoOpen(false)}
+                onAction={() => setModalSucessoOpen(false)}
             />
 
 

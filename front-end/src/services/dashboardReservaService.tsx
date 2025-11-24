@@ -27,15 +27,15 @@ export const dashboardReservaService = {
     return response.data;
   },
 
-  async adicionarItemVenda(pro_id: number, quantidade: number, valorUnitario: number) {
+  async adicionarItemVenda(ven_id: number, pro_id: number, quantidade: number, valorUnitario: number) {
     const response = await api.post("/reserva/adicionarItem", {
+      ven_id,
       pro_id,
       quantidade,
-      ite_valor_unit: valorUnitario 
+      ite_valor_unit: valorUnitario
     });
     return response.data;
   },
-
 
   async finalizarVenda(ven_id: number, formaPagamento: string) {
     const response = await api.patch(`/reserva/${ven_id}/finalizar`, {
@@ -46,5 +46,17 @@ export const dashboardReservaService = {
 
   async removerItemVenda(ven_id: number, pro_id: number) {
     return api.delete(`/reserva/${ven_id}/item/${pro_id}`);
+  },
+
+  async criarNovaVenda() {
+    const res = await api.post("/reserva/nova");
+    return res.data; // retorna a venda criada
+  },
+
+  // dashboardReservaService.ts
+  async removerReserva(ven_id: number) {
+    const response = await api.delete(`/reserva/remover/${ven_id}`);
+    return response.data;
   }
+
 };

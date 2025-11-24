@@ -3,6 +3,7 @@ import Button from "../buttons/Button";
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { dashboardReservaService } from "../../services/dashboardReservaService";
 
 interface NavBarDashboardProps {
   page: string;
@@ -32,7 +33,7 @@ export default function NavBarDashboard({ page }: NavBarDashboardProps) {
 
   return (
     <div className="bg-black-smooth border-r border-gray-100/20 w-50 text-center text-white flex flex-col justify-between max-h-screen lg:min-h-screen font-bold">
-      <img src="/logo-orange-full.png" alt=""  className="w-10/12 mx-auto " onClick={() => navigate("/catalogo")}/>
+      <img src="/logo-orange-full.png" alt="" className="w-10/12 mx-auto " onClick={() => navigate("/catalogo")} />
 
       <div className="flex flex-col">
         {/* Botões comuns */}
@@ -81,7 +82,20 @@ export default function NavBarDashboard({ page }: NavBarDashboardProps) {
                 Análise de Vendas
               </button>
               <button
-                onClick={() => navigateVendas("nova-venda")}
+                onClick={async () => {
+                  try {
+                    const novaVenda = await dashboardReservaService.criarNovaVenda();
+                    if (!novaVenda?.id) {
+                      alert("Erro: não foi possível criar nova venda");
+                      return;
+                    }
+                    navigate(`/dashboard/vendas/nova-venda?reserva=${novaVenda.id}`);
+
+                  } catch (err) {
+                    console.error(err);
+                    alert("Erro ao criar nova venda!");
+                  }
+                }}
                 className="w-full text-left px-5 py-3 hover:bg-primary-orange/10 text-ice text-sm"
               >
                 Nova Venda

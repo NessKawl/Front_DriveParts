@@ -24,7 +24,7 @@ export default function GraficoLinhas({ titulo, data, series, filtro,
   tituloFiltro,
   filtroChildren, }: GraficoLinhasProps) {
   return (
-    <div className="w-full md:h-70">
+    <div className="w-full lg:h-90 md:h-70">
       <div className="w-full h-full bg-black-smooth border-l border-primary-orange p-2" >
         <div className="flex flex-row justify-between items-end">
           <h2 className="text-xl font-semibold mb-2 text-primary-orange">{titulo}</h2>

@@ -50,17 +50,63 @@ export default function DashNovaVenda() {
     const [modalBotaoAcao, setModalBotaoAcao] = useState("");
     const [acaoModal, setAcaoModal] = useState<(() => void) | undefined>();
     const [modalTipo, setModalTipo] = useState<"erro" | "confirmacao">("confirmacao");
+    const [reservaCriada, setReservaCriada] = useState(false);
+    const [reservaIdState, setReservaIdState] = useState<number | null>(
+        reservaId ? Number(reservaId) : null
+    );
 
-    const abrirModalVoltar = () => {
+
+    const abrirModalVoltar = async () => {
         setModalTipo("confirmacao");
         setModalTitulo("Você deseja sair sem finalizar a venda?");
-
         setModalBotaoAcao("Sair");
-        setAcaoModal(() => () => {
-            navigate("/dashboard/Reservas");
+        setAcaoModal(() => async () => {
+            try {
+                if (carrinho.length === 0 && reservaId && reservaCriada) {
+                    await dashboardReservaService.removerReserva(Number(reservaId));
+                }
+
+            } catch (err) {
+                console.error("Erro ao remover reserva vazia:", err);
+            } finally {
+                navigate("/dashboard/Reservas");
+            }
         });
         setModalAberto(true);
     };
+
+    useEffect(() => {
+        async function iniciarReserva() {
+            if (!reservaIdState) {
+                try {
+                    const novaReserva = await dashboardReservaService.criarNovaVenda();
+                    setReservaIdState(novaReserva.id);
+                    setReservaCriada(true);
+                } catch (err) {
+                    console.error("Erro ao criar nova reserva:", err);
+                    abrirModalErro("Erro ao iniciar nova venda");
+                }
+            } else {
+                setReservaCriada(true);
+                // Carregar itens da reserva existente
+                try {
+                    const reserva = await dashboardReservaService.buscarReservaPorId(reservaIdState);
+                    const itens = (reserva.ite_itemVenda || []).map((item: any) => ({
+                        codigo: item.pro_produto.pro_cod,
+                        produto: item.pro_produto.pro_nome,
+                        valor: Number(item.ite_valor) / item.ite_qtd,
+                        quantidade: item.ite_qtd ?? 1,
+                    }));
+                    setCarrinho(itens);
+                } catch (err) {
+                    console.error(err);
+                    abrirModalErro("Erro! Reserva não encontrada");
+                }
+            }
+        }
+
+        iniciarReserva();
+    }, [reservaIdState]);
 
     const abrirModalFinalizar = () => {
         if (!formaPagamento) {
@@ -179,28 +225,40 @@ export default function DashNovaVenda() {
     // Adicionar produto ao carrinho
     const adicionarProdutoAoCarrinho = async () => {
         if (!produtoSelecionado) return abrirModalErro("Erro! Selecione um produto antes de adicionar.");
+        if (!reservaId) return abrirModalErro("Erro! Reserva não encontrada.");
+
         try {
-            await dashboardReservaService.adicionarItemVenda(produtoSelecionado.codigo, quantidade, valorUnitario);
-            if (reservaId) {
-                const reserva = await dashboardReservaService.buscarReservaPorId(Number(reservaId));
-                const itens = reserva.ite_itemVenda.map((item: any) => ({
-                    codigo: item.pro_produto.pro_cod,
-                    produto: item.pro_produto.pro_nome,
-                    valor: Number(item.ite_valor) / item.ite_qtd,
-                    quantidade: item.ite_qtd,
-                }));
-                setCarrinho(itens);
-            }
+            await dashboardReservaService.adicionarItemVenda(
+                Number(reservaId),          // ven_id
+                produtoSelecionado.codigo,  // pro_id
+                quantidade,                 // quantidade
+                valorUnitario               // valorUnitario
+            );
+
+
+            // Recarrega os itens da reserva
+            const reserva = await dashboardReservaService.buscarReservaPorId(Number(reservaId));
+            const itens = (reserva.ite_itemVenda || []).map((item: any) => ({
+                codigo: item.pro_produto.pro_cod,
+                produto: item.pro_produto.pro_nome,
+                valor: Number(item.ite_valor) / item.ite_qtd,
+                quantidade: item.ite_qtd,
+            }));
+
+            setCarrinho(itens);
+
+            // Reset inputs
             setProdutoSelecionado(null);
             setProdutoBusca("");
             setQuantidade(1);
             setValorUnitario(0);
         } catch (err: any) {
             console.error(err);
-            abrirModalErro("Erro!" + err?.response?.data?.message || "Erro ao adicionar produto. Verifique estoque.");
+            abrirModalErro("Erro! " + (err?.response?.data?.message || "Erro ao adicionar produto. Verifique estoque."));
             inputBuscaRef.current?.focus();
         }
     };
+
 
     const removerItem = async (codigo: number) => {
         if (!reservaId) return;

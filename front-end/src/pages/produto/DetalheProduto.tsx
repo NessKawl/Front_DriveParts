@@ -189,7 +189,7 @@ export default function DetalheProduto() {
 
 
         </div>
-        <div className="mt-10">
+        <div className="mt-10 ">
           <h1 className="text-2xl font-semibold border-b border-gray-300">Recomendados</h1>
           <ProductsGridReco />
         </div>

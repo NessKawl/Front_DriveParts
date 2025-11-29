@@ -86,8 +86,13 @@ export const CadEspecificacao = async (
     }
 }
 
-export async function VincularEspecificacao(pro_id: number, esp_id: number) {
-    return api.post("/produto/especificacao", { pro_id, esp_id });
+export async function VincularEspecificacao(pro_id: number, esp_id: number[], valores: string[]) {
+     const esp = esp_id.map((id, index) => ({
+        esp_id: id,
+        pro_esp_valor: valores[index]
+    }));
+
+    return api.post("/produto/vinculaEsp", { pro_id, met_id: 1, esp });
 }
 
 
@@ -164,6 +169,16 @@ export const CriarMovimentacaoProduto = async (pro_id: number, mov_qtd: number, 
 
 export const BuscaProdutoPorNome = async (termo: string | null) => {
     return await api.get(`/produto/search?termo=${termo}`)
+}
+
+export const GetLastProduct = async () => {
+    const response = await api.get('/produto/ultimo')
+    return response.data;
+}
+
+export const GetLastEsp = async () => {
+    const response = await api.get('/produto/ultimaEsp')
+    return response.data
 }
 
 export async function BuscaProdutoPorCategoria(categoria: string | null) {

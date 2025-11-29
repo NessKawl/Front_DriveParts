@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect } from "react";
 import { BanknoteArrowDown, BanknoteArrowUp, PackagePlus, X } from "lucide-react";
 import Cropper from "react-easy-crop";
 import FormGenerator from "../../components/forms/FormGenerator";
-import { CadProduto, BuscaTodosProdutos, EditProduto, CriarMovimentacaoProduto, CadEspecificacao } from "../../services/dataService";
+import { CadProduto, BuscaTodosProdutos, EditProduto, CriarMovimentacaoProduto, CadEspecificacao, GetLastEsp, GetLastProduct, VincularEspecificacao } from "../../services/dataService";
 
 export default function DashProdutos() {
     const [form, setForm] = useState({
@@ -15,7 +15,8 @@ export default function DashProdutos() {
         cod: "",
         estoque: 0,
         status: "Ativo",
-        esp: "",
+        esp_nome: "",
+        pro_esp_valor: "",
         categoria: "1"
     });
     const [formEdit, setFormEdit] = useState({
@@ -24,7 +25,8 @@ export default function DashProdutos() {
         marca: "",
         cod: "",
         status: "Ativo",
-        esp: "",
+        esp_nome: "",
+        pro_esp_valor: "",
         categoria: "1"
     });
     const [edit, setEdit] = useState(false);
@@ -107,19 +109,56 @@ export default function DashProdutos() {
     const [produtoEditando, setProdutoEditando] = useState<any>(null);
     const [isOpenEdit, setIsOpenEdit] = useState(false);
 
-    const [especificacoes, setEspecificacoes] = useState([{ valor: "" }]);
+    const [espId, setEspId] = useState("")
 
-    const adicionarEspecificacao = () => {
-        setEspecificacoes([...especificacoes, { valor: "" }]);
+    useEffect(() => {
+        const loadEspId = async () => {
+            const data = await GetLastEsp();
+            setEspId(data.esp_id + 1);
+        };
+
+        loadEspId();
+    }, []);
+
+    const [especificacoes, setEspecificacoes] = useState([{
+        esp_nome: "",
+        pro_esp_valor: "",
+        esp_id: "",
+        pro_id: ""
+    }]);
+
+    const adicionarEspecificacao = async () => {
+        setEspecificacoes([...especificacoes, { esp_nome: "", esp_id: "", pro_id: "", pro_esp_valor: "" }]);
+
+        setEspId(espId + 1)
+
+        console.log("Teste ESP", espId);
     };
 
-    const atualizarEspecificacao = (index: number, novoValor: string) => {
+    const atualizarEspecificacaoNome = async (index: number, novoValor: string) => {
         const novas = [...especificacoes];
-        novas[index].valor = novoValor;
+        novas[index].esp_nome = novoValor;
+
+        const res = await GetLastProduct()
+        const pro_id = res.pro_id + 1
         setEspecificacoes(novas);
+
+        novas[index].pro_id = pro_id
 
         console.log(especificacoes);
     };
+
+    const atualizarEspecificacaoValor = async (index: number, pro_esp_valor: string) => {
+        const novas = [...especificacoes]
+        novas[index].pro_esp_valor = pro_esp_valor
+
+        setEspecificacoes(novas)
+
+        novas[index].esp_id = espId
+
+        console.log("esp_id",);
+        console.log("pro_esp_valor: ", especificacoes);
+    }
 
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,10 +214,15 @@ export default function DashProdutos() {
 
             const categoria = Number(form.categoria)
 
-            const espNome = especificacoes.map(item => item.valor)
-
+            const espNome = especificacoes.map(item => item.esp_nome)
 
             const resEspecificacao = await CadEspecificacao(espNome, categoria)
+
+            const resProduct = await GetLastProduct()
+            const proId = resProduct.pro_id + 1
+
+            const espId = especificacoes.map(item => Number(item.esp_id))
+            const proEspValor = especificacoes.map(item => item.pro_esp_valor)
 
             if (resEspecificacao) {
 
@@ -187,6 +231,10 @@ export default function DashProdutos() {
 
                 if (!resProduto || !resProduto.pro_id) {
                     throw new Error("Erro ao cadastrar produto");
+                }
+
+                if (resProduto) {
+                    await VincularEspecificacao(proId, espId, proEspValor)
                 }
 
                 if (form.estoque && form.estoque > 0) {
@@ -207,7 +255,8 @@ export default function DashProdutos() {
                 cod: "",
                 estoque: 0,
                 status: "Ativo",
-                esp: "",
+                esp_nome: "",
+                pro_esp_valor: "",
                 categoria: "1",
             });
 
@@ -268,7 +317,8 @@ export default function DashProdutos() {
                 cod: "",
                 estoque: 0,
                 status: "Ativo",
-                esp: "",
+                esp_nome: "",
+                pro_esp_valor: "",
                 categoria: "1",
             });
         } catch (error) {
@@ -343,7 +393,8 @@ export default function DashProdutos() {
                 marca: produtoEditando.marca || "",
                 cod: produtoEditando.codigo || "",
                 status: produtoEditando.status ? "Ativo" : "Inativo",
-                esp: produtoEditando.esp || "",
+                esp_nome: produtoEditando.esp_nome || "",
+                pro_esp_valor: produtoEditando.pro_esp_valor || "",
                 categoria: produtoEditando.categoria || "11",
             });
         }
@@ -368,7 +419,8 @@ export default function DashProdutos() {
                                 cod: "",
                                 estoque: 0,
                                 status: "Ativo",
-                                esp: "",
+                                esp_nome: "",
+                                pro_esp_valor: "",
                                 categoria: "1",
                             })
                             setIsOpen(true)
@@ -506,16 +558,27 @@ export default function DashProdutos() {
                             <div className="flex flex-col gap-3">
                                 <label className="text-md font-medium text-ice">Especificações</label>
 
-                                {especificacoes.map((esp, i) => (
-                                    <input
-                                        key={i}
-                                        type="text"
-                                        placeholder={`Especificação ${i + 1}`}
-                                        value={esp.valor}
-                                        onChange={(e) => atualizarEspecificacao(i, e.target.value)}
-                                        className="bg-black-smooth border border-gray-600 text-ice p-2 rounded"
-                                    />
-                                ))}
+                                <div>
+                                    {especificacoes.map((esp, i) => (
+                                        <>
+                                            <input
+                                                key={i}
+                                                type="text"
+                                                placeholder={`Especificação ${i + 1}`}
+                                                value={esp.esp_nome}
+                                                onChange={(e) => atualizarEspecificacaoNome(i, e.target.value)}
+                                                className="bg-black-smooth border border-gray-600 text-ice p-2 m-2 rounded" />
+                                            <input
+                                                key={i}
+                                                type="text"
+                                                placeholder={`Valor ${i + 1}`}
+                                                value={esp.pro_esp_valor}
+                                                onChange={(e) => atualizarEspecificacaoValor(i, e.target.value)}
+                                                className="bg-black-smooth border border-gray-600 text-ice p-2 rounded" />
+                                        </>
+                                    ))}
+                                </div>
+
 
                                 <button
                                     type="button"

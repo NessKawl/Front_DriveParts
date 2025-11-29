@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect } from "react";
 import { BanknoteArrowDown, BanknoteArrowUp, PackagePlus, X } from "lucide-react";
 import Cropper from "react-easy-crop";
 import FormGenerator from "../../components/forms/FormGenerator";
-import { CadProduto, BuscaTodosProdutos, EditProduto, CriarMovimentacaoProduto } from "../../services/dataService";
+import { CadProduto, BuscaTodosProdutos, EditProduto, CriarMovimentacaoProduto, CadEspecificacao } from "../../services/dataService";
 
 export default function DashProdutos() {
     const [form, setForm] = useState({
@@ -15,7 +15,8 @@ export default function DashProdutos() {
         cod: "",
         estoque: 0,
         status: "Ativo",
-        categoria: "",
+        esp: "",
+        categoria: "1"
     });
     const [formEdit, setFormEdit] = useState({
         nome: "",
@@ -23,7 +24,8 @@ export default function DashProdutos() {
         marca: "",
         cod: "",
         status: "Ativo",
-        categoria: "",
+        esp: "",
+        categoria: "1"
     });
     const [edit, setEdit] = useState(false);
     const fields = [
@@ -46,15 +48,16 @@ export default function DashProdutos() {
             type: "select",
             placeholder: "Categoria do produto",
             options: [
-                { label: "Motor", value: "motor" },
-                { label: "Freios", value: "freios" },
-                { label: "Suspensão", value: "suspensao" },
-                { label: "Pneus", value: "pneus" },
-                { label: "Acessorios", value: "acessorios" },
-                { label: "Elétrica", value: "eletrica" },
-                { label: "Filtros", value: "Filtros" },
-                { label: "Óleos e Lubrificantes", value: "oleos" },
-                { label: "Outros", value: "Outros" },
+                { label: "Motor", value: "1" },
+                { label: "Freios", value: "4" },
+                { label: "Suspensão", value: "2" },
+                { label: "Pneus", value: "10" },
+                { label: "Acessorios", value: "8" },
+                { label: "Transmissão", value: "7" },
+                { label: "Elétrica", value: "3" },
+                { label: "Filtros", value: "5" },
+                { label: "Óleos e Lubrificantes", value: "6" },
+                { label: "Outros", value: "11" },
             ],
         },
     ].filter(Boolean) as any[];
@@ -98,11 +101,26 @@ export default function DashProdutos() {
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
-    
+
     const [isOpen, setIsOpen] = useState(false);
 
     const [produtoEditando, setProdutoEditando] = useState<any>(null);
     const [isOpenEdit, setIsOpenEdit] = useState(false);
+
+    const [especificacoes, setEspecificacoes] = useState([{ valor: "" }]);
+
+    const adicionarEspecificacao = () => {
+        setEspecificacoes([...especificacoes, { valor: "" }]);
+    };
+
+    const atualizarEspecificacao = (index: number, novoValor: string) => {
+        const novas = [...especificacoes];
+        novas[index].valor = novoValor;
+        setEspecificacoes(novas);
+
+        console.log(especificacoes);
+    };
+
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -155,17 +173,27 @@ export default function DashProdutos() {
 
             }
 
-            const valor = Number(form.valor)
-            const resProduto = await CadProduto(form.nome, valor, form.marca, form.cod, form.status, uploadedUrl)
+            const categoria = Number(form.categoria)
 
-            if (!resProduto || !resProduto.pro_id) {
-                throw new Error("Erro ao cadastrar produto");
-            }
+            const espNome = especificacoes.map(item => item.valor)
 
-            if (form.estoque && form.estoque > 0) {
-                const idNumber = Number(resProduto.pro_id)
-                const estoque = Number(form.estoque)
-                await CriarMovimentacaoProduto(idNumber, estoque, "COMPRA");
+
+            const resEspecificacao = await CadEspecificacao(espNome, categoria)
+
+            if (resEspecificacao) {
+
+                const valor = Number(form.valor)
+                const resProduto = await CadProduto(form.nome, valor, form.marca, form.cod, form.status, uploadedUrl)
+
+                if (!resProduto || !resProduto.pro_id) {
+                    throw new Error("Erro ao cadastrar produto");
+                }
+
+                if (form.estoque && form.estoque > 0) {
+                    const idNumber = Number(resProduto.pro_id)
+                    const estoque = Number(form.estoque)
+                    await CriarMovimentacaoProduto(idNumber, estoque, "COMPRA");
+                }
             }
 
             alert("Produto cadastrado com sucesso!");
@@ -179,7 +207,8 @@ export default function DashProdutos() {
                 cod: "",
                 estoque: 0,
                 status: "Ativo",
-                categoria: "",
+                esp: "",
+                categoria: "1",
             });
 
         } catch (error) {
@@ -239,7 +268,8 @@ export default function DashProdutos() {
                 cod: "",
                 estoque: 0,
                 status: "Ativo",
-                categoria: "",
+                esp: "",
+                categoria: "1",
             });
         } catch (error) {
             console.error(error);
@@ -313,7 +343,8 @@ export default function DashProdutos() {
                 marca: produtoEditando.marca || "",
                 cod: produtoEditando.codigo || "",
                 status: produtoEditando.status ? "Ativo" : "Inativo",
-                categoria: produtoEditando.categoria || "",
+                esp: produtoEditando.esp || "",
+                categoria: produtoEditando.categoria || "11",
             });
         }
     }, [produtoEditando]);
@@ -337,7 +368,8 @@ export default function DashProdutos() {
                                 cod: "",
                                 estoque: 0,
                                 status: "Ativo",
-                                categoria: "",
+                                esp: "",
+                                categoria: "1",
                             })
                             setIsOpen(true)
                         }}
@@ -470,6 +502,30 @@ export default function DashProdutos() {
 
                             {/* Inputs dinâmicos */}
                             <FormGenerator fields={fields} form={form} setForm={setForm} className="grid grid-cols-2 gap-4" />
+
+                            <div className="flex flex-col gap-3">
+                                <label className="text-md font-medium text-ice">Especificações</label>
+
+                                {especificacoes.map((esp, i) => (
+                                    <input
+                                        key={i}
+                                        type="text"
+                                        placeholder={`Especificação ${i + 1}`}
+                                        value={esp.valor}
+                                        onChange={(e) => atualizarEspecificacao(i, e.target.value)}
+                                        className="bg-black-smooth border border-gray-600 text-ice p-2 rounded"
+                                    />
+                                ))}
+
+                                <button
+                                    type="button"
+                                    onClick={adicionarEspecificacao}
+                                    className="bg-primary-orange px-3 py-1 rounded text-black-smooth font-bold w-10"
+                                >
+                                    +
+                                </button>
+                            </div>
+
 
                             <button
                                 type="submit"

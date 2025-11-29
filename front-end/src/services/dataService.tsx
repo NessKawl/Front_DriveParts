@@ -64,6 +64,33 @@ export const CadProduto = async (
     }
 };
 
+export const CadEspecificacao = async (
+    esp_nome: string[],
+    cat_id: number
+) => {
+    try {
+
+        console.log("Dados das especificações: ", {
+            esp_nome,
+            cat_id
+        });
+
+        const response = await api.post("/produto/cadastroEsp", {
+            esp_nome, cat_id
+        })
+
+        return response
+    } catch (error) {
+        console.error("Erro ao cadastrar especificação:, ", error)
+        throw error
+    }
+}
+
+export async function VincularEspecificacao(pro_id: number, esp_id: number) {
+    return api.post("/produto/especificacao", { pro_id, esp_id });
+}
+
+
 export const EditProduto = async (
     pro_id: number,
     pro_nome: string,

@@ -35,8 +35,8 @@ export default function ProductGridReco() {
 
     return (
         <div>
-            <div className="p-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-2 sm:gap-6 md:gap-10">
-                {produtosRecomendados.slice(0, 5).map((product, index) => (
+            <div className="p-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-6 md:gap-10">
+                {produtosRecomendados.slice(0, 10).map((product, index) => (
                     <ProductCard
                         key={index}
                         image={product.image}

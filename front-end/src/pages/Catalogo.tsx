@@ -9,7 +9,7 @@ import NavBar from "../components/navbar/NavBar.tsx"
 import { BuscaProdutoPorCategoria, GetProdutos } from "../services/dataService.tsx"
 
 
-interface Produto {
+interface Produto { 
     pro_id: number;
     pro_nome: string;
     pro_valor: number;

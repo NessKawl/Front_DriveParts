@@ -4,7 +4,7 @@ import FooterMain from "../../components/footer/FooterMain";
 import { useNavigate } from "react-router-dom";
 import { Edit, LogOut, Phone, User } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getUserProfile } from "../../services/dataService";
+import { getUserProfile } from "../../services/authService";
 import { getReservasAtivas, getHistoricoGeral } from "../../services/historicoService";
 import { logout } from "../../utils/auth";
 import ModalReserva from "../../components/modal/ModalHistórico";

@@ -3,7 +3,7 @@ import Button from "../components/buttons/Button"
 import NavBarSimples from "../components/navbar/NavbarSimples"
 import FooterMain from "../components/footer/FooterMain"
 import { useState } from "react"
-import { VerifyLogin } from "../services/dataService"
+import { VerifyLogin } from "../services/authService"
 import { useSearchParams } from "react-router-dom";
 
 const formatTelefone = (value: string) => {

@@ -5,9 +5,28 @@ import { useState, useCallback, useEffect } from "react";
 import { BanknoteArrowDown, BanknoteArrowUp, PackagePlus, X } from "lucide-react";
 import Cropper from "react-easy-crop";
 import FormGenerator from "../../components/forms/FormGenerator";
-import { CadProduto, BuscaTodosProdutos, EditProduto, CriarMovimentacaoProduto, CadEspecificacao, GetLastEsp, GetLastProduct, VincularEspecificacao } from "../../services/dataService";
+import { CadProduto, BuscaTodosProdutos, EditProduto, CriarMovimentacaoProduto, GetLastProduct, } from "../../services/dataService";
+import { CadEspecificacao, GetLastEsp, VincularEspecificacao, BuscaMetricas } from "../../services/especificacaoService"
+
+interface Metrica {
+    met_id: number,
+    met_nome: string
+}
 
 export default function DashProdutos() {
+
+    const [metrica, setMetrica] = useState<Metrica[]>([])
+
+    useEffect(() => {
+        const fetchMetricas = async () => {
+            const data = await BuscaMetricas()
+            setMetrica(data);
+        }
+
+        fetchMetricas()
+    }, [])
+
+
     const [form, setForm] = useState({
         nome: "",
         valor: 0,
@@ -62,6 +81,7 @@ export default function DashProdutos() {
                 { label: "Outros", value: "11" },
             ],
         },
+
     ].filter(Boolean) as any[];
     const [isOpenEstoque, setIsOpenEstoque] = useState(false);
     const [tipoEstoque, setTipoEstoque] = useState<"Entrada" | "Saida" | null>(null);
@@ -124,11 +144,12 @@ export default function DashProdutos() {
         esp_nome: "",
         pro_esp_valor: "",
         esp_id: "",
-        pro_id: ""
+        pro_id: "",
+        met_id: 1
     }]);
 
     const adicionarEspecificacao = async () => {
-        setEspecificacoes([...especificacoes, { esp_nome: "", esp_id: "", pro_id: "", pro_esp_valor: "" }]);
+        setEspecificacoes([...especificacoes, { esp_nome: "", esp_id: "", pro_id: "", pro_esp_valor: "", met_id: 1 }]);
 
         setEspId(espId + 1)
 
@@ -160,6 +181,11 @@ export default function DashProdutos() {
         console.log("pro_esp_valor: ", especificacoes);
     }
 
+    const atualizarMetrica = (index: number, met_id: number) => {
+        const novas = [...especificacoes];
+        novas[index].met_id = met_id;
+        setEspecificacoes(novas);
+    };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -224,6 +250,8 @@ export default function DashProdutos() {
             const espId = especificacoes.map(item => Number(item.esp_id))
             const proEspValor = especificacoes.map(item => item.pro_esp_valor)
 
+            const metricaIds = especificacoes.map(item => Number(item.met_id));
+
             if (resEspecificacao) {
 
                 const valor = Number(form.valor)
@@ -234,7 +262,7 @@ export default function DashProdutos() {
                 }
 
                 if (resProduto) {
-                    await VincularEspecificacao(proId, espId, proEspValor)
+                    await VincularEspecificacao(proId, espId, proEspValor, metricaIds)
                 }
 
                 if (form.estoque && form.estoque > 0) {
@@ -269,7 +297,7 @@ export default function DashProdutos() {
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!form.nome || !form.valor) {
+        if (!formEdit.nome || !formEdit.valor) {
             alert("Preencha todos os campos obrigatórios.");
             return;
         }
@@ -277,55 +305,41 @@ export default function DashProdutos() {
         let uploadedUrl = produtoEditando?.pro_caminho_img;
 
         try {
-
-            const valor = Number(form.valor);
+            const valor = Number(formEdit.valor);
 
             const resProduto = await EditProduto(
                 produtoEditando?.id,
-                form.nome,
+                formEdit.nome,
                 valor,
-                form.marca,
-                form.cod,
-                form.status,
+                formEdit.marca,
+                formEdit.cod,
+                formEdit.status,
                 uploadedUrl
             );
-
-            const estoqueAnterior = produtoEditando.estoque || 0;
-            const estoqueNovo = Number(form.estoque);
-
-            if (estoqueNovo !== estoqueAnterior) {
-                const tipo = estoqueNovo > estoqueAnterior ? "COMPRA" : "VENDA";
-                const diferenca = Math.abs(estoqueNovo - estoqueAnterior);
-
-                await CriarMovimentacaoProduto(produtoEditando.id, diferenca, tipo);
-            }
-
-
-            if (!resProduto) {
-                throw new Error("Erro ao atualizar produto");
-            }
 
             alert("Produto atualizado com sucesso!");
             setIsOpenEdit(false);
             setProdutoEditando(null);
             setImages([]);
             setPreviewUrls([]);
-            setForm({
+
+            setFormEdit({
                 nome: "",
                 valor: 0,
                 marca: "",
                 cod: "",
-                estoque: 0,
                 status: "Ativo",
                 esp_nome: "",
                 pro_esp_valor: "",
                 categoria: "1",
             });
+
         } catch (error) {
             console.error(error);
             alert("Ocorreu um erro ao atualizar o produto.");
         }
     };
+
 
 
     const handleSubmitEstoque = (e: React.FormEvent) => {
@@ -423,8 +437,18 @@ export default function DashProdutos() {
                                 pro_esp_valor: "",
                                 categoria: "1",
                             })
+
+                            setEspecificacoes([{
+                                esp_nome: "",
+                                pro_esp_valor: "",
+                                esp_id: "",
+                                pro_id: "",
+                                met_id: 1
+                            }])
                             setIsOpen(true)
                         }}
+
+
                     >
                         <PackagePlus className="w-6 h-6 mr-2" />
                         Adicionar Produto
@@ -555,27 +579,40 @@ export default function DashProdutos() {
                             {/* Inputs dinâmicos */}
                             <FormGenerator fields={fields} form={form} setForm={setForm} className="grid grid-cols-2 gap-4" />
 
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-col">
                                 <label className="text-md font-medium text-ice">Especificações</label>
 
-                                <div>
+                                <div className="flex flex-col w-50 m-2">
                                     {especificacoes.map((esp, i) => (
-                                        <>
+                                        <div className="flex m-2">
                                             <input
                                                 key={i}
                                                 type="text"
                                                 placeholder={`Especificação ${i + 1}`}
                                                 value={esp.esp_nome}
                                                 onChange={(e) => atualizarEspecificacaoNome(i, e.target.value)}
-                                                className="bg-black-smooth border border-gray-600 text-ice p-2 m-2 rounded" />
+                                                className="bg-black-smooth border border-gray-600 text-ice p-2 me-2 rounded" />
                                             <input
                                                 key={i}
                                                 type="text"
                                                 placeholder={`Valor ${i + 1}`}
                                                 value={esp.pro_esp_valor}
                                                 onChange={(e) => atualizarEspecificacaoValor(i, e.target.value)}
-                                                className="bg-black-smooth border border-gray-600 text-ice p-2 rounded" />
-                                        </>
+                                                className="bg-black-smooth border border-gray-600 text-ice p-2 me-2 rounded" />
+                                            <select
+                                                className="bg-black-smooth border border-gray-600 text-ice p-2 rounded"
+                                                value={esp.met_id}
+                                                onChange={(e) => atualizarMetrica(i, Number(e.target.value))}
+                                            >
+                                                {metrica.map((m) => (
+                                                    <option key={m.met_id} value={m.met_id}>
+                                                        {m.met_nome}
+                                                    </option>
+                                                ))}
+                                            </select>
+
+
+                                        </div>
                                     ))}
                                 </div>
 

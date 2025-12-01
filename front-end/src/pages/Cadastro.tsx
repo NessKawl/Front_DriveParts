@@ -3,7 +3,7 @@ import Button from "../components/buttons/Button";
 import FooterMain from "../components/footer/FooterMain";
 import NavBarSimples from "../components/navbar/NavbarSimples";
 import { useNavigate } from "react-router-dom"
-import { Register } from "../services/dataService";
+import { Register } from "../services/authService";
 
 const formatTelefone = (value: string) => {
   value = value.replace(/\D/g, ""); // remove tudo que não for número

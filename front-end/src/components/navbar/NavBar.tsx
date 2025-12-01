@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import Categoria from "../buttons/Categoria.tsx";
 import Avatar from "../imagens/Avatar.tsx";
 import { useNavigate } from "react-router-dom";
-import { getUserProfile } from "../../services/dataService.tsx";
+import { getUserProfile } from "../../services/authService.tsx";
 import clsx from "clsx";
 
 export default function NavBar() {

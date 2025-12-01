@@ -1,26 +1,6 @@
 import api from "./api";
 
-// Autenticação
 
-export const VerifyLogin = async (usu_tel: string, usu_senha: string) => {
-    console.log("Enviando login:", { usu_tel, usu_senha });
-    return await api.post("/auth/login", { usu_tel, usu_senha });
-};
-
-export const Register = async (usu_nome: string, usu_tel: string, usu_senha: string) => {
-    try {
-        console.log("Recebendo cadastro:", { usu_nome, usu_tel, usu_senha });
-        const response = await api.post("/auth/register", { usu_nome, usu_tel, usu_senha });
-        return response.data;
-    } catch (error) {
-        console.error("Erro no registro:", error);
-        throw error;
-    }
-};
-
-export const getUserProfile = async () => {
-    return await api.get("/auth/me");
-};
 
 // Produtos
 
@@ -63,38 +43,6 @@ export const CadProduto = async (
         throw error;
     }
 };
-
-export const CadEspecificacao = async (
-    esp_nome: string[],
-    cat_id: number
-) => {
-    try {
-
-        console.log("Dados das especificações: ", {
-            esp_nome,
-            cat_id
-        });
-
-        const response = await api.post("/produto/cadastroEsp", {
-            esp_nome, cat_id
-        })
-
-        return response
-    } catch (error) {
-        console.error("Erro ao cadastrar especificação:, ", error)
-        throw error
-    }
-}
-
-export async function VincularEspecificacao(pro_id: number, esp_id: number[], valores: string[]) {
-     const esp = esp_id.map((id, index) => ({
-        esp_id: id,
-        pro_esp_valor: valores[index]
-    }));
-
-    return api.post("/produto/vinculaEsp", { pro_id, met_id: 1, esp });
-}
-
 
 export const EditProduto = async (
     pro_id: number,
@@ -176,10 +124,6 @@ export const GetLastProduct = async () => {
     return response.data;
 }
 
-export const GetLastEsp = async () => {
-    const response = await api.get('/produto/ultimaEsp')
-    return response.data
-}
 
 export async function BuscaProdutoPorCategoria(categoria: string | null) {
     console.log("Essa é a categoria: ", categoria);

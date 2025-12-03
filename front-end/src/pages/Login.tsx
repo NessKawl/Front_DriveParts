@@ -96,7 +96,7 @@ export default function Login() {
       <NavBarSimples rota={"catalogo"} />
 
       <div className="flex flex-col justify-center items-center ">
-        <h1 className="text-4xl font-bold my-4">Entrar</h1>
+        <h1 className="text-4xl font-seminbold my-4">Entrar</h1>
         <form
           action=""
           onSubmit={handleSubmit}

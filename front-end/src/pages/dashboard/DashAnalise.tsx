@@ -150,35 +150,41 @@ export default function DashAnalise() {
         <div className="flex bg-black-smooth/95">
             <NavBarDashboard page="Análise de Vendas" />
             <div className="flex flex-col gap-5 py-10 px-5 w-full">
-                {/* Filtro gráfico */}
-                <div className="flex items-center gap-2">
-                    <label className="text-white">Filtro Gráfico:</label>
-                    <select value={filtro} onChange={e => setFiltro(e.target.value)} className="bg-black-smooth text-white border border-gray-600 rounded px-2 py-1">
-                        {filtros.map(f => <option key={f.children} value={f.children}>{f.value}</option>)}
-                    </select>
+                <div className="bg-black-smooth border-l border-primary-orange">
+                    {/* Filtro gráfico */}
+                    <div className="flex justify-between items-center gap-2 w-full p-4">
+                        <h2 className="text-primary-orange text-xl font-semibold">Vendas</h2>
+                        <select value={filtro} onChange={e => setFiltro(e.target.value)} className="bg-black-smooth text-white border border-gray-600 rounded px-2 py-1">
+                            {filtros.map(f => <option key={f.children} value={f.children}>{f.value}</option>)}
+                        </select>
+                    </div>
+
+                    {/* Gráfico */}
+                    <GraficoLinhas
+                        titulo=""
+                        filtro={false}
+                        data={dadosGrafico}
+                        series={[{ key: "vendas", color: "#22C55E", label: "Vendas" }]}
+                    />
                 </div>
 
-                {/* Gráfico */}
-                <GraficoLinhas
-                    titulo="Vendas"
-                    filtro={false}
-                    data={dadosGrafico}
-                    series={[{ key: "vendas", color: "#22C55E", label: "Vendas" }]}
-                />
-
-                <div>
-                    <label className="text-white mr-2">Ordenar:</label>
-                    <select value={ordenacao} onChange={e => setOrdenacao(e.target.value)} className="bg-black-smooth text-white border border-gray-600 rounded px-2 py-1">
-                        {ordenacoes.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                    </select>
+                <div className="bg-black-smooth border-l border-primary-orange">
+                    {/* Ordenação tabela */}
+                    <div className="flex justify-between p-2">
+                        <h2 className="text-primary-orange text-xl font-semibold">Vendas</h2>
+                        <select value={ordenacao} onChange={e => setOrdenacao(e.target.value)} className="bg-black-smooth text-white border border-gray-600 rounded px-2 py-1">
+                            {ordenacoes.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                        </select>
+                    </div>
+                    {/* Tabela */}
+                    <TabelaLista
+                        titulo=""
+                        colunas={colunasVendas}
+                        fetchData={fetchVendas}
+                        alturaMax="md:max-h-90"
+                    />
                 </div>
-                {/* Tabela */}
-                <TabelaLista
-                    titulo="Vendas"
-                    colunas={colunasVendas}
-                    fetchData={fetchVendas}
-                    alturaMax="md:max-h-90"
-                />
+
             </div>
         </div>
     );

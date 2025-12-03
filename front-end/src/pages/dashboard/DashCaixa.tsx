@@ -309,23 +309,27 @@ export default function DashCaixa() {
             />
           </div>
 
-          <div className="flex justify-end mb-2">
-            <select
-              value={filtroMov}
-              onChange={(e) => setFiltroMov(e.target.value)}
-              className="bg-zinc-900 text-white border border-zinc-700 px-2 py-1 rounded"
-            >
-              <option value="Diario">Diário</option>
-              <option value="Semanal">Semanal</option>
-              <option value="Mensal">Mensal</option>
-              <option value="Semestral">Semestral</option>
-              <option value="Anual">Anual</option>
-            </select>
-          </div>
 
-          <div className="w-full h-80">
+
+          <div className="w-full h-auto bg-black-smooth border-l border-primary-orange">
+            <div className="flex justify-between items-end mb-2 bg-black-smooth p-2">
+              <h2 className="text-lg text-primary-orange">
+                FLUXO DE MOVIMENTAÇÃO ({filtroMov.toUpperCase()})
+              </h2>
+              <select
+                value={filtroMov}
+                onChange={(e) => setFiltroMov(e.target.value)}
+                className="bg-zinc-900 text-white border border-zinc-700 px-2 py-1 rounded"
+              >
+                <option value="Diario">Diário</option>
+                <option value="Semanal">Semanal</option>
+                <option value="Mensal">Mensal</option>
+                <option value="Semestral">Semestral</option>
+                <option value="Anual">Anual</option>
+              </select>
+            </div>
             <GraficoLinhas
-              titulo="Fluxo de movimentação"
+              titulo=""
               data={fluxoMovimentacao}
               series={[{ key: "caixa", color: "#FF961F", label: "Fluxo de caixa" }]}
             />

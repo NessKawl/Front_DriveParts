@@ -359,9 +359,9 @@ export default function DashGeral() {
                 </div>
 
                 <div className="flex flex-row gap-4 w-full h-full">
-                    <div className="flex flex-col w-full gap-2">
-                        <div className="flex flex-row gap-2 items-center mb-2">
-                            <label className="text-white">Filtro Gráficos:</label>
+                    <div className="flex flex-col w-full gap-2 bg-black-smooth border-l border-primary-orange">
+                        <div className="flex flex-row justify-end gap-2 items-center p-2">
+                            <label className="text-primary-orange">Filtro Gráficos:</label>
                             <select
                                 value={filtro}
                                 onChange={(e) => setFiltro(e.target.value)}
@@ -375,7 +375,7 @@ export default function DashGeral() {
                             </select>
                         </div>
 
-                        <div className="flex flex-row gap-5">
+                        <div className="flex flex-row gap-5 bg-black-smooth">
                             <GraficoLinhas
                                 titulo="Reservas"
                                 filtro={false}
@@ -385,7 +385,7 @@ export default function DashGeral() {
                                     { key: "canceladas", color: "#EF4444", label: "Canceladas" },
                                 ]}
                             />
-
+        
                             <GraficoLinhas
                                 data={dadosGraficoVendas}
                                 titulo="Vendas"

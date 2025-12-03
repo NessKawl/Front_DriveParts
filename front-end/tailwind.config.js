@@ -1,9 +1,15 @@
-plugins: [
-  require('tailwind-scrollbar'),
-],
-theme: {
-  extend: {},
-},
-variants: {
-  scrollbar: ['rounded'],
-},
+module.exports = {
+  plugins: [
+    require('tailwind-scrollbar'),
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+         base: ["Kanit", "sans-serif"],
+      },
+    },
+  },
+  variants: {
+    scrollbar: ['rounded'],
+  },
+};

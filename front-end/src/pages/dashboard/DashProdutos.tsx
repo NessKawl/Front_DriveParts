@@ -288,6 +288,8 @@ export default function DashProdutos() {
                 categoria: "1",
             });
 
+            window.location.reload()
+
         } catch (error) {
             console.error(error);
             alert("Ocorreu um erro ao enviar o produto.");
@@ -436,6 +438,17 @@ export default function DashProdutos() {
                                 esp_nome: "",
                                 pro_esp_valor: "",
                                 categoria: "1",
+                            })
+
+                            setFormEdit({
+                                nome: "",
+                                valor: 0,
+                                marca: "",
+                                cod: "",
+                                status: "Ativo",
+                                esp_nome: "",
+                                pro_esp_valor: "",
+                                categoria: "1"
                             })
 
                             setEspecificacoes([{
@@ -739,12 +752,12 @@ export default function DashProdutos() {
                                 className="grid grid-cols-2 gap-4"
                             />
 
-                            <button
-                                type="submit"
-                                className="bg-pear-green hover:bg-orange-300 w-48 py-2 text-ice text-xl font-semibold rounded-md self-end"
-                            >
-                                Salvar alterações
-                            </button>
+                                <button
+                                    type="submit"
+                                    className="bg-pear-green hover:bg-orange-300 w-48 py-2 text-ice text-xl font-semibold rounded-md self-end"
+                                >
+                                    Salvar alterações
+                                </button>
                         </form>
                     </div>
                 </div>

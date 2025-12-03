@@ -9,7 +9,7 @@ interface GraficoPizzaProps {
   height?: string;
 }
 
-const COLORS = ["#FF961F", "#1F47FF", "#369638", "#FF2817"]; // cores personalizáveis
+const COLORS = ["#F7D720","#FF961F", "#1F47FF", "#369638", "#FF2817"]; // cores personalizáveis
 
 export default function GraficoPizza({ data, titulo, height = "h-60" }: GraficoPizzaProps) {
   return (

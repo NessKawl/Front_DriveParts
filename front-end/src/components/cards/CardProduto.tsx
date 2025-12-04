@@ -33,6 +33,11 @@ export default function CardProduto({ image, name, price, parcelas,praso, reserv
         <p className="text-black-smooth font-semibold text-md">{reserva}</p>
         <p className={clsx("text-black-smooth font-semibold text-lg", status === "Finalizado" ? "text-pear-green" : "text-red-alert")}>{status}</p>
       </div>
+      <div className="flex justify-center items-center w-full  bg-pear-green rounded-3xl sm:rounded-none hover:shadow-lg hover:shadow-pear-green/40 hover:scale-95  transition-transform duration-300">
+        <button
+         className="text-ice px-4 py-1 sm:py-2 "
+        >Ver detelhes</button>
+      </div>
     </div>
   );
 }

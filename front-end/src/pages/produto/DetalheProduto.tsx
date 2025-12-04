@@ -124,7 +124,7 @@ export default function DetalheProduto() {
           <div className="mt-5 flex justify-center md:col-start-2 md:row-start-5 md:mb-10">
             <Button
               children="Reservar"
-              className="rounded-lg text-xl font-semibold bg-primary-orange px-15 py-1 lg:px-25 lg:py-2 text-ice sm:rounded-none"
+              className="rounded-lg text-xl font-semibold bg-primary-orange px-15 py-1 lg:px-25 lg:py-2 text-ice sm:rounded-none hover:shadow-lg hover:shadow-primary-orange/40 hover:scale-110  transition-transform duration-300"
               onClick={() => {
                 if (quantidade === 0) {
                   abrirModal({

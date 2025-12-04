@@ -63,12 +63,14 @@ export default function NavBar() {
               className="flex flex-row gap-2"
               onClick={() => (action())}
             >
-              <div className="flex flex-col text-right border-r border-black-smooth pr-3 items-center justify-center cursor-pointer">
+              <div className="flex flex-col text-right border-r border-black-smooth pr-3 items-end justify-center cursor-pointer">
                 {userName ? <p className="font-light text-sm md:text-lg">Bem vindo(a)</p> : <p className="font-semibold text-md">Acessar conta</p>}
                 <p className="font-bold text-sm md:text-lg">{userName}</p>
               </div>
             </div>
-            <div className="relative hidden md:block">
+            <div className="relative hidden md:block cursor-pointer"
+              onClick={() => (action())}
+            >
               <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />
 
               <Avatar

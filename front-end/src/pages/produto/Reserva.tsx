@@ -26,6 +26,8 @@ export default function Reserva() {
   const pro_id = searchParam.get("id");
   const [produto, setProduto] = useState<Produto | null>(null)
 
+  const [modalSuccessOpen, setModalSuccessOpen] = useState(false);
+
   useEffect(() => {
     if (!pro_id) return
 
@@ -128,13 +130,8 @@ export default function Reserva() {
                       return;
                     }
 
-                    try {
-
-                      const produtoIdNumber = Number(pro_id)
-
-                      const resultado = await criarReservaBackend(produtoIdNumber, slecionaQuantidade, selecionarPeriodo);
-                      alert(`Reserva criada com sucesso! ID: ${resultado.ven_id}`);
-                      navigate("/catalogo");
+                    try {                  
+                      setModalSuccessOpen(true);
                     } catch (err: any) {
                       alert(err.response?.data?.message || "Erro ao criar reserva");
                     }
@@ -147,6 +144,19 @@ export default function Reserva() {
           </form>
         </div>
       </div>
+      {modalSuccessOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full flex flex-col items-center">
+            <h2 className="text-2xl text-primary-orange font-semibold mb-4">Reserva Criada com Sucesso!</h2>
+            <p className="text-gray-600 font-semibold">Você reservou {slecionaQuantidade} unidades do produto {pro_nome}</p>
+            <button
+              onClick={() => navigate("/catalogo")}
+              className="mt-4 px-4 py-2 bg-primary-orange text-white rounded-md hover:bg-primary-orange/80 hover:shadow-lg hover:shadow-primary-orange/40 hover:scale-105 transition-transform duration-300
+              sm:rounded-none"
+            >Voltar para o Catalogo</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

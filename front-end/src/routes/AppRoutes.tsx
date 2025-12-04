@@ -1,7 +1,9 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import PWABadge from "../PWABadge";
 import { dashboardRoutes } from "./DashboardRoutes"
+import { Navigate } from "react-router-dom";
+
 
 const Catalogo = lazy(() => import("../pages/Catalogo"));
 const Login = lazy(() => import("../pages/Login"));
@@ -23,34 +25,12 @@ function Loader() {
     </div>
   );
 }
-
-function Home() {
-  const navigate = useNavigate();
-  return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-3xl font-bold">Tela Inicial</h1>
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-        onClick={() => navigate("/login")}
-      >
-        Ir para login
-      </button>
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-        onClick={() => navigate("/dashboard/geral")}
-      >
-        Ir para dashboard
-      </button>
-    </div>
-  );
-}
-
 export default function AppRoutes() {
   return (
     <>
       <Suspense fallback={<Loader />}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Navigate to="/catalogo" replace />} />
           <Route path="/catalogo" element={<Catalogo />} />
           <Route path="/pesquisa" element={<Pesquisa />} />
           <Route path="/perfil" element={<Perfil />} />

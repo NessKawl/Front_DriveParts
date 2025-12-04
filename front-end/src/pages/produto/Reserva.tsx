@@ -130,7 +130,10 @@ export default function Reserva() {
                       return;
                     }
 
-                    try {                  
+                    try {
+                      const produtoIdNumber = Number(pro_id)
+
+                      const resultado = await criarReservaBackend(produtoIdNumber, slecionaQuantidade, selecionarPeriodo);
                       setModalSuccessOpen(true);
                     } catch (err: any) {
                       alert(err.response?.data?.message || "Erro ao criar reserva");

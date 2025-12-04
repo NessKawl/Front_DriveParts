@@ -752,12 +752,50 @@ export default function DashProdutos() {
                                 className="grid grid-cols-2 gap-4"
                             />
 
-                                <button
-                                    type="submit"
-                                    className="bg-pear-green hover:bg-orange-300 w-48 py-2 text-ice text-xl font-semibold rounded-md self-end"
-                                >
-                                    Salvar alterações
-                                </button>
+                            {/* <div className="flex flex-col">
+                                <label className="text-md font-medium text-ice">Especificações</label>
+
+                                <div className="flex flex-col w-50 m-2">
+                                    {especificacoes.map((esp, i) => (
+                                        <div className="flex m-2">
+                                            <input
+                                                key={i}
+                                                type="text"
+                                                placeholder={`Especificação ${i + 1}`}
+                                                value={esp.esp_nome}
+                                                onChange={(e) => atualizarEspecificacaoNome(i, e.target.value)}
+                                                className="bg-black-smooth border border-gray-600 text-ice p-2 me-2 rounded" />
+                                            <input
+                                                key={i}
+                                                type="text"
+                                                placeholder={`Valor ${i + 1}`}
+                                                value={esp.pro_esp_valor}
+                                                onChange={(e) => atualizarEspecificacaoValor(i, e.target.value)}
+                                                className="bg-black-smooth border border-gray-600 text-ice p-2 me-2 rounded" />
+                                            <select
+                                                className="bg-black-smooth border border-gray-600 text-ice p-2 rounded"
+                                                value={esp.met_id}
+                                                onChange={(e) => atualizarMetrica(i, Number(e.target.value))}
+                                            >
+                                                {metrica.map((m) => (
+                                                    <option key={m.met_id} value={m.met_id}>
+                                                        {m.met_nome}
+                                                    </option>
+                                                ))}
+                                            </select>
+
+
+                                        </div>
+                                    ))}
+                                </div>
+                            </div> */}
+
+                            <button
+                                type="submit"
+                                className="bg-pear-green hover:bg-orange-300 w-48 py-2 text-ice text-xl font-semibold rounded-md self-end"
+                            >
+                                Salvar alterações
+                            </button>
                         </form>
                     </div>
                 </div>

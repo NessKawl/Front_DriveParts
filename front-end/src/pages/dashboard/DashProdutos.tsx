@@ -471,7 +471,7 @@ export default function DashProdutos() {
                 <div>
                     <TabelaLista
                         titulo="Produtos"
-                        filtro={true}
+                        filtro={false}
                         tituloFiltro="Filtar"
                         filtroChildren={[
                             { value: "A-Z", children: "De A-Z" },
@@ -481,7 +481,7 @@ export default function DashProdutos() {
                             { value: "Ativo", children: "Ativos" },
                             { value: "Inativo", children: "Inativos" },
                         ]}
-                        pesquisa={true}
+                        pesquisa={false}
                         colunas={[
                             { chave: "codigo", titulo: "Código", size: "sm" },
                             { chave: "produto", titulo: "Produto", size: "auto" },

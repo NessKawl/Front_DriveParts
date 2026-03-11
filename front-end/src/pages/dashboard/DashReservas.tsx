@@ -328,8 +328,8 @@ export default function DashReservas() {
 
                         <TabelaLista
                             titulo="Reservas"
-                            pesquisa={true}
-                            filtro={true}
+                            pesquisa={false}
+                            filtro={false}
                             tituloFiltro="Filtrar"
                             filtroChildren={filtros}
                             colunas={colunasReservas}

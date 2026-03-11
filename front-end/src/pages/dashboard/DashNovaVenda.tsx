@@ -33,7 +33,7 @@ export default function DashNovaVenda() {
     const [produtoBusca, setProdutoBusca] = useState("");
     const [quantidade, setQuantidade] = useState(1);
     const [valorUnitario, setValorUnitario] = useState(0);
-    const [produtoSelecionado, setProdutoSelecionado] = useState<ItemCarrinho | null>(null);
+    const [produtoSelecionado, setProdutoSelecionado] = useState<ItemCarrinho[] | null>(null);
     const [valorTotal, setValorTotal] = useState("R$ 0,00");
     const [formaPagamento, setFormaPagamento] = useState("");
     const [totalRecebido, setTotalRecebido] = useState("R$");
@@ -183,38 +183,29 @@ export default function DashNovaVenda() {
     // Buscar produto pelo termo
     const buscarProduto = async () => {
         if (!produtoBusca.trim()) return;
+
         try {
             const res = await dashboardReservaService.buscarProduto(produtoBusca.trim());
+            console.log(res);
+
             const lista = Array.isArray(res) ? res : [res];
+
             if (!lista.length) {
                 abrirModalErro("Erro! Produto não encontrado");
                 return;
             }
 
-            const termoLower = produtoBusca.trim().toLowerCase();
-            let escolhido = lista[0];
-
-            const byCode = lista.find(
-                (p: any) => String(p.pro_cod || p.pro_id).toLowerCase() === termoLower
-            );
-            if (byCode) escolhido = byCode;
-            else {
-                const byName = lista.find((p: any) =>
-                    (p.pro_nome || "").toLowerCase().includes(termoLower)
-                );
-                if (byName) escolhido = byName;
-            }
-
-            setProdutoSelecionado({
-                codigo: escolhido.pro_id,
-                produto: escolhido.pro_nome,
+            const produtos = lista.map((item: any) => ({
+                codigo: item.pro_id,
+                produto: item.pro_nome,
                 quantidade: 1,
-                valor: Number(escolhido.pro_valor),
-            });
-            setProdutoBusca(escolhido.pro_nome);
-            setQuantidade(1);
-            setValorUnitario(Number(escolhido.pro_valor));
+                valor: Number(item.pro_valor)
+            }));
 
+            setProdutoSelecionado(produtos);
+
+            setProdutoBusca("");
+            setQuantidade(1);
 
         } catch (err: any) {
             console.error(err);
@@ -228,12 +219,14 @@ export default function DashNovaVenda() {
         if (!reservaId) return abrirModalErro("Erro! Reserva não encontrada.");
 
         try {
-            await dashboardReservaService.adicionarItemVenda(
-                Number(reservaId),          // ven_id
-                produtoSelecionado.codigo,  // pro_id
-                quantidade,                 // quantidade
-                valorUnitario               // valorUnitario
-            );
+            for (const produto of produtoSelecionado) {
+                await dashboardReservaService.adicionarItemVenda(
+                    Number(reservaId),
+                    produto.codigo,
+                    produto.quantidade,
+                    produto.valor
+                );
+            }
 
 
             // Recarrega os itens da reserva
@@ -432,12 +425,15 @@ export default function DashNovaVenda() {
                 <div className="flex flex-row gap-4 mb-6 items-end">
                     <div className="flex flex-col flex-1">
                         <label className="text-ice font-medium mb-1">Produto</label>
-                        <input
-                            type="text"
-                            value={produtoSelecionado.produto}
-                            disabled={true}
-                            className="bg-ice/80 rounded-md p-2 w-full"
-                        />
+                        {produtoSelecionado.map((prod) => (
+                            <input
+                                key={prod.codigo}
+                                type="text"
+                                value={prod.produto}
+                                disabled={true}
+                                className="bg-ice/80 rounded-md p-2 w-full mb-2"
+                            />
+                        ))}
                     </div>
                     <div className="flex flex-col w-40">
                         <label className="text-ice font-medium mb-1">Valor Unitário</label>

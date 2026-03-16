@@ -40,15 +40,18 @@ export default function ModalReserva({ isOpen, dados, onClose }: ModalReservaPro
                     <span className="font-semibold">Data da reserva:</span> {new Date(dados.ven_data_criacao).toLocaleDateString("pt-BR")}
                 </p>
 
-                {dados.itens?.length > 0 && (
+                {dados.ite_itemVenda?.length > 0 && (
                     <div className="flex flex-col items-center gap-4">
-                        {dados.itens.map((item: any, index: number) => (
+                        {dados.ite_itemVenda.map((item: any, index: number) => (
                             <div key={index} className="text-center">
                                 <p className="mb-2">
-                                    <span className="font-semibold">Quantidade:</span> {item.quantidade} unidade(s)
+                                    <span className="font-semibold">Produto:</span> {item.pro_produto?.pro_nome}
                                 </p>
                                 <p className="mb-2">
-                                    <span className="font-semibold">Valor:</span> R$ {item.valor.toFixed(2)}
+                                    <span className="font-semibold">Quantidade:</span> {item.ite_qtd} unidade(s)
+                                </p>
+                                <p className="mb-2">
+                                    <span className="font-semibold">Valor:</span> R$ {item.ite_valor.toFixed(2)}
                                 </p>
                             </div>
                         ))}
@@ -57,6 +60,10 @@ export default function ModalReserva({ isOpen, dados, onClose }: ModalReservaPro
 
                 <p className={`mb-2 font-semibold`}>
                     Status:<span className={statusColor}> {dados.ven_status}</span>
+                </p>
+
+                <p className={`mb-2 font-semibold`}>
+                    Período Retirada:<span className="text-primary-orange"> {dados.ven_periodo}</span>
                 </p>
 
                 <div className="flex gap-4 justify-center">

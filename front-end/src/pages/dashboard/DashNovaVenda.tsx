@@ -11,6 +11,7 @@ interface ItemCarrinho {
     produto: string;
     quantidade: number;
     valor: number;
+    estoque?: number;
 }
 
 const formaPagamentoMap: Record<string, string> = {
@@ -54,7 +55,15 @@ export default function DashNovaVenda() {
     const [reservaIdState, setReservaIdState] = useState<number | null>(
         reservaId ? Number(reservaId) : null
     );
+    const [produtoEscolhido, setProdutoEscolhido] = useState<ItemCarrinho | null>(null);
 
+    useEffect(() => {
+        if (produtoSelecionado && produtoSelecionado.length > 0) {
+            const primeiro = produtoSelecionado[0];
+            setProdutoEscolhido(primeiro);
+            setValorUnitario(primeiro.valor);
+        }
+    }, [produtoSelecionado]);
 
     const abrirModalVoltar = async () => {
         setModalTipo("confirmacao");
@@ -62,8 +71,8 @@ export default function DashNovaVenda() {
         setModalBotaoAcao("Sair");
         setAcaoModal(() => async () => {
             try {
-                if (carrinho.length === 0 && reservaId && reservaCriada) {
-                    await dashboardReservaService.removerReserva(Number(reservaId));
+                if (reservaIdState && reservaCriada) {
+                    await dashboardReservaService.removerReserva(Number(reservaIdState));
                 }
 
             } catch (err) {
@@ -148,8 +157,6 @@ export default function DashNovaVenda() {
         setModalAberto(true);
     };
 
-
-
     useEffect(() => {
         inputBuscaRef.current?.focus();
     }, []);
@@ -199,7 +206,8 @@ export default function DashNovaVenda() {
                 codigo: item.pro_id,
                 produto: item.pro_nome,
                 quantidade: 1,
-                valor: Number(item.pro_valor)
+                valor: Number(item.pro_valor),
+                estoque: item.estoque
             }));
 
             setProdutoSelecionado(produtos);
@@ -215,43 +223,52 @@ export default function DashNovaVenda() {
 
     // Adicionar produto ao carrinho
     const adicionarProdutoAoCarrinho = async () => {
-        if (!produtoSelecionado) return abrirModalErro("Erro! Selecione um produto antes de adicionar.");
+        if (!produtoEscolhido) return abrirModalErro("Erro! Selecione um produto antes de adicionar.");
         if (!reservaId) return abrirModalErro("Erro! Reserva não encontrada.");
 
         try {
-            for (const produto of produtoSelecionado) {
-                await dashboardReservaService.adicionarItemVenda(
-                    Number(reservaId),
-                    produto.codigo,
-                    produto.quantidade,
-                    produto.valor
-                );
-            }
+            await dashboardReservaService.adicionarItemVenda(
+                Number(reservaId),
+                produtoEscolhido.codigo,
+                quantidade,
+                valorUnitario
+            );
 
+            setCarrinho((prev) => {
+                const itemExistente = prev.find(p => p.codigo === produtoEscolhido.codigo);
 
-            // Recarrega os itens da reserva
-            const reserva = await dashboardReservaService.buscarReservaPorId(Number(reservaId));
-            const itens = (reserva.ite_itemVenda || []).map((item: any) => ({
-                codigo: item.pro_produto.pro_cod,
-                produto: item.pro_produto.pro_nome,
-                valor: Number(item.ite_valor) / item.ite_qtd,
-                quantidade: item.ite_qtd,
-            }));
+                if (itemExistente) {
+                    return prev.map(p =>
+                        p.codigo === produtoEscolhido.codigo
+                            ? { ...p, quantidade: p.quantidade + quantidade }
+                            : p
+                    );
+                }
 
-            setCarrinho(itens);
+                return [
+                    ...prev,
+                    {
+                        codigo: produtoEscolhido.codigo,
+                        produto: produtoEscolhido.produto,
+                        quantidade: quantidade,
+                        valor: valorUnitario
+                    }
+                ];
+            });
 
-            // Reset inputs
             setProdutoSelecionado(null);
+            setProdutoEscolhido(null);
             setProdutoBusca("");
             setQuantidade(1);
             setValorUnitario(0);
+
+            inputBuscaRef.current?.focus();
+
         } catch (err: any) {
             console.error(err);
-            abrirModalErro("Erro! " + (err?.response?.data?.message || "Erro ao adicionar produto. Verifique estoque."));
-            inputBuscaRef.current?.focus();
+            abrirModalErro("Erro! " + (err?.response?.data?.message || "Erro ao adicionar produto."));
         }
     };
-
 
     const removerItem = async (codigo: number) => {
         if (!reservaId) return;
@@ -399,8 +416,6 @@ export default function DashNovaVenda() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [produtoSelecionado, quantidade, carrinho, formaPagamento, totalRecebido, modalAberto, modalTipo, acaoModal]);
 
-
-
     return (
         <div className="flex-1 h-screen bg-black-smooth/95 p-6  pb-3">
             {/* Barra de busca */}
@@ -425,7 +440,7 @@ export default function DashNovaVenda() {
                 <div className="flex flex-row gap-4 mb-6 items-end">
                     <div className="flex flex-col flex-1">
                         <label className="text-ice font-medium mb-1">Produto</label>
-                        {produtoSelecionado.map((prod) => (
+                        {/*{produtoSelecionado.map((prod) => (
                             <input
                                 key={prod.codigo}
                                 type="text"
@@ -433,7 +448,36 @@ export default function DashNovaVenda() {
                                 disabled={true}
                                 className="bg-ice/80 rounded-md p-2 w-full mb-2"
                             />
-                        ))}
+                        ))}*/}
+
+                        <select
+                            className="bg-ice/80 rounded-md p-2 w-full mb-2"
+                            style={{ color: produtoEscolhido?.estoque === 0 ? "gray" : "black" }}
+                            value={produtoEscolhido?.codigo || ""}
+                            onChange={(e) => {
+                                const codigo = Number(e.target.value);
+                                const produto = produtoSelecionado.find(p => p.codigo === codigo);
+
+                                if (produto) {
+                                    setProdutoEscolhido(produto);
+                                    setValorUnitario(produto.valor);
+                                }
+                            }}
+                        >
+                            {produtoSelecionado.map((prod) => (
+                                <option
+                                    key={prod.codigo}
+                                    value={prod.codigo}
+                                    disabled={prod.estoque === 0}
+                                    style={{ color: prod.estoque === 0 ? "gray" : "black" }}
+                                >
+                                    {prod.estoque === 0
+                                        ? `${prod.produto} - Indisponível (sem estoque)`
+                                        : prod.produto}
+                                </option>
+                            ))}
+                        </select>
+
                     </div>
                     <div className="flex flex-col w-40">
                         <label className="text-ice font-medium mb-1">Valor Unitário</label>

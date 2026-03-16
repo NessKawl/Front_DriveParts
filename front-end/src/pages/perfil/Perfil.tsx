@@ -34,25 +34,7 @@ export default function Perfil() {
         { value: "Finalizado", children: "Finalizado" },
         { value: "Cancelado", children: "Cancelado" },
     ];
-    // const products = [
-    //     {
-    //         image: "/produtos/cabecote.png",
-    //         name: "JUNTA CABECOTE - HISTÓRICO",
-    //         reserva: "Reservado em 20/10/2025",
-    //         status: "Finalizado",
-    //     },
-    //     {
-    //         image: "/produtos/cabecote.png",
-    //         name: "JUNTA CABECOTE - HISTÓRICO",
-    //         reserva: "Reservado em 20/10/2025",
-    //         status: "Cancelado",
-    //     },
-    //     {
-    //         image: "/produtos/cabecote.png",
-    //         name: "JUNTA CABECOTE - ATIVA",
-    //         praso: "Reservado até as 18:00 de 13/10/2025",
-    //     },
-    // ]
+
     const [nome, setNome] = useState<any>(null);
     const [tel, setTel] = useState<any>(null);
     const [reservasAtivas, setReservasAtivas] = useState<any[]>([]);
@@ -65,12 +47,10 @@ export default function Perfil() {
         setModalAberto(true);
     };
 
-
     const fecharModalReserva = () => {
         setModalAberto(false);
         setReservaSelecionada(null);
     };
-
 
     useEffect(() => {
         const fetchUserAndReservas = async () => {

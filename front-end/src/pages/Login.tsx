@@ -5,6 +5,7 @@ import FooterMain from "../components/footer/FooterMain"
 import { useState } from "react"
 import { VerifyLogin } from "../services/authService"
 import { useSearchParams } from "react-router-dom";
+import axios from "axios"
 
 const formatTelefone = (value: string) => {
   // Remove tudo que não for número (bloqueia letras e símbolos)
@@ -80,7 +81,10 @@ export default function Login() {
     } catch (err: any) {
       console.log(err);
 
-      if (err.response?.status === 401 || err.response?.status === 404) {
+      if(err.response?.status === 429){
+        setError("Muitas tentativas erradas. Tente novamente após 1 minuto.")
+      }
+      else if (err.response?.status === 401 || err.response?.status === 404) {
         setError("Telefone ou senha incorretos.");
       } else {
         setError("Erro ao fazer login. Tente novamente.");
@@ -89,6 +93,8 @@ export default function Login() {
     finally {
       setLoading(false);
     }
+    
+    
   }
 
   return (

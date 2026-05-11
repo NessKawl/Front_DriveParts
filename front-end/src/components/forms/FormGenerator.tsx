@@ -6,7 +6,8 @@ interface Field {
   type: string;
   placeholder: string;
   required?: boolean;
-  options?: { label: string; value: any }[]; // usado para selects
+  options?: { label: string; value: any }[];
+  disabled?: boolean;
 }
 
 interface FormGeneratorProps {
@@ -49,8 +50,8 @@ export default function FormGenerator({ fields, form, setForm, className }: Form
             value={form[field.name]}
             onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
             required={field.required}
-            className="appearance-none border border-gray-300 p-2 bg-ice text-black-smooth rounded-md"
-          />
+            disabled={field.disabled}
+           className={`appearance-none border border-gray-300 p-2 rounded-md ${field.disabled ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-ice text-black-smooth"}`}/>
         );
       })}
     </div>

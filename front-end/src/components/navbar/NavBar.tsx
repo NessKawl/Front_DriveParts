@@ -1,75 +1,96 @@
 import Search from "../inputs/Search.tsx";
-import { useEffect, useState } from "react"
-import { Menu, X } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import Categoria from "../buttons/Categoria.tsx";
 import Avatar from "../imagens/Avatar.tsx";
 import { useNavigate } from "react-router-dom";
 import { getUserProfile } from "../../services/authService.tsx";
 import clsx from "clsx";
+import { u } from "framer-motion/client";
 
 export default function NavBar() {
-  const [user, setUser] = useState<any>(null);
-  const [userName, setUserName] = useState("");
-  const [userPhone, setUserPhone] = useState("");
+  // const [user, setUser] = useState<any>(null);
+  // const [userName, setUserName] = useState("");
+  // const [userPhone, setUserPhone] = useState("");
+
+  const userStorage = JSON.parse(localStorage.getItem("user") || "{}");
+
+  const [user, setUser] = useState({
+    nome: userStorage.usu_nome || "",
+    telefone: userStorage.usu_tel || "",
+  });
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return; // usuário não logado, sai da função
+    function atualizarUsuario() {
+      const updatedUser = JSON.parse(localStorage.getItem("user") || "{}");
 
-        const response = await getUserProfile();
-        setUser(response.data); // O Nest retorna req.user
-        setUserName(response.data.usu_nome)
-        setUserPhone(response.data.usu_tel)
-        console.log("Nome do usuario: ", userName);
-      } catch (err) {
-        console.error("Erro ao obter perfil:", err);
-        // Token inválido ou expirado → limpa storage
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-      }
+      setUser({
+        nome: updatedUser.usu_nome || "",
+        telefone: updatedUser.usu_tel || "",
+      });
+    }
+
+    atualizarUsuario();
+
+    window.addEventListener("storage", atualizarUsuario);
+
+    return () => {
+      window.removeEventListener("storage", atualizarUsuario);
     };
-
-    fetchUser();
   }, []);
 
   function action() {
-    if (userName) {
-      navigate("/perfil")
+    if (user.nome) {
+      navigate("/perfil");
     } else {
-      navigate("/login")
+      navigate("/login");
     }
   }
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   return (
     <div className=" bg-primary-orange py-4 px-2 flex flex-col justify-between items-center ">
       <div className="flex justify-between items-center w-full">
         <div className="h-20 w-5/12">
-          <button onClick={() => userPhone == "12987654321" ? navigate("/dashboard/geral") : navigate("/catalogo")} className=" cursor-pointer ">
-            <img src="/logo-black-full.png" alt="" className="absolute  md:block hidden md:w-30 lg:w-40 top-0 " />
-            <img src="/logo-black-mini.png" alt="" className="absolute md:hidden block w-40 top-10" />
+          <button
+            onClick={() =>
+              user.telefone == "12987654321"
+                ? navigate("/dashboard/geral")
+                : navigate("/catalogo")
+            }
+            className=" cursor-pointer "
+          >
+            <img
+              src="/logo-black-full.png"
+              alt=""
+              className="absolute  md:block hidden md:w-30 lg:w-40 top-0 "
+            />
+            <img
+              src="/logo-black-mini.png"
+              alt=""
+              className="absolute md:hidden block w-40 top-10"
+            />
           </button>
-
         </div>
         <div className="flex justify-between items-end gap-20 w-full">
           <div className="hidden md:block w-full">
             <Search />
           </div>
           <div className="flex justify-end gap-2 mb-2 md:w-6/12  w-full">
-            <div
-              className="flex flex-row gap-2"
-              onClick={() => (action())}
-            >
+            <div className="flex flex-row gap-2" onClick={() => action()}>
               <div className="flex flex-col text-right border-r border-black-smooth pr-3 items-end justify-center cursor-pointer">
-                {userName ? <p className="font-light text-sm md:text-lg">Bem vindo(a)</p> : <p className="font-semibold text-md">Acessar conta</p>}
-                <p className="font-bold text-sm md:text-lg">{userName}</p>
+                {user.nome ? (
+                  <p className="font-light text-sm md:text-lg">Bem vindo(a)</p>
+                ) : (
+                  <p className="font-semibold text-md">Acessar conta</p>
+                )}
+                <p className="font-bold text-sm md:text-lg">{user.nome}</p>
               </div>
             </div>
-            <div className="relative hidden md:block cursor-pointer"
-              onClick={() => (action())}
+            <div
+              className="relative hidden md:block cursor-pointer"
+              onClick={() => action()}
             >
               <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />
 
@@ -86,7 +107,6 @@ export default function NavBar() {
           </div>
         </div>
 
-
         <AnimatePresence>
           {open && (
             <motion.div
@@ -102,19 +122,31 @@ export default function NavBar() {
                     <button onClick={() => setOpen(!open)}>
                       <X size={28} className="text-black-smooth" />
                     </button>
-                    <img src="/logo-black-mini.png" alt="" className="md:hidden block w-35 " />
+                    <img
+                      src="/logo-black-mini.png"
+                      alt=""
+                      className="md:hidden block w-35 "
+                    />
                   </div>
                   <div
-                    className={clsx("flex justify-end items-center mt-4 cursor-pointer hover:opacity-80 transition")}
-                    onClick={() => (userName ? navigate("/perfil") : navigate("/login"))}
+                    className={clsx(
+                      "flex justify-end items-center mt-4 cursor-pointer hover:opacity-80 transition",
+                    )}
+                    onClick={() =>
+                      user.nome ? navigate("/perfil") : navigate("/login")
+                    }
                   >
                     <div className="text-right mr-3">
                       <div className="text-right border-r border-black-smooth pr-3 items-center">
-                        {userName ? <p className="font-light text-sm md:text-lg">Bem vindo(a)</p> : <p className="font-semibold text-md">Acessar conta</p>}
-                        <p
-                          className="font-bold text-sm md:text-lg"
-                        >
-                          {userName}
+                        {user.nome ? (
+                          <p className="font-light text-sm md:text-lg">
+                            Bem vindo(a)
+                          </p>
+                        ) : (
+                          <p className="font-semibold text-md">Acessar conta</p>
+                        )}
+                        <p className="font-bold text-sm md:text-lg">
+                          {user.nome}
                         </p>
                       </div>
                     </div>
@@ -150,7 +182,6 @@ export default function NavBar() {
             </motion.div>
           )}
         </AnimatePresence>
-
       </div>
       <div className="md:hidden w-11/12">
         <Search />
@@ -165,7 +196,6 @@ export default function NavBar() {
           <Categoria name="Óleos e Lubrificantes" />
         </nav>
       </div>
-
     </div>
   );
 }

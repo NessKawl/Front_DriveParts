@@ -5,7 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { Edit, LogOut, Phone, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getUserProfile } from "../../services/authService";
-import { getReservasAtivas, getHistoricoGeral } from "../../services/historicoService";
+import {
+  getReservasAtivas,
+  getHistoricoGeral,
+} from "../../services/historicoService";
 import { logout } from "../../utils/auth";
 import ModalReserva from "../../components/modal/ModalHistórico";
 
@@ -21,157 +24,156 @@ const formatarTelefone = (telefone: string) => {
   }
 };
 
-
 export default function Perfil() {
-    const navigate = useNavigate()
-    const filtros = [
-        { value: "Hoje", children: "Hoje" },
-        { value: "Ultimos 7 dias", children: "Ultimos 7 dias" },
-        { value: "Ultimos 30 dias", children: "Ultimos 30 dias" },
-        { value: "Ultimos 6 meses", children: "Ultimos 6 meses" },
-        { value: "Ultimos 1 ano", children: "Ultimos 1 ano" },
-        { value: "Todos", children: "Todos" },
-        { value: "Finalizado", children: "Finalizado" },
-        { value: "Cancelado", children: "Cancelado" },
-    ];
+  const navigate = useNavigate();
+  const filtros = [
+    { value: "Hoje", children: "Hoje" },
+    { value: "Ultimos 7 dias", children: "Ultimos 7 dias" },
+    { value: "Ultimos 30 dias", children: "Ultimos 30 dias" },
+    { value: "Ultimos 6 meses", children: "Ultimos 6 meses" },
+    { value: "Ultimos 1 ano", children: "Ultimos 1 ano" },
+    { value: "Todos", children: "Todos" },
+    { value: "Finalizado", children: "Finalizado" },
+    { value: "Cancelado", children: "Cancelado" },
+  ];
 
-    const [nome, setNome] = useState<any>(null);
-    const [tel, setTel] = useState<any>(null);
-    const [reservasAtivas, setReservasAtivas] = useState<any[]>([]);
-    const [historico, setHistorico] = useState<any[]>([]);
-    const [reservaSelecionada, setReservaSelecionada] = useState<any>(null);
-    const [modalAberto, setModalAberto] = useState(false);
+  const userStorage = JSON.parse(localStorage.getItem("user") || "{}");
 
-    const abrirModalReserva = (item: any) => {
-        setReservaSelecionada(item.dadosCompletos);
-        setModalAberto(true);
+  const [nome, setNome] = useState(userStorage.usu_nome || "");
+  const [tel, setTel] = useState(userStorage.usu_tel || "");
+  const [reservasAtivas, setReservasAtivas] = useState<any[]>([]);
+  const [historico, setHistorico] = useState<any[]>([]);
+  const [reservaSelecionada, setReservaSelecionada] = useState<any>(null);
+  const [modalAberto, setModalAberto] = useState(false);
+
+  const abrirModalReserva = (item: any) => {
+    setReservaSelecionada(item.dadosCompletos);
+    setModalAberto(true);
+  };
+
+  const fecharModalReserva = () => {
+    setModalAberto(false);
+    setReservaSelecionada(null);
+  };
+
+  useEffect(() => {
+    const fetchUserAndReservas = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        
+        const reservasAtivasRaw = await getReservasAtivas(token);
+        const historicoRaw = await getHistoricoGeral(token);
+
+        const mapearReservas = (lista: any[]) =>
+          lista.map((reserva) => ({
+            image:
+              reserva.ite_itemVenda?.[0]?.pro_produto?.pro_caminho_img ||
+              "/produtos/sem-imagem.png",
+            name:
+              reserva.ite_itemVenda?.[0]?.pro_produto?.pro_nome ||
+              `Reserva #${reserva.ven_id}`,
+            reserva: `Reservado em ${new Date(reserva.ven_data_criacao).toLocaleDateString("pt-BR")}`,
+            status: reserva.ven_status,
+            dadosCompletos: {
+              ...reserva,
+              itens: reserva.ite_itemVenda.map((item: any) => ({
+                quantidade: item.ite_qtd,
+                valor: item.ite_valor,
+                nome: item.pro_produto?.pro_nome || "Produto sem nome",
+              })),
+            },
+          }));
+
+        setReservasAtivas(mapearReservas(reservasAtivasRaw));
+        setHistorico(mapearReservas(historicoRaw));
+      } catch (err) {
+        console.error("Erro ao carregar perfil/reservas:", err);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
     };
 
-    const fecharModalReserva = () => {
-        setModalAberto(false);
-        setReservaSelecionada(null);
-    };
+    fetchUserAndReservas();
+  }, []);
 
-    useEffect(() => {
-        const fetchUserAndReservas = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                if (!token) return;
+  const user = {
+    nome: nome,
+    telefone: tel,
+  };
 
-                const response = await getUserProfile();
-                setNome(response.data.usu_nome);
-                setTel(response.data.usu_tel);
-
-                const reservasAtivasRaw = await getReservasAtivas(token);
-                const historicoRaw = await getHistoricoGeral(token);
-
-                const mapearReservas = (lista: any[]) =>
-                    lista.map((reserva) => ({
-                        image: reserva.ite_itemVenda?.[0]?.pro_produto?.pro_caminho_img || "/produtos/sem-imagem.png",
-                        name: reserva.ite_itemVenda?.[0]?.pro_produto?.pro_nome || `Reserva #${reserva.ven_id}`,
-                        reserva: `Reservado em ${new Date(reserva.ven_data_criacao).toLocaleDateString("pt-BR")}`,
-                        status: reserva.ven_status,
-                        dadosCompletos: {
-                            ...reserva,
-                            itens: reserva.ite_itemVenda.map((item: any) => ({
-                                quantidade: item.ite_qtd,
-                                valor: item.ite_valor,
-                                nome: item.pro_produto?.pro_nome || "Produto sem nome",
-                            })),
-                        },
-                    }));
-
-                setReservasAtivas(mapearReservas(reservasAtivasRaw));
-                setHistorico(mapearReservas(historicoRaw));
-
-            } catch (err) {
-                console.error("Erro ao carregar perfil/reservas:", err);
-                localStorage.removeItem("token");
-                localStorage.removeItem("user");
-            }
-        };
-
-        fetchUserAndReservas();
-    }, []);
-
-    const user = {
-        nome: nome,
-        telefone: tel
-    }
-
-    return (
-        <div className="bg-ice min-h-screen ">
-            <NavBarSimples rota={"catalogo"} />
-            <main>
-                <header className=" flex justify-center items-center px-6 py-3 shadow">
-                    <h1 className="text-2xl font-bold">Seu Perfil</h1>
-                </header>
-                <div className="flex justify-center my-10">
-                    <div className="bg-white shadow-xl rounded-xl p-4 w-[350px] text-center">
-                        <div className=" flex justify-end">
-                            <button
-                                className="flex items-center gap-2 bg-white hover:bg-primary-orange border hover:border-primary-orange px-3 py-1 rounded transition"
-                                onClick={() => navigate("/editar-perfil")}
-                            >
-                                <Edit size={18} /> Editar
-                            </button>
-                        </div>
-                        <div className="flex flex-col items-center mt-4">
-                            <div className="w-26 h-26 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white mb-3">
-                                <User size={48} />
-                            </div>
-                            <h2 className="text-2xl font-bold text-gray-800">{user.nome}</h2>
-                            <p className="text-gray-600 flex items-center justify-center gap-1 mt-1">
-                                <Phone size={16} /> {formatarTelefone(user.telefone)}
-                            </p>
-                        </div>
-                        <button
-                            className="mt-6 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition px-4 py-2 rounded-lg flex items-center justify-center gap-2 w-full"
-                            onClick={() => {
-                                // Lógica de logout aqui
-                                logout();
-                                navigate("/catalogo")
-                            }}
-                        >
-                            <LogOut size={20} /> Desconectar
-                        </button>
-                    </div>
-                </div>
-
-                <div className="md:px-10 mb-2">
-                    <ProductsGrid
-                        filtro={false}
-                        title="Suas Reservas Ativas"
-                        tipo="reservasAtivas"
-                        products={reservasAtivas}
-                        onClickItem={abrirModalReserva}
-                    />
-                </div>
-                <div className="md:px-10">
-                    <ProductsGrid
-                        filtro={true}
-                        filtroChildren={filtros}
-                        tituloFiltro="Período"
-                        title="Histórico de Reservas"
-                        tipo="historico"
-                        products={historico}
-                        onClickItem={abrirModalReserva}
-                    />
-                </div>
-
-                {modalAberto && reservaSelecionada && (
-                    <ModalReserva
-                        isOpen={modalAberto}
-                        dados={reservaSelecionada}
-                        onClose={fecharModalReserva}
-                    />
-                )}
-
-
-            </main>
-            <footer>
-                <FooterMain />
-            </footer>
+  return (
+    <div className="bg-ice min-h-screen ">
+      <NavBarSimples rota={"catalogo"} />
+      <main>
+        <header className=" flex justify-center items-center px-6 py-3 shadow">
+          <h1 className="text-2xl font-bold">Seu Perfil</h1>
+        </header>
+        <div className="flex justify-center my-10">
+          <div className="bg-white shadow-xl rounded-xl p-4 w-[350px] text-center">
+            <div className=" flex justify-end">
+              <button
+                className="flex items-center gap-2 bg-white hover:bg-primary-orange border hover:border-primary-orange px-3 py-1 rounded transition"
+                onClick={() => navigate("/editar-perfil")}
+              >
+                <Edit size={18} /> Editar
+              </button>
+            </div>
+            <div className="flex flex-col items-center mt-4">
+              <div className="w-26 h-26 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white mb-3">
+                <User size={48} />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-800">{user.nome}</h2>
+              <p className="text-gray-600 flex items-center justify-center gap-1 mt-1">
+                <Phone size={16} /> {formatarTelefone(user.telefone)}
+              </p>
+            </div>
+            <button
+              className="mt-6 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition px-4 py-2 rounded-lg flex items-center justify-center gap-2 w-full"
+              onClick={() => {
+                // Lógica de logout aqui
+                logout();
+                navigate("/catalogo");
+              }}
+            >
+              <LogOut size={20} /> Desconectar
+            </button>
+          </div>
         </div>
-    )
+
+        <div className="md:px-10 mb-2">
+          <ProductsGrid
+            filtro={false}
+            title="Suas Reservas Ativas"
+            tipo="reservasAtivas"
+            products={reservasAtivas}
+            onClickItem={abrirModalReserva}
+          />
+        </div>
+        <div className="md:px-10">
+          <ProductsGrid
+            filtro={true}
+            filtroChildren={filtros}
+            tituloFiltro="Período"
+            title="Histórico de Reservas"
+            tipo="historico"
+            products={historico}
+            onClickItem={abrirModalReserva}
+          />
+        </div>
+
+        {modalAberto && reservaSelecionada && (
+          <ModalReserva
+            isOpen={modalAberto}
+            dados={reservaSelecionada}
+            onClose={fecharModalReserva}
+          />
+        )}
+      </main>
+      <footer>
+        <FooterMain />
+      </footer>
+    </div>
+  );
 }

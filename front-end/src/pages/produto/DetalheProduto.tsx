@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom"
 // import ProductCarousel from "../../components/carrosel/ProductCarousel";
 import ProductsGridReco from "../../components/cards/ProductsGridReco";
 import { useEffect, useState } from "react";
-import { GetProdutosId } from "../../services/dataService";
+import { GetProdutosUuid } from "../../services/dataService";
 import { isAuthenticated } from "../../utils/auth";
 import Modal from "../../components/modal/Modal";
 
@@ -30,7 +30,7 @@ export default function DetalheProduto() {
   const navigate = useNavigate();
 
   const [searchParam] = useSearchParams();
-  const pro_id = searchParam.get("id")
+  const uuid = searchParam.get("uuid")
   const [produtos, setProdutos] = useState<Produto | null>(null)
   const [modalOpen, setModalOpen] = useState(false);
   const [modalData, setModalData] = useState({
@@ -42,27 +42,23 @@ export default function DetalheProduto() {
 
   useEffect(() => {
 
-    if (!pro_id) return
-
-    const produtoIdNumber = parseInt(pro_id);
-
-    if (isNaN(produtoIdNumber)) {
-      console.error("ID do produto na URL não é um número válido.");
+    if (!uuid) {
+      console.error("UUID não encontrado na URL");
       return;
     }
-
     const fetchProdutos = async () => {
-      const response = await GetProdutosId(produtoIdNumber);
-      if (response && response.data) {
-        setProdutos(response.data as Produto);
-      } else {
-        // Se o serviço retornou { data: null } ou algo inesperado
+      const data = await GetProdutosUuid(uuid);
+
+      setProdutos(data as Produto);
+      // Se o serviço retornou { data: null } ou algo inesperado
+      if (!data) {
         setProdutos(null);
         console.error("Dados do produto vieram vazios ou nulos da API.");
       }
+
     };
     fetchProdutos();
-  }, [pro_id]);
+  }, [uuid]);
 
   if (!produtos) {
     return (
@@ -143,12 +139,12 @@ export default function DetalheProduto() {
                     actionText: "Realizar Login",
                     action: () => {
                       setModalOpen(false);
-                      navigate(`/login?redirect=/reserva?id=${pro_id}`)
+                      navigate(`/login?redirect=/reserva?uuid=${uuid}`)
                     }
                   });
                   return;
                 }
-                navigate(`/reserva?id=${pro_id}`);
+                navigate(`/reserva?uuid=${uuid}`);
               }}
             />
           </div>

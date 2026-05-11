@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 interface Produto {
     pro_id: number;
+    pro_aux_uuid: string;
     pro_nome: string;
     pro_valor: number;
     pro_marca?: string;
@@ -23,8 +24,8 @@ export default function PesquisaGrid({ products }: { products: Produto[] }) {
             >
                 {products.map((product) => (
                     <div
-                        key={product.pro_id}
-                        onClick={() => navigate(`/detalhe-produto?id=${product.pro_id}`)}
+                        key={product.pro_aux_uuid}
+                        onClick={() => navigate(`/detalhe-produto?uuid=${product.pro_aux_uuid}`)}
                         className="
                             w-full h-44 sm:w-56 sm:h-76 
                             bg-white 

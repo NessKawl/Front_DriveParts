@@ -15,7 +15,7 @@ interface Product {
   praso?: string;
   reserva?: string;
   status?: string;
-  id: number;
+  id: string;
 }
 interface GridProps {
   title: string

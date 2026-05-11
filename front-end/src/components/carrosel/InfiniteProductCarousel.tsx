@@ -3,14 +3,14 @@ import React, { useRef, useEffect } from "react";
 interface Produto {
   image: string,
   name: string,
-  id: number,
+  id: string,
   price: string,
 }
 
 interface InfiniteProductCarouselProps {
   products: Produto[];
   speed?: number; // em pixels por segundo
-  onCardClick: (id: number) => void;
+  onCardClick: (id: string) => void;
 }
 
 const InfiniteProductCarousel: React.FC<InfiniteProductCarouselProps> = ({

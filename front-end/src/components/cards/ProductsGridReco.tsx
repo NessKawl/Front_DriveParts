@@ -5,6 +5,7 @@ import { GetProdutos } from "../../services/dataService";
 
 interface Produto {
     pro_id: number;
+    pro_aux_uuid: string;
     pro_nome: string;
     pro_valor: number;
     pro_marca?: string;
@@ -28,7 +29,7 @@ export default function ProductGridReco() {
     const produtosRecomendados = produtos.map((p) => ({
         image: p.pro_caminho_img || "/sem-imagem.jpg",
         name: p.pro_nome,
-        id: p.pro_id,
+        id: p.pro_aux_uuid,
         price: `R$ ${p.pro_valor.toFixed(2).replace(".", ",")}`,
         // parcelas: "ou 6x sem juros",
     }))
@@ -43,7 +44,7 @@ export default function ProductGridReco() {
                         name={product.name}
                         price={product.price}
                         id={product.id}
-                        // parcelas={product.parcelas}
+                    // parcelas={product.parcelas}
                     />
                 ))}
             </div>

@@ -8,6 +8,7 @@ import { BuscaProdutoPorCategoria, BuscaProdutoPorNome } from "../services/dataS
 
 interface Produto {
   pro_id: number;
+  pro_aux_uuid: string;
   pro_nome: string;
   pro_valor: number;
   pro_marca?: string;

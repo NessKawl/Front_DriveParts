@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom"
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { criarReservaBackend } from "../../services/reservaService";
-import { GetProdutosId } from "../../services/dataService";
+import { GetProdutosUuid } from "../../services/dataService";
 
 interface Produto {
   pro_nome: string;
@@ -23,15 +23,15 @@ export default function Reserva() {
 
   const [searchParam] = useSearchParams();
 
-  const pro_id = searchParam.get("id");
+  const uuid = searchParam.get("uuid")
   const [produto, setProduto] = useState<Produto | null>(null)
 
   const [modalSuccessOpen, setModalSuccessOpen] = useState(false);
 
   useEffect(() => {
-    if (!pro_id) return
+    if (!uuid) return
 
-    const produtoIdNumber = parseInt(pro_id);
+    const produtoIdNumber = parseInt(uuid);
 
     if (isNaN(produtoIdNumber)) {
       console.error("ID do produto na URL não é um número válido.");
@@ -39,16 +39,17 @@ export default function Reserva() {
     }
 
     const fetchProdutos = async () => {
-      const response = await GetProdutosId(produtoIdNumber)
-      if (response && response.data) {
-        setProduto(response.data as Produto)
-      } else {
-        setProduto(null)
-        console.error("Dados do produto vieram vazios ou nulos da API")
+      const data = await GetProdutosUuid(uuid);
+
+      setProduto(data as Produto);
+      // Se o serviço retornou { data: null } ou algo inesperado
+      if (!data) {
+        setProduto(null);
+        console.error("Dados do produto vieram vazios ou nulos da API.");
       }
     }
     fetchProdutos()
-  }, [pro_id])
+  }, [uuid])
 
   if (!produto) {
     return (
@@ -131,7 +132,7 @@ export default function Reserva() {
                     }
 
                     try {
-                      const produtoIdNumber = Number(pro_id)
+                      const produtoIdNumber = Number(uuid);
 
                       const resultado = await criarReservaBackend(produtoIdNumber, slecionaQuantidade, selecionarPeriodo);
                       setModalSuccessOpen(true);

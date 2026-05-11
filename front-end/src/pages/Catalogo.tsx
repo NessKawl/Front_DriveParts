@@ -9,8 +9,9 @@ import NavBar from "../components/navbar/NavBar.tsx"
 import { BuscaProdutoPorCategoria, GetProdutos } from "../services/dataService.tsx"
 
 
-interface Produto { 
+interface Produto {
     pro_id: number;
+    pro_aux_uuid: string;
     pro_nome: string;
     pro_valor: number;
     pro_marca?: string;
@@ -49,7 +50,7 @@ export default function Catalogo() {
     const productsGridMaisVendidos = produtos.map((p) => ({
         image: p.pro_caminho_img || "/sem-imagem.jpg",
         name: p.pro_nome,
-        id: p.pro_id,
+        id: p.pro_aux_uuid,
         price: `R$ ${p.pro_valor.toFixed(2).replace(".", ",")}`,
         parcelas: "ou 6x sem juros",
     }));
@@ -57,14 +58,13 @@ export default function Catalogo() {
     const produtosCarrossel = produtosAcessorios.map((p) => ({
         image: p.pro_caminho_img || "/sem-imagem.jpg",
         name: p.pro_nome,
-        id: p.pro_id,
+        id: p.pro_aux_uuid,
         price: `R$ ${p.pro_valor.toFixed(2).replace(".", ",")}`,
     }))
 
-    const handleCardClick = (id: number) => {
-        navigate(`/detalhe-produto?id=${id}`)
+    const handleCardClick = (uuid: string) => {
+        navigate(`/detalhe-produto?uuid=${uuid}`)
     }
-
     return (
         <div className="bg-ice min-h-screen ">
             <aside >

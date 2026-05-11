@@ -1,5 +1,5 @@
 import api from "./api";
-
+import * as bcrypt from 'bcrypt';
 
 
 // Produtos
@@ -101,11 +101,10 @@ export const BuscaTodosProdutos = async () => {
 };
 
 
-export const GetProdutosId = async (pro_id: number) => {
-    const response = await api.get(`/produto/${pro_id}`);
-    return response;
+export const GetProdutosUuid = async (uuid: string) => {
+    const response = await api.get(`/produto/${uuid}`);
+    return response.data;
 }
-
 export const CriarMovimentacaoProduto = async (pro_id: number, mov_qtd: number, mov_tipo: "COMPRA" | "VENDA") => {
     const response = await api.post("/estoque/movimentacao", {
         pro_id,

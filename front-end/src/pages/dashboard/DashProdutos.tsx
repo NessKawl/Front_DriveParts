@@ -612,8 +612,58 @@ export default function DashProdutos() {
         pro_esp_valor: produtoEditando.pro_esp_valor || "",
         categoria: produtoEditando.categoria || "11",
       });
+
+      // Exibir imagem existente se houver
+      if (produtoEditando.pro_caminho_img) {
+        setPreviewUrls([produtoEditando.pro_caminho_img]);
+      } else {
+        setPreviewUrls([]);
+      }
     }
   }, [produtoEditando]);
+
+  const fecharModalCadastro = () => {
+    setIsOpen(false);
+    setImages([]);
+    setPreviewUrls([]);
+    setForm({
+      nome: "",
+      valor: 0,
+      marca: "",
+      cod: "",
+      estoque: 0,
+      status: "Ativo",
+      esp_nome: "",
+      pro_esp_valor: "",
+      categoria: "1",
+    });
+    setEspecificacoes([
+      {
+        esp_nome: "",
+        pro_esp_valor: "",
+        esp_id: "",
+        pro_id: "",
+        met_id: 1,
+      },
+    ]);
+  };
+
+  const fecharModalEdicao = () => {
+    setIsOpenEdit(false);
+    setProdutoEditando(null);
+    setImages([]);
+    setPreviewUrls([]);
+    setFormEdit({
+      nome: "",
+      valor: 0,
+      marca: "",
+      cod: "",
+      status: "Ativo",
+      esp_nome: "",
+      pro_esp_valor: "",
+      categoria: "1",
+    });
+  };
 
   const carregarProdutos = useCallback(async () => {
     const data = await BuscaTodosProdutos();
@@ -746,102 +796,150 @@ export default function DashProdutos() {
       </div>
       {/* === Modal de Cadastro === */}
       {isOpen && (
-        <div className="absolute flex justify-center items-center w-full h-full bg-black/50 z-50">
-          <div className="bg-black-smooth h-[90%] w-[60%] rounded-md p-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
-            <div className="flex flex-row justify-between mb-4">
-              <h1 className="text-2xl font-semibold text-primary-orange">
-                Cadastre um novo produto
-              </h1>
-              <X
-                size={30}
-                color="#FFF"
-                onClick={() => setIsOpen(false)}
-                className="cursor-pointer hover:scale-110 transition-transform"
-              />
+        <div className="fixed inset-0 flex justify-center items-center bg-black/60 backdrop-blur-sm z-50 transition-all duration-300">
+          <div className="bg-black-smooth w-full max-w-4xl h-auto max-h-[95vh] rounded-3xl p-8 md:p-10 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent border border-white/10 shadow-2xl animate-in fade-in zoom-in duration-300">
+            <div className="flex flex-row justify-between items-center mb-8 border-b border-white/10 pb-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-primary-orange/20 text-primary-orange rounded-2xl">
+                  <PackagePlus size={28} />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-white tracking-tight">
+                    Cadastrar Produto
+                  </h1>
+                  <p className="text-white/50 text-sm">Adicione um novo item ao seu catálogo</p>
+                </div>
+              </div>
+              <button
+                onClick={fecharModalCadastro}
+                className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/70 hover:text-white"
+              >
+                <X size={28} />
+              </button>
             </div>
-            <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+
+            <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
               {/* Upload de imagens */}
-              <div>
-                <label className="text-md font-medium text-ice block mb-2">
-                  Imagens do produto (máx. 5MB cada):
+              <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
+                <label className="text-lg font-semibold text-white block mb-4 flex items-center gap-2">
+                  <div className="w-2 h-6 bg-primary-orange rounded-full"></div>
+                  Imagens do Produto
                 </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleFileChange}
-                  className="block w-full text-sm text-ice file:mr-3 file:py-2 file:px-4 
-                    file:rounded-md file:border-0 file:text-sm file:font-semibold 
-                    file:bg-primary-orange file:text-black-smooth hover:file:bg-orange-300"
-                />
-                <div className="grid grid-cols-6 gap-3 mt-3">
-                  {previewUrls.map((url, i) => (
-                    <div
-                      key={i}
-                      className="relative group cursor-pointer"
-                      onClick={() => {
-                        setSelectedImage(url);
-                        setSelectedIndex(i);
-                      }}
-                    >
-                      <img
-                        src={url}
-                        alt="preview"
-                        className="h-32 w-32 object-cover rounded-md border border-gray-500"
-                      />
-                      <span className="absolute top-1 left-1 bg-black/60 text-ice px-1 text-xs rounded opacity-0 group-hover:opacity-100">
-                        Cortar
-                      </span>
-                    </div>
-                  ))}
+                <div className="flex flex-col md:flex-row gap-6">
+                   <div className="flex-1">
+                      <div className="relative group border-2 border-dashed border-white/20 hover:border-primary-orange/50 rounded-2xl p-8 transition-all duration-300 bg-black/20 flex flex-col items-center justify-center gap-3">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleFileChange}
+                          className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                        />
+                        <div className="p-4 bg-white/5 rounded-full text-white/50 group-hover:text-primary-orange transition-colors">
+                           <PackagePlus size={32} />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-white font-medium">Clique para enviar</p>
+                          <p className="text-white/40 text-xs mt-1">PNG, JPG até 5MB cada</p>
+                        </div>
+                      </div>
+                   </div>
+
+                   <div className="flex-[2]">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        {previewUrls.map((url, i) => (
+                          <div
+                            key={i}
+                            className="relative group aspect-square rounded-xl overflow-hidden border border-white/10 shadow-lg"
+                          >
+                            <img
+                              src={url}
+                              alt="preview"
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            />
+                            <div 
+                              className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                              onClick={() => {
+                                setSelectedImage(url);
+                                setSelectedIndex(i);
+                              }}
+                            >
+                              <span className="bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-semibold border border-white/20">
+                                Cortar
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                        {previewUrls.length === 0 && (
+                           <div className="col-span-full h-full flex items-center justify-center text-white/20 text-sm italic py-10">
+                              Nenhuma imagem selecionada
+                           </div>
+                        )}
+                      </div>
+                   </div>
                 </div>
               </div>
 
               {/* Inputs dinâmicos */}
-              <FormGenerator
-                fields={fields}
-                form={form}
-                setForm={setForm}
-                className="grid grid-cols-2 gap-4"
-              />
-
-              <div className="flex flex-col">
-                <label className="text-md font-medium text-ice">
-                  Especificações
+              <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
+                <label className="text-lg font-semibold text-white block mb-6 flex items-center gap-2">
+                  <div className="w-2 h-6 bg-primary-orange rounded-full"></div>
+                  Informações Gerais
                 </label>
+                <FormGenerator
+                  fields={fields}
+                  form={form}
+                  setForm={setForm}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                />
+              </div>
 
-                <div className="flex flex-col w-50 m-2">
+              <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
+                <div className="flex justify-between items-center mb-6">
+                  <label className="text-lg font-semibold text-white flex items-center gap-2">
+                    <div className="w-2 h-6 bg-primary-orange rounded-full"></div>
+                    Especificações
+                  </label>
+                  <button
+                    type="button"
+                    onClick={adicionarEspecificacao}
+                    className="bg-primary-orange hover:bg-orange-500 px-4 py-2 rounded-xl text-black-smooth font-bold flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-primary-orange/20"
+                  >
+                    <PackagePlus size={18} />
+                    Adicionar
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-4">
                   {especificacoes.map((esp, i) => (
-                    <div className="flex m-2">
+                    <div key={i} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-black/20 rounded-xl border border-white/5">
                       <input
-                        key={i}
                         type="text"
-                        placeholder={`Especificação ${i + 1}`}
+                        placeholder="Nome (ex: Material)"
                         value={esp.esp_nome}
                         onChange={(e) =>
                           atualizarEspecificacaoNome(i, e.target.value)
                         }
-                        className="bg-black-smooth border border-gray-600 text-ice p-2 me-2 rounded"
+                        className="bg-ice/5 border border-white/10 text-white p-3 rounded-lg focus:border-primary-orange/50 outline-none transition-colors"
                       />
                       <input
-                        key={i}
                         type="text"
-                        placeholder={`Valor ${i + 1}`}
+                        placeholder="Valor (ex: Aço)"
                         value={esp.pro_esp_valor}
                         onChange={(e) =>
                           atualizarEspecificacaoValor(i, e.target.value)
                         }
-                        className="bg-black-smooth border border-gray-600 text-ice p-2 me-2 rounded"
+                        className="bg-ice/5 border border-white/10 text-white p-3 rounded-lg focus:border-primary-orange/50 outline-none transition-colors"
                       />
                       <select
-                        className="bg-black-smooth border border-gray-600 text-ice p-2 rounded"
+                        className="bg-ice/5 border border-white/10 text-white p-3 rounded-lg focus:border-primary-orange/50 outline-none transition-colors"
                         value={esp.met_id}
                         onChange={(e) =>
                           atualizarMetrica(i, Number(e.target.value))
                         }
                       >
                         {metrica.map((m) => (
-                          <option key={m.met_id} value={m.met_id}>
+                          <option key={m.met_id} value={m.met_id} className="bg-black-smooth">
                             {m.met_nome}
                           </option>
                         ))}
@@ -849,171 +947,145 @@ export default function DashProdutos() {
                     </div>
                   ))}
                 </div>
+              </div>
 
+              <div className="flex justify-end items-center gap-4 pt-4 border-t border-white/10 mt-4">
                 <button
                   type="button"
-                  onClick={adicionarEspecificacao}
-                  className="bg-primary-orange px-3 py-1 rounded text-black-smooth font-bold w-10"
+                  onClick={fecharModalCadastro}
+                  className="px-8 py-3 text-white/70 hover:text-white font-semibold transition-colors"
                 >
-                  +
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="bg-pear-green hover:bg-green-600 px-12 py-3 text-white text-lg font-bold rounded-xl shadow-lg shadow-pear-green/20 hover:shadow-pear-green/40 transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
+                >
+                  Cadastrar Produto
                 </button>
               </div>
-
-              <button
-                type="submit"
-                className="bg-pear-green hover:bg-orange-300 w-48 py-2 text-ice text-xl font-semibold rounded-md self-end"
-              >
-                Cadastrar
-              </button>
             </form>
           </div>
-          {/* Modal de corte de imagem */}
-          {selectedImage && (
-            <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-50">
-              <div className="bg-black-smooth p-5 rounded-lg relative">
-                <h2 className="text-primary-orange mb-3 text-lg font-semibold">
-                  Ajustar imagem
-                </h2>
-                <div className="relative w-[400px] h-[300px]">
-                  <Cropper
-                    image={selectedImage}
-                    crop={crop}
-                    zoom={zoom}
-                    aspect={1 / 1}
-                    onCropChange={setCrop}
-                    onZoomChange={setZoom}
-                    onCropComplete={onCropComplete}
-                  />
-                </div>
-                <div className="flex justify-between mt-3">
-                  <button
-                    onClick={() => setSelectedImage(null)}
-                    className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-ice rounded-md"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={handleSaveCrop}
-                    className="px-4 py-2 bg-primary-orange hover:bg-orange-300 text-black-smooth rounded-md"
-                  >
-                    Salvar corte
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+          
+
         </div>
       )}
 
       {/* === MODAL DE EDIÇÃO === */}
       {isOpenEdit && (
-        <div className="absolute flex justify-center items-center w-full h-full bg-black/50 z-50">
-          <div className="bg-black-smooth h-[90%] w-[60%] rounded-md p-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
-            <div className="flex flex-row justify-between mb-4">
-              <h1 className="text-2xl font-semibold text-primary-orange">
-                Editar produto
-              </h1>
-              <X
-                size={30}
-                color="#FFF"
-                onClick={() => {
-                  setIsOpenEdit(false);
-                  setProdutoEditando(null);
-                }}
-                className="cursor-pointer hover:scale-110 transition-transform"
-              />
+        <div className="fixed inset-0 flex justify-center items-center bg-black/60 backdrop-blur-sm z-50 transition-all duration-300">
+          <div className="bg-black-smooth w-full max-w-4xl h-auto max-h-[95vh] rounded-3xl p-8 md:p-10 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent border border-white/10 shadow-2xl animate-in fade-in zoom-in duration-300">
+            <div className="flex flex-row justify-between items-center mb-8 border-b border-white/10 pb-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-primary-orange/20 text-primary-orange rounded-2xl">
+                  <PackagePlus size={28} />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-white tracking-tight">
+                    Editar Produto
+                  </h1>
+                  <p className="text-white/50 text-sm">Atualize as informações e imagens do produto</p>
+                </div>
+              </div>
+              <button
+                onClick={fecharModalEdicao}
+                className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/70 hover:text-white"
+              >
+                <X size={28} />
+              </button>
             </div>
 
-            <form className="flex flex-col gap-5" onSubmit={handleUpdate}>
+            <form className="flex flex-col gap-8" onSubmit={handleUpdate}>
               {/* Upload de imagens */}
-              <div>
-                <label className="text-md font-medium text-ice block mb-2">
-                  Imagens do produto (máx. 5MB cada):
+              <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
+                <label className="text-lg font-semibold text-white block mb-4 flex items-center gap-2">
+                  <div className="w-2 h-6 bg-primary-orange rounded-full"></div>
+                  Imagens do Produto
                 </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleFileChange}
-                  className="block w-full text-sm text-ice file:mr-3 file:py-2 file:px-4 
-                    file:rounded-md file:border-0 file:text-sm file:font-semibold 
-                    file:bg-primary-orange file:text-black-smooth hover:file:bg-orange-300"
-                />
-                <div className="grid grid-cols-6 gap-3 mt-3">
-                  {previewUrls.map((url, i) => (
-                    <div
-                      key={i}
-                      className="relative group cursor-pointer"
-                      onClick={() => {
-                        setSelectedImage(url);
-                        setSelectedIndex(i);
-                      }}
-                    >
-                      <img
-                        src={url}
-                        alt="preview"
-                        className="h-32 w-32 object-cover rounded-md border border-gray-500"
-                      />
-                      <span className="absolute top-1 left-1 bg-black/60 text-ice px-1 text-xs rounded opacity-0 group-hover:opacity-100">
-                        Cortar
-                      </span>
-                    </div>
-                  ))}
+                <div className="flex flex-col md:flex-row gap-6">
+                   <div className="flex-1">
+                      <div className="relative group border-2 border-dashed border-white/20 hover:border-primary-orange/50 rounded-2xl p-8 transition-all duration-300 bg-black/20 flex flex-col items-center justify-center gap-3">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleFileChange}
+                          className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                        />
+                        <div className="p-4 bg-white/5 rounded-full text-white/50 group-hover:text-primary-orange transition-colors">
+                           <PackagePlus size={32} />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-white font-medium">Clique para enviar</p>
+                          <p className="text-white/40 text-xs mt-1">PNG, JPG até 5MB cada</p>
+                        </div>
+                      </div>
+                   </div>
+
+                   <div className="flex-[2]">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        {previewUrls.map((url, i) => (
+                          <div
+                            key={i}
+                            className="relative group aspect-square rounded-xl overflow-hidden border border-white/10 shadow-lg"
+                          >
+                            <img
+                              src={url}
+                              alt="preview"
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            />
+                            <div 
+                              className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                              onClick={() => {
+                                setSelectedImage(url);
+                                setSelectedIndex(i);
+                              }}
+                            >
+                              <span className="bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-semibold border border-white/20">
+                                Cortar
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                        {previewUrls.length === 0 && (
+                           <div className="col-span-full h-full flex items-center justify-center text-white/20 text-sm italic py-10">
+                              Nenhuma imagem selecionada
+                           </div>
+                        )}
+                      </div>
+                   </div>
                 </div>
               </div>
 
               {/* Inputs dinâmicos */}
-              <FormGenerator
-                fields={fields}
-                form={formEdit}
-                setForm={setFormEdit}
-                className="grid grid-cols-2 gap-4"
-              />
+              <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
+                <label className="text-lg font-semibold text-white block mb-6 flex items-center gap-2">
+                  <div className="w-2 h-6 bg-primary-orange rounded-full"></div>
+                  Informações Gerais
+                </label>
+                <FormGenerator
+                  fields={fields}
+                  form={formEdit}
+                  setForm={setFormEdit}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                />
+              </div>
 
-              {/* <div className="flex flex-col">
-                                <label className="text-md font-medium text-ice">Especificações</label>
-
-                                <div className="flex flex-col w-50 m-2">
-                                    {especificacoes.map((esp, i) => (
-                                        <div className="flex m-2">
-                                            <input
-                                                key={i}
-                                                type="text"
-                                                placeholder={`Especificação ${i + 1}`}
-                                                value={esp.esp_nome}
-                                                onChange={(e) => atualizarEspecificacaoNome(i, e.target.value)}
-                                                className="bg-black-smooth border border-gray-600 text-ice p-2 me-2 rounded" />
-                                            <input
-                                                key={i}
-                                                type="text"
-                                                placeholder={`Valor ${i + 1}`}
-                                                value={esp.pro_esp_valor}
-                                                onChange={(e) => atualizarEspecificacaoValor(i, e.target.value)}
-                                                className="bg-black-smooth border border-gray-600 text-ice p-2 me-2 rounded" />
-                                            <select
-                                                className="bg-black-smooth border border-gray-600 text-ice p-2 rounded"
-                                                value={esp.met_id}
-                                                onChange={(e) => atualizarMetrica(i, Number(e.target.value))}
-                                            >
-                                                {metrica.map((m) => (
-                                                    <option key={m.met_id} value={m.met_id}>
-                                                        {m.met_nome}
-                                                    </option>
-                                                ))}
-                                            </select>
-
-
-                                        </div>
-                                    ))}
-                                </div>
-                            </div> */}
-
-              <button
-                type="submit"
-                className="bg-pear-green hover:bg-orange-300 w-48 py-2 text-ice text-xl font-semibold rounded-md self-end"
-              >
-                Salvar alterações
-              </button>
+              <div className="flex justify-end items-center gap-4 pt-4 border-t border-white/10 mt-4">
+                <button
+                  type="button"
+                  onClick={fecharModalEdicao}
+                  className="px-8 py-3 text-white/70 hover:text-white font-semibold transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="bg-pear-green hover:bg-green-600 px-12 py-3 text-white text-lg font-bold rounded-xl shadow-lg shadow-pear-green/20 hover:shadow-pear-green/40 transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
+                >
+                  Salvar Alterações
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -1160,6 +1232,43 @@ export default function DashProdutos() {
           onCancel: () => setModalAberto(false),
         })}
       />
+
+      {/* Modal de corte de imagem (Global para Cadastro e Edição) */}
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] backdrop-blur-sm">
+          <div className="bg-black-smooth p-8 rounded-3xl border border-white/10 shadow-2xl animate-in fade-in zoom-in duration-200">
+            <h2 className="text-primary-orange mb-6 text-xl font-bold flex items-center gap-2">
+              <div className="w-2 h-6 bg-primary-orange rounded-full"></div>
+              Ajustar Imagem
+            </h2>
+            <div className="relative w-[500px] h-[400px] rounded-xl overflow-hidden border border-white/5">
+              <Cropper
+                image={selectedImage}
+                crop={crop}
+                zoom={zoom}
+                aspect={1 / 1}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+              />
+            </div>
+            <div className="flex justify-between mt-8">
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="px-6 py-2 text-white/70 hover:text-white font-semibold transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSaveCrop}
+                className="px-8 py-3 bg-primary-orange hover:bg-orange-500 text-black-smooth font-bold rounded-xl shadow-lg shadow-primary-orange/20 transition-all active:scale-95"
+              >
+                Salvar Corte
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

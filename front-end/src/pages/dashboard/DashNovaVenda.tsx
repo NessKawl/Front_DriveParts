@@ -5,6 +5,19 @@ import { useSearchParams } from "react-router-dom";
 import { dashboardReservaService } from "../../services/dashboardReservaService";
 import { useNavigate } from "react-router-dom";
 import Modal from "../../components/modal/Modal";
+import NavBarDashboard from "../../components/navbar/NavBarDashboard";
+import { 
+    Search, 
+    ShoppingCart, 
+    CreditCard, 
+    Banknote, 
+    QrCode, 
+    ArrowLeft, 
+    CheckCircle,
+    Plus,
+    Trash2,
+    Package
+} from "lucide-react";
 
 interface ItemCarrinho {
     codigo: number;
@@ -417,160 +430,259 @@ export default function DashNovaVenda() {
     }, [produtoSelecionado, quantidade, carrinho, formaPagamento, totalRecebido, modalAberto, modalTipo, acaoModal]);
 
     return (
-        <div className="flex-1 h-screen bg-black-smooth/95 p-6  pb-3">
-            {/* Barra de busca */}
-            <div className="flex gap-4 mb-6 items-center">
-                <input
-                    ref={inputBuscaRef}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                            buscarProduto();
-                        }
-                    }}
-                    value={produtoBusca}
-                    onChange={(e) => setProdutoBusca(e.target.value)}
-                    placeholder="Código ou nome do produto"
-                    className="bg-ice/90 text-black font-semibold rounded-md p-2 w-full"
-                />
-                <Button className="bg-orange-400 px-2 py-2 w-20 text-md rounded-lg" onClick={buscarProduto}>Buscar</Button>
-            </div>
+        <div className="flex h-screen bg-black-smooth/95 overflow-hidden font-sans">
+            <NavBarDashboard page="Vendas" />
 
-            {/* Inputs para produto selecionado */}
-            {produtoSelecionado && (
-                <div className="flex flex-row gap-4 mb-6 items-end">
-                    <div className="flex flex-col flex-1">
-                        <label className="text-ice font-medium mb-1">Produto</label>
-                        {/*{produtoSelecionado.map((prod) => (
+            <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+                {/* === COLUNA ESQUERDA: BUSCA E SELEÇÃO === */}
+                <div className="flex-[1.5] p-6 lg:p-10 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                    <header className="mb-10">
+                        <div className="flex items-center gap-4 mb-2">
+                            <div className="p-3 bg-primary-orange/20 text-primary-orange rounded-2xl">
+                                <Plus size={28} />
+                            </div>
+                            <h1 className="text-4xl font-bold text-white tracking-tight">Nova Venda</h1>
+                        </div>
+                        <p className="text-white/40 text-lg">Busque produtos e selecione as opções de pagamento</p>
+                    </header>
+
+                    {/* Barra de Busca */}
+                    <section className="mb-10">
+                        <div className="relative group">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-primary-orange transition-colors" size={24} />
                             <input
-                                key={prod.codigo}
-                                type="text"
-                                value={prod.produto}
-                                disabled={true}
-                                className="bg-ice/80 rounded-md p-2 w-full mb-2"
+                                ref={inputBuscaRef}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") buscarProduto();
+                                }}
+                                value={produtoBusca}
+                                onChange={(e) => setProdutoBusca(e.target.value)}
+                                placeholder="Escaneie o código ou digite o nome do produto..."
+                                className="w-full bg-white/5 border border-white/10 text-white text-xl pl-14 pr-32 py-5 rounded-2xl focus:border-primary-orange/50 focus:bg-white/10 outline-none transition-all placeholder:text-white/20"
                             />
-                        ))}*/}
+                            <button 
+                                onClick={buscarProduto}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 bg-primary-orange hover:bg-orange-500 text-black-smooth font-bold px-6 py-3 rounded-xl transition-all active:scale-95 shadow-lg shadow-primary-orange/20"
+                            >
+                                Buscar (Enter)
+                            </button>
+                        </div>
+                    </section>
 
-                        <select
-                            className="bg-ice/80 rounded-md p-2 w-full mb-2"
-                            style={{ color: produtoEscolhido?.estoque === 0 ? "gray" : "black" }}
-                            value={produtoEscolhido?.codigo || ""}
-                            onChange={(e) => {
-                                const codigo = Number(e.target.value);
-                                const produto = produtoSelecionado.find(p => p.codigo === codigo);
+                    {/* Seleção de Produto */}
+                    {produtoSelecionado && (
+                        <section className="mb-10 animate-in fade-in slide-in-from-top-4 duration-300">
+                            <div className="bg-white/5 border border-primary-orange/30 rounded-3xl p-8 shadow-2xl shadow-primary-orange/5">
+                                <div className="flex items-center gap-2 mb-6">
+                                    <div className="w-2 h-6 bg-primary-orange rounded-full"></div>
+                                    <h2 className="text-xl font-bold text-white">Item Selecionado</h2>
+                                </div>
 
-                                if (produto) {
-                                    setProdutoEscolhido(produto);
-                                    setValorUnitario(produto.valor);
-                                }
-                            }}
-                        >
-                            {produtoSelecionado.map((prod) => (
-                                <option
-                                    key={prod.codigo}
-                                    value={prod.codigo}
-                                    disabled={prod.estoque === 0}
-                                    style={{ color: prod.estoque === 0 ? "gray" : "black" }}
+                                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
+                                    <div className="md:col-span-6 flex flex-col gap-2">
+                                        <label className="text-white/50 text-sm font-medium ml-1">Produto / Opção</label>
+                                        <select
+                                            className="bg-black/40 border border-white/10 text-white p-4 rounded-xl focus:border-primary-orange/50 outline-none transition-colors w-full"
+                                            style={{ color: produtoEscolhido?.estoque === 0 ? "#666" : "white" }}
+                                            value={produtoEscolhido?.codigo || ""}
+                                            onChange={(e) => {
+                                                const codigo = Number(e.target.value);
+                                                const produto = produtoSelecionado.find(p => p.codigo === codigo);
+                                                if (produto) {
+                                                    setProdutoEscolhido(produto);
+                                                    setValorUnitario(produto.valor);
+                                                }
+                                            }}
+                                        >
+                                            {produtoSelecionado.map((prod) => (
+                                                <option
+                                                    key={prod.codigo}
+                                                    value={prod.codigo}
+                                                    disabled={prod.estoque === 0}
+                                                    className="bg-black-smooth text-white"
+                                                >
+                                                    {prod.estoque === 0
+                                                        ? `${prod.produto} - [SEM ESTOQUE]`
+                                                        : prod.produto}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="md:col-span-3 flex flex-col gap-2">
+                                        <label className="text-white/50 text-sm font-medium ml-1">Valor Unit. (F1)</label>
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-sm">R$</span>
+                                            <input
+                                                ref={inputValorUnitarioRef}
+                                                type="number"
+                                                value={valorUnitario}
+                                                onChange={(e) => setValorUnitario(Number(e.target.value))}
+                                                className="w-full bg-black/40 border border-white/10 text-white p-4 pl-10 rounded-xl focus:border-primary-orange/50 outline-none transition-colors"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="md:col-span-2 flex flex-col gap-2">
+                                        <label className="text-white/50 text-sm font-medium ml-1">Qtd. (F2)</label>
+                                        <input
+                                            ref={inputQuantidadeRef}
+                                            type="number"
+                                            value={quantidade}
+                                            onChange={(e) => setQuantidade(Number(e.target.value))}
+                                            className="w-full bg-black/40 border border-white/10 text-white p-4 rounded-xl focus:border-primary-orange/50 outline-none transition-colors text-center"
+                                        />
+                                    </div>
+
+                                    <div className="md:col-span-1">
+                                        <button 
+                                            onClick={adicionarProdutoAoCarrinho} 
+                                            className="w-full aspect-square bg-pear-green hover:bg-green-500 text-white flex items-center justify-center rounded-xl transition-all active:scale-90 shadow-lg shadow-pear-green/20"
+                                            title="Adicionar ao Carrinho (Insert)"
+                                        >
+                                            <Plus size={32} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Forma de Pagamento */}
+                    <section className="mb-20">
+                        <div className="flex items-center gap-2 mb-6">
+                            <div className="w-2 h-6 bg-primary-orange rounded-full"></div>
+                            <h2 className="text-xl font-bold text-white">Forma de Pagamento</h2>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                            {[
+                                { id: "dinheiro", label: "Dinheiro (F3)", icon: Banknote },
+                                { id: "cartaoCredito", label: "Crédito (F4)", icon: CreditCard },
+                                { id: "cartaoDebito", label: "Débito (F5)", icon: CreditCard },
+                                { id: "pix", label: "PIX (F6)", icon: QrCode },
+                            ].map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => setFormaPagamento(item.id)}
+                                    className={`flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 transition-all duration-200 ${
+                                        formaPagamento === item.id
+                                            ? "bg-primary-orange/10 border-primary-orange text-primary-orange shadow-lg shadow-primary-orange/10"
+                                            : "bg-white/5 border-white/5 text-white/40 hover:bg-white/10 hover:border-white/10 hover:text-white/60"
+                                    }`}
                                 >
-                                    {prod.estoque === 0
-                                        ? `${prod.produto} - Indisponível (sem estoque)`
-                                        : prod.produto}
-                                </option>
+                                    <item.icon size={32} />
+                                    <span className="font-bold text-sm uppercase tracking-wider">{item.label}</span>
+                                </button>
                             ))}
-                        </select>
+                        </div>
 
-                    </div>
-                    <div className="flex flex-col w-40">
-                        <label className="text-ice font-medium mb-1">Valor Unitário</label>
-                        <input
-                            ref={inputValorUnitarioRef}
-                            type="number"
-                            value={valorUnitario}
-                            onChange={(e) => setValorUnitario(Number(e.target.value))}
-                            className="bg-ice/80 rounded-md p-2 w-full"
-                        />
-                    </div>
-                    <div className="flex flex-col w-32">
-                        <label className="text-ice font-medium mb-1">Quantidade</label>
-
-                        <input
-                            ref={inputQuantidadeRef}
-                            type="number"
-                            value={quantidade}
-                            onChange={(e) => setQuantidade(Number(e.target.value))}
-                            className="bg-ice/80 rounded-md p-2 w-full"
-                        />
-                    </div>
-                    <Button onClick={adicionarProdutoAoCarrinho} className="bg-orange-400 px-2 py-2 w-20 text-center text-md rounded-lg">
-                        Adicionar
-                    </Button>
+                        {formaPagamento === "dinheiro" && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-white/5 border border-white/10 rounded-3xl animate-in fade-in zoom-in duration-300">
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-white/50 text-sm font-medium ml-1">Total Recebido (F7)</label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-lg">R$</span>
+                                        <input
+                                            type="text"
+                                            value={totalRecebido}
+                                            onChange={(e) => setTotalRecebido(e.target.value)}
+                                            placeholder="0,00"
+                                            className="w-full bg-black/40 border border-white/10 text-white text-2xl p-4 pl-12 rounded-xl focus:border-primary-orange/50 outline-none"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-white/50 text-sm font-medium ml-1">Troco</label>
+                                    <input 
+                                        type="text" 
+                                        value={troco} 
+                                        disabled 
+                                        readOnly 
+                                        className="w-full bg-pear-green/10 border border-pear-green/30 text-pear-green text-2xl p-4 rounded-xl font-bold" 
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </section>
                 </div>
-            )}
 
-
-            {/* Carrinho */}
-            <div className="bg-black-smooth/80 rounded-lg p-4 mb-6">
-                <TabelaLista titulo="Carrinho" colunas={colunas} fetchData={listaItens} alturaMax={formaPagamento === "dinheiro" ? "md:max-h-70" : "md:max-h-80"} />
-            </div>
-
-            {/* Total */}
-            <div className="flex justify-between items-center mt-6 bg-black-smooth/70 px-5 py-4 rounded-lg">
-                <span className="text-xl text-ice">Total</span>
-                <span className="text-3xl font-bold text-pear-green">{valorTotal}</span>
-            </div>
-
-            {/* Pagamento */}
-            <div className="mt-6 flex flex-col gap-4">
-                <label className="text-ice font-medium">Forma de Pagamento</label>
-                <select
-                    value={formaPagamento}
-                    onChange={(e) => setFormaPagamento(e.target.value)}
-                    className="bg-ice/90 rounded-lg p-2"
-                >
-                    <option hidden value="">
-                        Selecione
-                    </option>
-                    <option value="dinheiro">Dinheiro</option>
-                    <option value="cartaoCredito">Cartão de Crédito</option>
-                    <option value="cartaoDebito">Cartão de Débito</option>
-                    <option value="pix">PIX</option>
-                </select>
-
-                {formaPagamento === "dinheiro" && (
-                    <div className="flex flex-row gap-4">
-                        <div className="flex flex-col w-full">
-                            <label>Total Recebido</label>
-                            <input
-                                type="text"
-                                value={totalRecebido}
-                                onChange={(e) => setTotalRecebido(e.target.value)}
-                                placeholder="R$ 0,00"
-                                className="bg-ice/80 rounded-md p-2"
-                            />
+                {/* === COLUNA DIREITA: CARRINHO E RESUMO === */}
+                <div className="w-full lg:w-[480px] bg-black/40 border-l border-white/10 flex flex-col shadow-2xl relative">
+                    <div className="p-8 border-b border-white/10 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <ShoppingCart className="text-primary-orange" size={24} />
+                            <h2 className="text-2xl font-bold text-white tracking-tight">Carrinho</h2>
                         </div>
-                        <div className="flex flex-col w-full">
-                            <label>Troco</label>
-                            <input type="text" value={troco} disabled={true} readOnly className="bg-ice/80 rounded-md p-2" />
+                        <span className="bg-white/10 text-white/60 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
+                            {carrinho.length} Itens
+                        </span>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-white/10">
+                        {carrinho.length > 0 ? (
+                            <div className="space-y-4">
+                                {carrinho.map((item) => (
+                                    <div key={item.codigo} className="bg-white/5 border border-white/5 rounded-2xl p-4 flex items-center justify-between group hover:border-white/10 transition-colors">
+                                        <div className="flex-1">
+                                            <h3 className="text-white font-bold truncate pr-4">{item.produto}</h3>
+                                            <div className="flex items-center gap-3 mt-1">
+                                                <span className="text-white/40 text-sm">{item.quantidade}x</span>
+                                                <span className="text-primary-orange font-medium text-sm">
+                                                    {(item.valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            <span className="text-white font-bold text-lg whitespace-nowrap">
+                                                {(item.valor * item.quantidade).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                                            </span>
+                                            <button 
+                                                onClick={() => removerItem(item.codigo)}
+                                                className="p-2 text-white/20 hover:text-red-500 transition-colors"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="h-full flex flex-col items-center justify-center opacity-20 py-20">
+                                <Package size={64} className="mb-4" />
+                                <p className="italic text-lg">O carrinho está vazio</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Resumo de Valores */}
+                    <div className="p-8 bg-black/60 border-t border-white/10 space-y-6">
+                        <div className="flex justify-between items-end">
+                            <div>
+                                <p className="text-white/40 text-sm font-bold uppercase tracking-widest mb-1">Total a Pagar</p>
+                                <div className="text-5xl font-black text-pear-green tracking-tighter">{valorTotal}</div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <button
+                                onClick={abrirModalVoltar}
+                                className="flex items-center justify-center gap-2 px-6 py-4 bg-white/5 hover:bg-white/10 text-white font-bold rounded-2xl transition-all active:scale-95 border border-white/10"
+                            >
+                                <ArrowLeft size={20} />
+                                Voltar (Esc)
+                            </button>
+                            <button
+                                onClick={abrirModalFinalizar}
+                                className="flex items-center justify-center gap-2 px-6 py-4 bg-pear-green hover:bg-green-500 text-white font-black text-lg rounded-2xl transition-all active:scale-95 shadow-xl shadow-pear-green/20"
+                            >
+                                <CheckCircle size={24} />
+                                Finalizar (F9)
+                            </button>
                         </div>
                     </div>
-                )}
-
-
-            </div>
-
-            <div className="mt-5 absolute bottom-0 left-0 w-full flex justify-between px-10 py-4 bg-black-smooth/80">
-                <Button
-                    onClick={abrirModalVoltar}
-                    className="bg-red-500 text-white px-4 py-3 text-lg rounded-lg"
-                >
-                    Voltar
-                </Button>
-                <Button
-                    onClick={abrirModalFinalizar}
-                    className="bg-pear-green text-white px-4 py-3 text-lg rounded-lg"
-                >
-                    Finalizar Venda
-                </Button>
-            </div>
+                </div>
+            </main>
 
             <Modal
                 isOpen={modalAberto}

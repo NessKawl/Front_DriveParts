@@ -802,35 +802,53 @@ export default function DashProdutos() {
             )}
             {/* === MODAL DE ENTRADA/SAIDA === */}
             {isOpenEstoque && (
-                <div className="absolute flex justify-center items-center w-full h-full bg-black/50 z-50">
-                    <div className="bg-black-smooth h-[90%] w-[60%] rounded-md p-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
-                        <div className="flex flex-row justify-between mb-4">
-                            <h1 className="text-2xl font-semibold text-primary-orange">
-                                Cadastrar nova movimentação de{" "}
-                                {tipoEstoque === "Saida" ? "Saída" : "Entrada"}
-                            </h1>
-                            <X
-                                size={30}
-                                color="#FFF"
+                <div className="fixed inset-0 flex justify-center items-center bg-black/60 backdrop-blur-sm z-50 transition-all duration-300">
+                    <div className="bg-black-smooth w-full max-w-2xl h-auto max-h-[90vh] rounded-3xl p-8 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent border border-white/10 shadow-2xl animate-in fade-in zoom-in duration-300">
+                        <div className="flex flex-row justify-between items-center mb-8 border-b border-white/10 pb-4">
+                            <div className="flex items-center gap-4">
+                                <div className={`p-3 rounded-2xl ${tipoEstoque === "Saida" ? "bg-red-500/20 text-red-500" : "bg-pear-green/20 text-pear-green"}`}>
+                                    {tipoEstoque === "Saida" ? <BanknoteArrowDown size={28} /> : <BanknoteArrowUp size={28} />}
+                                </div>
+                                <div>
+                                    <h1 className="text-2xl font-bold text-white tracking-tight">
+                                        Registrar {tipoEstoque === "Saida" ? "Saída" : "Entrada"}
+                                    </h1>
+                                    <p className="text-white/50 text-sm">Preencha os dados da movimentação abaixo</p>
+                                </div>
+                            </div>
+                            <button 
                                 onClick={() => setIsOpenEstoque(false)}
-                                className="cursor-pointer hover:scale-110 transition-transform"
-                            />
+                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/70 hover:text-white"
+                            >
+                                <X size={28} />
+                            </button>
                         </div>
 
-                        <form className="flex flex-col gap-5 w-full" onSubmit={handleSubmitEstoque}>
-                            <FormGenerator
-                                fields={fieldsEstoque}
-                                form={formEstoque}
-                                setForm={setFormEstoque}
-                                className="grid grid-cols-1 gap-4 w-full"
-                            />
+                        <form className="flex flex-col gap-8 w-full" onSubmit={handleSubmitEstoque}>
+                            <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
+                                <FormGenerator
+                                    fields={fieldsEstoque}
+                                    form={formEstoque}
+                                    setForm={setFormEstoque}
+                                    className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full"
+                                />
+                            </div>
 
-                            <button
-                                type="submit"
-                                className="bg-primary-orange hover:bg-orange-300 w-48 py-2 text-ice hover:text-black-smooth text-xl font-semibold rounded-md self-end"
-                            >
-                                Registrar
-                            </button>
+                            <div className="flex justify-end items-center gap-4 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsOpenEstoque(false)}
+                                    className="px-6 py-3 text-white/70 hover:text-white font-semibold transition-colors"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="bg-primary-orange hover:bg-orange-500 px-10 py-3 text-black-smooth text-lg font-bold rounded-xl shadow-lg shadow-primary-orange/20 hover:shadow-primary-orange/40 transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
+                                >
+                                    Confirmar {tipoEstoque === "Saida" ? "Saída" : "Entrada"}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

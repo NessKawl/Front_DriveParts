@@ -144,42 +144,50 @@ const confirmarAtualizacao = async () => {
 };
 
   return (
-    <div className="bg-ice h-screen">
+    <div className="bg-ice min-h-screen">
       <NavBarSimples rota={"perfil"} />
 
-      <main className="flex flex-col justify-center items-center w-full">
+      <main className="flex flex-col justify-center items-center w-full py-10 px-4">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col items-center w-10/12 h-auto bg-white p-4"
+          className="flex flex-col items-center w-full max-w-xl h-auto bg-white p-8 md:p-12 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100"
         >
-          <div className="w-full flex flex-col justify-center items-center my-5">
-            <h1 className="text-black-smooth md:text-4xl text-2xl font-bold">
+          <div className="w-full flex flex-col justify-center items-center mb-8">
+            <h1 className="text-black-smooth md:text-4xl text-2xl font-bold tracking-tight">
               Editar Perfil
             </h1>
 
-            <Avatar size="xl" className={"my-4"} src={"/icons/avatar.png"} />
+            <div className="relative group my-6">
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary-orange to-orange-400 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+              <Avatar 
+                size="xl" 
+                className="relative border-4 border-white shadow-md transform transition duration-500 group-hover:scale-105" 
+                src={"/icons/avatar.png"} 
+              />
+            </div>
 
-            <p className="text-gray md:text-lg text-sm">
-              Altere suas informações abaixo
+            <p className="text-gray-500 md:text-lg text-sm text-center">
+              Mantenha seus dados atualizados para uma melhor experiência
             </p>
           </div>
 
-          <div className="flex-1 w-10/12">
+          <div className="w-full space-y-6">
             <FormGenerator
               fields={fields}
               form={form}
               setForm={setForm}
-              className="grid grid-cols-1 gap-4"
+              className="grid grid-cols-1 gap-6"
             />
           </div>
 
-          <Button
-            children={"Salvar Alterações"}
-            type="submit"
-            className={
-              "bg-primary-orange md:text-xl sm:text-sm font-semibold text-black-smooth hover:text-ice px-4 py-2 mb-10 hover:shadow-sm hover:shadow-primary-orange mt-5 rounded-md"
-            }
-          />
+          <div className="w-full mt-10">
+            <Button
+              type="submit"
+              className="w-full bg-primary-orange md:text-xl text-lg font-bold text-black-smooth hover:text-white px-6 py-4 rounded-2xl shadow-lg shadow-primary-orange/30 hover:shadow-xl hover:shadow-primary-orange/40 transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
+            >
+              Salvar Alterações
+            </Button>
+          </div>
         </form>
       </main>
 

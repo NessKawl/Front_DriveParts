@@ -1,5 +1,5 @@
+import { tr } from "framer-motion/client";
 import api from "./api";
-import * as bcrypt from 'bcrypt';
 
 
 // Produtos
@@ -115,7 +115,14 @@ export const CriarMovimentacaoProduto = async (pro_id: number, mov_qtd: number, 
 }
 
 export const BuscaProdutoPorNome = async (termo: string | null) => {
+    
+    try {
     return await api.get(`/produto/search?termo=${termo}`)
+
+    }catch (error) {
+   console.error("Erro ao buscar produtos:", error);
+   return [];
+}
 }
 
 export const GetLastProduct = async () => {

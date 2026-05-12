@@ -29,12 +29,8 @@ export default function Reserva() {
   const [modalSuccessOpen, setModalSuccessOpen] = useState(false);
 
   useEffect(() => {
-    if (!uuid) return
-
-    const produtoIdNumber = parseInt(uuid);
-
-    if (isNaN(produtoIdNumber)) {
-      console.error("ID do produto na URL não é um número válido.");
+    if (!uuid) {
+      console.error("UUID inválido");
       return;
     }
 
@@ -132,9 +128,11 @@ export default function Reserva() {
                     }
 
                     try {
-                      const produtoIdNumber = Number(uuid);
-
-                      const resultado = await criarReservaBackend(produtoIdNumber, slecionaQuantidade, selecionarPeriodo);
+                      const resultado = await criarReservaBackend(
+                        uuid,
+                        slecionaQuantidade,
+                        selecionarPeriodo
+                      );
                       setModalSuccessOpen(true);
                     } catch (err: any) {
                       alert(err.response?.data?.message || "Erro ao criar reserva");

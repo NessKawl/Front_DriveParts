@@ -70,6 +70,15 @@ export default function Cadastro() {
       setError("As senhas devem ser iguais.");
       return;
     }
+    const senhaForte =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!senhaForte.test(form.senha)) {
+      setError(
+        "A senha deve conter no mínimo 8 caracteres, incluindo letra maiúscula, número e caractere especial."
+      );
+      return;
+    }
 
 
     try {

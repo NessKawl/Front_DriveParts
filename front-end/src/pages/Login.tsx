@@ -70,6 +70,7 @@ export default function Login() {
       const response = await VerifyLogin(form.telefone, form.senha);
       localStorage.setItem("token", response.data.access_token);
       console.log("TOKEN: ", localStorage.getItem("token"));
+      localStorage.setItem("usu_tipo", response.data.user.usu_tipo);
       localStorage.setItem("user", JSON.stringify(response.data.user));
       console.log(localStorage.getItem("user"));
 

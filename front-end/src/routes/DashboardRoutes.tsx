@@ -6,15 +6,16 @@ import DashReservas from "../pages/dashboard/DashReservas";
 import DashAnalise from "../pages/dashboard/DashAnalise";
 import DashNovaVenda from "../pages/dashboard/DashNovaVenda";
 import ProdfutoForm from "../pages/dashboard/ProdfutoForm";
+import ProtectedRoute from "./ProtectedRoute";
 
 export const dashboardRoutes = (
   <>
-    <Route path="/dashboard/geral" element={<DashGeral />} />
-    <Route path="/dashboard/caixa" element={<DashCaixa />} />
-    <Route path="/dashboard/produtos" element={<DashProdutos />} />
-    <Route path="/dashboard/reservas" element={<DashReservas />} />
-    <Route path="/dashboard/vendas/analise" element={<DashAnalise />} />
-    <Route path="/dashboard/vendas/nova-venda" element={<DashNovaVenda />} />
-    <Route path="/dashboard/teste" element={<ProdfutoForm />} />
+    <Route path="/dashboard/geral" element={<ProtectedRoute><DashGeral /></ProtectedRoute>} />
+    <Route path="/dashboard/caixa" element={<ProtectedRoute><DashCaixa /></ProtectedRoute>} />
+    <Route path="/dashboard/produtos" element={<ProtectedRoute><DashProdutos /></ProtectedRoute>} />
+    <Route path="/dashboard/reservas" element={<ProtectedRoute><DashReservas /></ProtectedRoute>} />
+    <Route path="/dashboard/vendas/analise" element={<ProtectedRoute><DashAnalise /></ProtectedRoute>} />
+    <Route path="/dashboard/vendas/nova-venda" element={<ProtectedRoute><DashNovaVenda /></ProtectedRoute>} />
+    <Route path="/dashboard/teste" element={<ProtectedRoute><ProdfutoForm /></ProtectedRoute>} />
   </>
 );

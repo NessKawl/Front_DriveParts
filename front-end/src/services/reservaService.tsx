@@ -10,13 +10,13 @@ export async function criarReservaBackend(
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Usuário não logado");
 
-
-
   const response = await axios.post(
     API_URL,
     { pro_aux_uuid, ite_qtd: quantidade, periodo },
     { headers: { Authorization: `Bearer ${token}` } }
   );
 
+
+  console.log("Resposta da API:", response.data);
   return response.data;
 }

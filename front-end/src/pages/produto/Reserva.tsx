@@ -135,7 +135,7 @@ export default function Reserva() {
                       );
                       setModalSuccessOpen(true);
                     } catch (err: any) {
-                      alert(err.response?.data?.message || "Erro ao criar reserva");
+                      alert("erro: " + (err.response?.data?.message || "Erro ao criar reserva"));
                     }
                   }}
                 />

@@ -201,17 +201,17 @@ export default function DashProdutos() {
       options:
         tipoEstoque === "Saida"
           ? [
-              { label: "Venda", value: "VENDA" },
-              { label: "Defeito", value: "DEFEITO" },
-              { label: "Perda", value: "PERDA" },
-              { label: "Vencimento", value: "VENCIMENTO" },
-              { label: "Uso e Consumo", value: "USO_E_CONSUMO" },
-            ]
+            { label: "Venda", value: "VENDA" },
+            { label: "Defeito", value: "DEFEITO" },
+            { label: "Perda", value: "PERDA" },
+            { label: "Vencimento", value: "VENCIMENTO" },
+            { label: "Uso e Consumo", value: "USO_E_CONSUMO" },
+          ]
           : [
-              { label: "Compra", value: "COMPRA" },
-              { label: "Devolução", value: "DEVOLUCAO" },
-              { label: "Outros", value: "OUTROS" },
-            ],
+            { label: "Compra", value: "COMPRA" },
+            { label: "Devolução", value: "DEVOLUCAO" },
+            { label: "Outros", value: "OUTROS" },
+          ],
     },
     { name: "data", type: "date", placeholder: "Data da movimentação" },
     { name: "quantidade", type: "number", placeholder: "Quantidade", min: 1 },
@@ -287,6 +287,8 @@ export default function DashProdutos() {
 
   const [espId, setEspId] = useState("");
 
+  const [proId, setProId] = useState("");
+
   useEffect(() => {
     const loadEspId = async () => {
       const data = await GetLastEsp();
@@ -324,11 +326,11 @@ export default function DashProdutos() {
     const novas = [...especificacoes];
     novas[index].esp_nome = novoValor;
 
-    const res = await GetLastProduct();
-    const pro_id = res.pro_id + 1;
+    // const res = await GetLastProduct();
+    // const pro_id = res.pro_id + 1;
     setEspecificacoes(novas);
 
-    novas[index].pro_id = pro_id;
+    novas[index].pro_id = proId;
 
     console.log(especificacoes);
   };
@@ -413,8 +415,8 @@ export default function DashProdutos() {
 
       const resEspecificacao = await CadEspecificacao(espNome, categoria);
 
-      const resProduct = await GetLastProduct();
-      const proId = resProduct.pro_id + 1;
+      // const resProduct = await GetLastProduct();
+      // const proId = resProduct.pro_id + 1;
 
       const espId = especificacoes.map((item) => Number(item.esp_id));
       const proEspValor = especificacoes.map((item) => item.pro_esp_valor);
@@ -431,6 +433,9 @@ export default function DashProdutos() {
           form.status,
           uploadedUrl,
         );
+
+        const proId = Number(resProduto.pro_id);
+        setProId(resProduto.pro_id);
 
         if (!resProduto || !resProduto.pro_id) {
           throw new Error("Erro ao cadastrar produto");
@@ -547,8 +552,7 @@ export default function DashProdutos() {
     }
 
     abrirModalConfirmacao(
-      `Deseja confirmar a ${
-        tipoEstoque === "Saida" ? "saída" : "entrada"
+      `Deseja confirmar a ${tipoEstoque === "Saida" ? "saída" : "entrada"
       } de estoque?`,
       salvarMovimentacao,
     );
@@ -768,7 +772,7 @@ export default function DashProdutos() {
                 cor: "bg-primary-orange text-black-smooth hover:bg-orange-300",
                 onClick: (item) => {
                   setProdutoEditando(item);
-                  setIsOpenEdit(true); 
+                  setIsOpenEdit(true);
                   setEdit(true);
                 },
               },
@@ -826,57 +830,57 @@ export default function DashProdutos() {
                   Imagens do Produto
                 </label>
                 <div className="flex flex-col md:flex-row gap-6">
-                   <div className="flex-1">
-                      <div className="relative group border-2 border-dashed border-white/20 hover:border-primary-orange/50 rounded-2xl p-8 transition-all duration-300 bg-black/20 flex flex-col items-center justify-center gap-3">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          onChange={handleFileChange}
-                          className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                        />
-                        <div className="p-4 bg-white/5 rounded-full text-white/50 group-hover:text-primary-orange transition-colors">
-                           <PackagePlus size={32} />
-                        </div>
-                        <div className="text-center">
-                          <p className="text-white font-medium">Clique para enviar</p>
-                          <p className="text-white/40 text-xs mt-1">PNG, JPG até 5MB cada</p>
-                        </div>
+                  <div className="flex-1">
+                    <div className="relative group border-2 border-dashed border-white/20 hover:border-primary-orange/50 rounded-2xl p-8 transition-all duration-300 bg-black/20 flex flex-col items-center justify-center gap-3">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleFileChange}
+                        className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                      />
+                      <div className="p-4 bg-white/5 rounded-full text-white/50 group-hover:text-primary-orange transition-colors">
+                        <PackagePlus size={32} />
                       </div>
-                   </div>
+                      <div className="text-center">
+                        <p className="text-white font-medium">Clique para enviar</p>
+                        <p className="text-white/40 text-xs mt-1">PNG, JPG até 5MB cada</p>
+                      </div>
+                    </div>
+                  </div>
 
-                   <div className="flex-[2]">
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                        {previewUrls.map((url, i) => (
+                  <div className="flex-[2]">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                      {previewUrls.map((url, i) => (
+                        <div
+                          key={i}
+                          className="relative group aspect-square rounded-xl overflow-hidden border border-white/10 shadow-lg"
+                        >
+                          <img
+                            src={url}
+                            alt="preview"
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
                           <div
-                            key={i}
-                            className="relative group aspect-square rounded-xl overflow-hidden border border-white/10 shadow-lg"
+                            className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                            onClick={() => {
+                              setSelectedImage(url);
+                              setSelectedIndex(i);
+                            }}
                           >
-                            <img
-                              src={url}
-                              alt="preview"
-                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                            />
-                            <div 
-                              className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                              onClick={() => {
-                                setSelectedImage(url);
-                                setSelectedIndex(i);
-                              }}
-                            >
-                              <span className="bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-semibold border border-white/20">
-                                Cortar
-                              </span>
-                            </div>
+                            <span className="bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-semibold border border-white/20">
+                              Cortar
+                            </span>
                           </div>
-                        ))}
-                        {previewUrls.length === 0 && (
-                           <div className="col-span-full h-full flex items-center justify-center text-white/20 text-sm italic py-10">
-                              Nenhuma imagem selecionada
-                           </div>
-                        )}
-                      </div>
-                   </div>
+                        </div>
+                      ))}
+                      {previewUrls.length === 0 && (
+                        <div className="col-span-full h-full flex items-center justify-center text-white/20 text-sm italic py-10">
+                          Nenhuma imagem selecionada
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -966,7 +970,7 @@ export default function DashProdutos() {
               </div>
             </form>
           </div>
-          
+
 
         </div>
       )}
@@ -1003,57 +1007,57 @@ export default function DashProdutos() {
                   Imagens do Produto
                 </label>
                 <div className="flex flex-col md:flex-row gap-6">
-                   <div className="flex-1">
-                      <div className="relative group border-2 border-dashed border-white/20 hover:border-primary-orange/50 rounded-2xl p-8 transition-all duration-300 bg-black/20 flex flex-col items-center justify-center gap-3">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          onChange={handleFileChange}
-                          className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                        />
-                        <div className="p-4 bg-white/5 rounded-full text-white/50 group-hover:text-primary-orange transition-colors">
-                           <PackagePlus size={32} />
-                        </div>
-                        <div className="text-center">
-                          <p className="text-white font-medium">Clique para enviar</p>
-                          <p className="text-white/40 text-xs mt-1">PNG, JPG até 5MB cada</p>
-                        </div>
+                  <div className="flex-1">
+                    <div className="relative group border-2 border-dashed border-white/20 hover:border-primary-orange/50 rounded-2xl p-8 transition-all duration-300 bg-black/20 flex flex-col items-center justify-center gap-3">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleFileChange}
+                        className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                      />
+                      <div className="p-4 bg-white/5 rounded-full text-white/50 group-hover:text-primary-orange transition-colors">
+                        <PackagePlus size={32} />
                       </div>
-                   </div>
+                      <div className="text-center">
+                        <p className="text-white font-medium">Clique para enviar</p>
+                        <p className="text-white/40 text-xs mt-1">PNG, JPG até 5MB cada</p>
+                      </div>
+                    </div>
+                  </div>
 
-                   <div className="flex-[2]">
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                        {previewUrls.map((url, i) => (
+                  <div className="flex-[2]">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                      {previewUrls.map((url, i) => (
+                        <div
+                          key={i}
+                          className="relative group aspect-square rounded-xl overflow-hidden border border-white/10 shadow-lg"
+                        >
+                          <img
+                            src={url}
+                            alt="preview"
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
                           <div
-                            key={i}
-                            className="relative group aspect-square rounded-xl overflow-hidden border border-white/10 shadow-lg"
+                            className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                            onClick={() => {
+                              setSelectedImage(url);
+                              setSelectedIndex(i);
+                            }}
                           >
-                            <img
-                              src={url}
-                              alt="preview"
-                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                            />
-                            <div 
-                              className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                              onClick={() => {
-                                setSelectedImage(url);
-                                setSelectedIndex(i);
-                              }}
-                            >
-                              <span className="bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-semibold border border-white/20">
-                                Cortar
-                              </span>
-                            </div>
+                            <span className="bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-semibold border border-white/20">
+                              Cortar
+                            </span>
                           </div>
-                        ))}
-                        {previewUrls.length === 0 && (
-                           <div className="col-span-full h-full flex items-center justify-center text-white/20 text-sm italic py-10">
-                              Nenhuma imagem selecionada
-                           </div>
-                        )}
-                      </div>
-                   </div>
+                        </div>
+                      ))}
+                      {previewUrls.length === 0 && (
+                        <div className="col-span-full h-full flex items-center justify-center text-white/20 text-sm italic py-10">
+                          Nenhuma imagem selecionada
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 

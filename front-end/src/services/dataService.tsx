@@ -11,7 +11,7 @@ export const CadProduto = async (
     pro_cod: string,
     pro_status: any,
     pro_caminho_img: string,
-    pro_estoque?: number
+    pro_qtd?: number
 
 ) => {
     try {
@@ -20,9 +20,9 @@ export const CadProduto = async (
             pro_valor,
             pro_marca,
             pro_cod,
-            pro_status: pro_status === "Ativo",
+            pro_status,
             pro_caminho_img,
-            pro_estoque
+            pro_qtd
 
         });
 
@@ -31,9 +31,9 @@ export const CadProduto = async (
             pro_valor,
             pro_marca,
             pro_cod,
-            pro_status: pro_status === "Ativo",
+            pro_status,
             pro_caminho_img,
-            pro_estoque
+            pro_qtd
         });
 
 
@@ -60,7 +60,7 @@ export const EditProduto = async (
             pro_valor,
             pro_marca,
             pro_cod,
-            pro_status: pro_status === "Ativo",
+            pro_status,
             pro_caminho_img,
         });
 
@@ -69,7 +69,7 @@ export const EditProduto = async (
             pro_valor,
             pro_marca,
             pro_cod,
-            pro_status: pro_status === "Ativo",
+            pro_status,
             pro_caminho_img,
         });
 

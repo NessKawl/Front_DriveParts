@@ -31,10 +31,15 @@ export default function NavBarDashboard({ page }: NavBarDashboardProps) {
     { name: "Reservas", path: "/dashboard/reservas", icon: Calendar },
     { name: "Caixa", path: "/dashboard/caixa", icon: Wallet },
     { name: "Produtos", path: "/dashboard/produtos", icon: Package },
-    { name: "Movimentações", path: "/dashboard/movimentacoes", icon: ArrowUpDown },
+    { name: "Movimentações", path:`${import.meta.env.VITE_LARAVEL_URL}/dashboard/Movimentacoes`, icon: ArrowUpDown },
   ];
 
   function handleNavigation(path: string) {
+      if (path.startsWith("http")) {
+    window.location.href = path;
+    return;
+  }
+  
     navigate(path);
   }
 

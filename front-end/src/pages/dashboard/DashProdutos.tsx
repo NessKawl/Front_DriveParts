@@ -95,7 +95,7 @@ export default function DashProdutos() {
     marca: "",
     cod: "",
     estoque: 0,
-    status: "Ativo",
+    status: true,
     esp_nome: "",
     pro_esp_valor: "",
     categoria: "1",
@@ -105,11 +105,12 @@ export default function DashProdutos() {
     valor: 0,
     marca: "",
     cod: "",
-    status: "Ativo",
+    status: true,
     esp_nome: "",
     pro_esp_valor: "",
     categoria: "1",
   });
+
   const [edit, setEdit] = useState(false);
   const fields = [
     {
@@ -373,8 +374,8 @@ export default function DashProdutos() {
       img.onload = () => {
         validFiles.push(file);
         urls.push(objectUrl);
-        setImages([...validFiles]);
-        setPreviewUrls([...urls]);
+        setImages((prev) => [...prev, file]);
+        setPreviewUrls((prev) => [...prev, objectUrl]);
       };
     });
   };
@@ -425,6 +426,8 @@ export default function DashProdutos() {
 
       if (resEspecificacao) {
         const valor = Number(form.valor);
+        
+        
         const resProduto = await CadProduto(
           form.nome,
           valor,
@@ -432,6 +435,7 @@ export default function DashProdutos() {
           form.cod,
           form.status,
           uploadedUrl,
+          Number(form.estoque)
         );
 
         const proId = Number(resProduto.pro_id);
@@ -467,7 +471,7 @@ export default function DashProdutos() {
         marca: "",
         cod: "",
         estoque: 0,
-        status: "Ativo",
+        status: true,
         esp_nome: "",
         pro_esp_valor: "",
         categoria: "1",
@@ -514,7 +518,7 @@ export default function DashProdutos() {
         valor: 0,
         marca: "",
         cod: "",
-        status: "Ativo",
+        status: true,
         esp_nome: "",
         pro_esp_valor: "",
         categoria: "1",
@@ -611,7 +615,7 @@ export default function DashProdutos() {
         valor: produtoEditando.valor || "",
         marca: produtoEditando.marca || "",
         cod: produtoEditando.codigo || "",
-        status: produtoEditando.status ? "Ativo" : "Inativo",
+        status: produtoEditando.status,
         esp_nome: produtoEditando.esp_nome || "",
         pro_esp_valor: produtoEditando.pro_esp_valor || "",
         categoria: produtoEditando.categoria || "11",
@@ -636,7 +640,7 @@ export default function DashProdutos() {
       marca: "",
       cod: "",
       estoque: 0,
-      status: "Ativo",
+      status: true,
       esp_nome: "",
       pro_esp_valor: "",
       categoria: "1",
@@ -662,7 +666,7 @@ export default function DashProdutos() {
       valor: 0,
       marca: "",
       cod: "",
-      status: "Ativo",
+      status: true,
       esp_nome: "",
       pro_esp_valor: "",
       categoria: "1",
@@ -709,7 +713,7 @@ export default function DashProdutos() {
                 marca: "",
                 cod: "",
                 estoque: 0,
-                status: "Ativo",
+                status: true,
                 esp_nome: "",
                 pro_esp_valor: "",
                 categoria: "1",
@@ -720,7 +724,7 @@ export default function DashProdutos() {
                 valor: 0,
                 marca: "",
                 cod: "",
-                status: "Ativo",
+                status: true,
                 esp_nome: "",
                 pro_esp_valor: "",
                 categoria: "1",

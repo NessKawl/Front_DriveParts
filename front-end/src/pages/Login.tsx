@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom"
-import Button from "../components/buttons/Button"
-import NavBarSimples from "../components/navbar/NavbarSimples"
-import FooterMain from "../components/footer/FooterMain"
-import { useState } from "react"
-import { VerifyLogin } from "../services/authService"
+import { useNavigate } from "react-router-dom";
+import Button from "../components/buttons/Button";
+import NavBarSimples from "../components/navbar/NavbarSimples";
+import FooterMain from "../components/footer/FooterMain";
+import { useState } from "react";
+import { VerifyLogin } from "../services/authService";
 import { useSearchParams } from "react-router-dom";
-import axios from "axios"
+import axios from "axios";
 
 const formatTelefone = (value: string) => {
   // Remove tudo que não for número (bloqueia letras e símbolos)
@@ -29,15 +29,13 @@ const formatTelefone = (value: string) => {
     .replace(/(\d{5})(\d)/, "$1-$2");
 };
 
-
 export default function Login() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [form, setForm] = useState({ telefone: "", senha: "", });
+  const [form, setForm] = useState({ telefone: "", senha: "" });
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get("redirect");
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (error) setError("");
@@ -53,7 +51,6 @@ export default function Login() {
     }
   };
 
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
@@ -63,10 +60,9 @@ export default function Login() {
       return;
     }
 
-
     try {
       setLoading(true);
-      localStorage.setItem("token", "")
+      localStorage.setItem("token", "");
       const response = await VerifyLogin(form.telefone, form.senha);
       localStorage.setItem("token", response.data.access_token);
       localStorage.setItem("usu_tipo", response.data.user.usu_tipo);
@@ -80,43 +76,43 @@ export default function Login() {
     } catch (err: any) {
       console.log(err);
 
-      if(err.response?.status === 429){
-        setError("Muitas tentativas erradas. Tente novamente após 1 minuto.")
-      }
-      else if (err.response?.status === 401 || err.response?.status === 404) {
+      if (err.response?.status === 429) {
+        setError("Muitas tentativas erradas. Tente novamente após 1 minuto.");
+      } else if (err.response?.status === 401 || err.response?.status === 404) {
         setError("Telefone ou senha incorretos.");
       } else {
         setError("Erro ao fazer login. Tente novamente.");
       }
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
-    
-    
-  }
+  };
 
   return (
     <div className="bg-ice h-screen flex flex-col justify-between">
       <NavBarSimples rota={"catalogo"} />
+      
 
-      <div className="flex flex-col justify-center items-center ">
-        <h1 className="text-4xl font-seminbold my-4">Entrar</h1>
+      <div className="flex flex-col justify-center items-center mt-10 ">
         <form
           action=""
           onSubmit={handleSubmit}
-          className="bg-white flex flex-col justify-between items-center p-10 rounded-2xl sm:rounded-none w-10/12 md:w-8/12 lg:w-6/12 xl:w-5/12 2xl:w-4/12">
+          className="bg-white flex flex-col justify-between items-center p-10 rounded-2xl w-10/12 md:w-8/12 lg:w-6/12 xl:w-5/12 2xl:w-4/12 shadow-2xl shadow-primary-orange/20"
+        >
+          <h1 className="text-4xl font-seminbold my-4">Entrar</h1>
           <div className="w-full sm:w-10/12 flex flex-col gap-5 mb-4">
             <div className="flex flex-col items-start">
-              <label htmlFor="" className="font-semibold">Telefone</label>
+              <label htmlFor="" className="font-semibold">
+                Telefone
+              </label>
               <input
                 id="telefone"
                 type="tel"
                 placeholder="Insira seu Telefone"
                 //className=" ${ error ? 'border-red-500' : 'border-gray-300'}"
-                className={`w-full border border-gray-300 rounded-lg p-2 ${error ? "border-red-500" : "border-gray-300"
-                  }`}
-
+                className={`w-full border border-gray-300 rounded-lg p-2 ${
+                  error ? "border-red-500" : "border-gray-300"
+                }`}
                 value={formatTelefone(form.telefone)}
                 onChange={handleChange}
               />
@@ -124,15 +120,17 @@ export default function Login() {
 
             <div>
               <div className="flex flex-col items-start">
-                <label htmlFor="" className="font-semibold">Senha</label>
+                <label htmlFor="" className="font-semibold">
+                  Senha
+                </label>
                 <input
                   id="senha"
                   type="password"
                   placeholder="Insira sua Senha"
                   //className="w-full border border-gray-300 rounded-lg p-2 ${ error ? border-red-500 : border-gray-300 }"
-                  className={`w-full border border-gray-300 rounded-lg p-2 ${error ? "border-red-500" : "border-gray-300"
-                    }`}
-
+                  className={`w-full border border-gray-300 rounded-lg p-2 ${
+                    error ? "border-red-500" : "border-gray-300"
+                  }`}
                   value={form.senha}
                   onChange={handleChange}
                 />
@@ -140,23 +138,24 @@ export default function Login() {
 
               <div className="flex">
                 {error && (
-                  <p className="text-red-600 font-semibold mb-1">
-                    {error}
-                  </p>
+                  <p className="text-red-600 font-semibold mb-1">{error}</p>
                 )}
               </div>
 
               <div className="font-bold flex justify-end items-end mb-8 w-full">
-                <p className="cursor-pointer" onClick={() => navigate("/validar-usuario")} >Esqueceu sua senha?</p>
+                <p
+                  className="cursor-pointer"
+                  onClick={() => navigate("/validar-usuario")}
+                >
+                  Esqueceu sua senha?
+                </p>
               </div>
             </div>
-
           </div>
-
 
           <Button
             children="ACESSAR"
-            className="bg-ocean-blue text-ice font-semibold py-2 px-4 md:text-xl hover:bg-primary-orange"
+            className=" text-black-smooth font-semibold py-3 px-5 md:text-xl border rounded-xl hover:bg-primary-orange hover:text-white hover:border-primary-orange"
             type="submit"
           />
           <Button
@@ -171,5 +170,5 @@ export default function Login() {
         <FooterMain />
       </footer>
     </div>
-  )
+  );
 }

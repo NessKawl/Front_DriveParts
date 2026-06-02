@@ -74,7 +74,7 @@ export default function Verificacao() {
 
   return (
     <div className="bg-ice h-screen">
-      <NavBarSimples rota={"cadastro"} />
+      <NavBarSimples rota={"login"} />
 
       <div className="flex flex-col justify-center items-center mt-6">
         <h1 className="text-xl font-bold flex justify-center items-center mb-4">
@@ -120,7 +120,7 @@ export default function Verificacao() {
             onClick={handleVerificar}
             children={loading ? "Verificando..." : "Verificar"
             }
-            className="bg-pear-green text-ice font-semibold py-2 px-4 md:text-xl hover:bg-primary-orange"
+            className="bg-pear-green text-ice font-semibold py-2 px-4 md:text-xl rounded-xl hover:bg-primary-orange"
           />
         </div>
       </div>

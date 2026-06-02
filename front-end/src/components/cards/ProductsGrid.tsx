@@ -1,10 +1,9 @@
-import ProductCard from "./CardProduto"
-import FilterTable from "../buttons/FilterTable"
-
+import ProductCard from "./CardProduto";
+import FilterTable from "../buttons/FilterTable";
 
 interface Filtro {
   value: string;
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 interface Product {
@@ -18,37 +17,45 @@ interface Product {
   id: string;
 }
 interface GridProps {
-  title: string
+  title: string;
   products: Product[];
   filtro?: boolean;
   tituloFiltro?: string;
   filtroChildren?: Filtro[];
-  tipo?: "catalogo" | "historico" | "reservasAtivas"
+  tipo?: "catalogo" | "historico" | "reservasAtivas";
 }
-export default function ProductsGrid({ title, filtro, tituloFiltro, filtroChildren, tipo = "catalogo", products }: GridProps) {
-  
-
+export default function ProductsGrid({
+  title,
+  filtro,
+  tituloFiltro,
+  filtroChildren,
+  tipo = "catalogo",
+  products,
+}: GridProps) {
   // 🔍 Filtro baseado no tipo de grid
   const filteredProducts = products.filter((product) => {
-    if (tipo === "catalogo") return product.price
-    if (tipo === "historico") return product.reserva && product.status
-    if (tipo === "reservasAtivas") return product.praso
-    return true
-  })
+    if (tipo === "catalogo") return product.price;
+    if (tipo === "historico") return product.reserva && product.status;
+    if (tipo === "reservasAtivas") return product.praso;
+    return true;
+  });
 
   return (
     <div>
       <div className="flex flex-row justify-between items-center px-2 border-b border-gray-300 mb-4">
-        <h1 className="text-black-smooth text-xl md:text-3xl font-semibold">
-          {title}
-        </h1>
-        {filtro &&
+        <div className="flex items-center gap-3">
+          <div className="w-1 h-7 rounded-full bg-gradient-to-b from-primary-orange to-primary-orange/40" />
+          <h1 className="text-black-smooth text-xl md:text-3xl font-bold tracking-tight">
+            {title}
+          </h1>
+        </div>
+        {filtro && (
           <FilterTable
             titulo={tituloFiltro}
             FilterTableProps={filtroChildren}
             color="orange"
           />
-        }
+        )}
       </div>
       <div className="p-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-2 sm:gap-5 md:gap-10 lg:gap-5 2xl:gap-5">
         {filteredProducts.map((product, index) => (
@@ -66,6 +73,5 @@ export default function ProductsGrid({ title, filtro, tituloFiltro, filtroChildr
         ))}
       </div>
     </div>
-
-  )
+  );
 }

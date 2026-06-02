@@ -5,15 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import Categoria from "../buttons/Categoria.tsx";
 import Avatar from "../imagens/Avatar.tsx";
 import { useNavigate } from "react-router-dom";
-import { getUserProfile } from "../../services/authService.tsx";
 import clsx from "clsx";
-import { u } from "framer-motion/client";
 
 export default function NavBar() {
-  // const [user, setUser] = useState<any>(null);
-  // const [userName, setUserName] = useState("");
-  // const [userPhone, setUserPhone] = useState("");
-
   const userStorage = JSON.parse(localStorage.getItem("user") || "{}");
 
   const [user, setUser] = useState({
@@ -52,7 +46,7 @@ export default function NavBar() {
   return (
     <div className=" bg-primary-orange py-4 px-2 flex flex-col justify-between items-center ">
       <div className="flex justify-between items-center w-full">
-        <div className="h-20 w-5/12">
+        <div className="h-20 md:h-15 md:w-1/12">
           <button
             onClick={() =>
               user.telefone == "12987654321"
@@ -64,49 +58,64 @@ export default function NavBar() {
             <img
               src="/logo-black-full.png"
               alt=""
-              className="absolute  md:block hidden md:w-30 lg:w-40 top-0 "
+              className="absolute  md:block hidden md:w-25 top-0 "
             />
             <img
               src="/logo-black-mini.png"
               alt=""
-              className="absolute md:hidden block w-40 top-10"
+              className="absolute md:hidden block w-30 top-10"
             />
           </button>
         </div>
-        <div className="flex justify-between items-end gap-20 w-full">
-          <div className="hidden md:block w-full">
-            <Search />
+        {/*Barra de pesquisa desktop e menu mobile*/}
+        <div className="flex md:items-center justify-end gap-10 w-full">
+          {/*Categorias da barra de menu*/}
+          <div className="md:w-6/12 hidden md:flex justify-center">
+            <nav className="md:flex gap-6">
+              <Categoria name="Motor" />
+              <Categoria name="Freios" />
+              <Categoria name="Suspensão" />
+              <Categoria name="Elétrica" />
+              <Categoria name="Filtros" />
+              <Categoria name="Óleos e Lubrificantes" />
+            </nav>
           </div>
-          <div className="flex justify-end gap-2 mb-2 md:w-6/12  w-full">
-            <div className="flex flex-row gap-2" onClick={() => action()}>
-              <div className="flex flex-col text-right border-r border-black-smooth pr-3 items-end justify-center cursor-pointer">
-                {user.nome ? (
-                  <p className="font-light text-sm md:text-lg">Bem vindo(a)</p>
-                ) : (
-                  <p className="font-semibold text-md">Acessar conta</p>
-                )}
-                <p className="font-bold text-sm md:text-lg">{user.nome}</p>
-              </div>
+          <div className="flex flex-row items-center justify-end gap-10 w-6/12">
+            <div className="w-8/12 hidden md:block">
+              <Search />
             </div>
-            <div
-              className="relative hidden md:block cursor-pointer"
-              onClick={() => action()}
-            >
-              <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />
 
-              <Avatar
-                src="/icons/avatar.png"
-                alt="Avatar do usuário"
-                size="md"
-                className="relative shadow-lg"
-              />
+            <div className="flex gap-2 mb-2">
+              <div className="flex flex-row gap-2" onClick={() => action()}>
+                <div className="flex flex-col text-right border-r border-black-smooth pr-3 items-end justify-center cursor-pointer">
+                  {user.nome ? (
+                    <p className="font-light text-sm">Bem vindo(a)</p>
+                  ) : (
+                    <p className="font-semibold text-md">Acessar conta</p>
+                  )}
+                  <p className="font-semibold text-xl">{user.nome}</p>
+                </div>
+              </div>
+              <div
+                className="relative hidden md:block cursor-pointer"
+                onClick={() => action()}
+              >
+                <div className="absolute inset-0 rounded-full bg-primary-orange blur-sm opacity-50" />
+
+                <Avatar
+                  src="/icons/avatar.png"
+                  alt="Avatar do usuário"
+                  size="md"
+                  className="relative shadow-lg"
+                />
+              </div>
+              <button onClick={() => setOpen(!open)} className="md:hidden ">
+                <Menu size={30} className="text-black-smooth" />
+              </button>
             </div>
-            <button onClick={() => setOpen(!open)} className="md:hidden ">
-              <Menu size={30} className="text-black-smooth" />
-            </button>
           </div>
         </div>
-
+        {/*Animação de entrada e saida do menu mobile*/}
         <AnimatePresence>
           {open && (
             <motion.div
@@ -183,18 +192,10 @@ export default function NavBar() {
           )}
         </AnimatePresence>
       </div>
+
+      {/*Barra de pesquisa mobile*/}
       <div className="md:hidden w-11/12">
         <Search />
-      </div>
-      <div>
-        <nav className="hidden md:flex gap-6">
-          <Categoria name="Motor" />
-          <Categoria name="Freios" />
-          <Categoria name="Suspensão" />
-          <Categoria name="Elétrica" />
-          <Categoria name="Filtros" />
-          <Categoria name="Óleos e Lubrificantes" />
-        </nav>
       </div>
     </div>
   );

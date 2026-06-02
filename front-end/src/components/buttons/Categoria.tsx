@@ -25,7 +25,7 @@ export default function Categoria({ name, icon }: CategoriaProps) {
   return (
     <button
       onClick={() => navigate(`/pesquisa?categoria=${name}`)}
-      className="flex items-center justify-between w-full md:w-auto bg-white md:bg-transparent md:shadow-none shadow-sm hover:shadow-md md:hover:shadow-none text-black-smooth md:hover:text-white hover:text-primary-orange font-semibold md:font-bold text-lg px-4 py-3 md:p-0 rounded-lg border border-transparent hover:border-primary-orange transition-all duration-200"
+      className="flex items-center justify-between w-full md:w-auto bg-white md:bg-transparent md:shadow-none shadow-sm hover:shadow-md md:hover:shadow-none text-black-smooth md:hover:text-white hover:text-primary-orange font-medium text-xl px-4 py-3 md:p-0 rounded-lg border border-transparent hover:border-primary-orange transition-all duration-200"
     >
       <span>{name}</span>
       <span className="text-primary-orange">{getIcon()}</span>

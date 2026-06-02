@@ -33,11 +33,27 @@ export default function ProductGridReco() {
         price: `R$ ${p.pro_valor.toFixed(2).replace(".", ",")}`,
         // parcelas: "ou 6x sem juros",
     }))
-
+    const produtosRecomendados2: any[] = [];
+    const indicesUsados: number[] = [];
+    
+    // Se tiver menos de 6 produtos, use todos
+    const limite = Math.min(5, produtosRecomendados.length);
+    
+    for (let i = 0; i < limite; i++) {
+        let randomIndex: number;
+        // Garante que não pega o mesmo índice duas vezes
+        do {
+            randomIndex = Math.floor(Math.random() * produtosRecomendados.length);
+        } while (indicesUsados.includes(randomIndex));
+        
+        indicesUsados.push(randomIndex);
+        produtosRecomendados2.push(produtosRecomendados[randomIndex]);
+    }
+    
     return (
         <div>
             <div className="p-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-6 md:gap-10">
-                {produtosRecomendados.slice(0, 10).map((product, index) => (
+                {produtosRecomendados2.map((product, index) => (
                     <ProductCard
                         key={index}
                         image={product.image}

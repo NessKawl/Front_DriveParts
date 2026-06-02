@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 
 const images = [
-  "/banners/banner1.jpg",
-  "/banners/banner2.jpg",
-  "/banners/banner3.jpg",
+  "/banners/banner1.png",
+  "/banners/banner2.png",
+  "/banners/banner3.png",
 ]
 
 export default function Banner() {
@@ -17,7 +17,7 @@ export default function Banner() {
   }, [])
 
   return (
-    <div className="relative z-20 w-full h-32 md:h-80 overflow-hidden mx-2 md:mx-4">
+    <div className="relative z-20 w-full h-50 md:h-100 overflow-hidden mx-2 md:mx-4">
 
       {images.map((img, index) => (
         <img

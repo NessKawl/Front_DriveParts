@@ -43,7 +43,7 @@ export default function RecuperarSenha() {
 
     return (
         <div className="bg-ice h-screen flex flex-col justify-between">
-            <NavBarSimples rota={"catalogo"} />
+            <NavBarSimples rota={"login"} />
 
             <div className="flex flex-col justify-center items-center">
                 <h1 className="text-4xl font-bold my-4 mt-12 mb-12">
@@ -52,7 +52,7 @@ export default function RecuperarSenha() {
 
                 <form
                     onSubmit={handleSubmit}
-                    className="bg-white flex flex-col justify-between items-center p-10 rounded-2xl sm:rounded-none w-10/12 md:w-8/12 lg:w-6/12 xl:w-5/12 2xl:w-4/12"
+                    className="bg-white flex flex-col justify-between items-center p-10 rounded-2xl  w-10/12 md:w-8/12 lg:w-6/12 xl:w-5/12 2xl:w-4/12 shadow-2xl shadow-primary-orange/20"
                 >
                     <div className="w-full sm:w-10/12 flex flex-col gap-5 mb-4">
                         <div className="flex flex-col items-start">
@@ -74,7 +74,7 @@ export default function RecuperarSenha() {
 
                     <Button
                         children={loading ? "Enviando...": "Confirmar"}
-                        className="bg-ocean-blue text-ice font-semibold mt-8 mb-2 py-2 px-4 md:text-xl hover:bg-primary-orange"
+                        className="text-black-smooth font-semibold py-2 px-5 md:text-xl border rounded-xl hover:bg-primary-orange hover:text-white hover:border-primary-orange"
                         type="submit"
                     />
                 </form>

@@ -420,14 +420,14 @@ export default function DashGeral() {
                         titulo="Últimas Reservas"
                         colunas={colunasReservas}
                         fetchData={() => Promise.resolve(ultimasReservas)}
-                        alturaMax="max-h-28"
+                        alturaMax="max-h-full"
                     />
 
                     <TabelaLista
                         titulo="Últimas Vendas"
                         colunas={colunasVendas}
                         fetchData={() => Promise.resolve(ultimasVendas)}
-                        alturaMax="max-h-28"
+                        alturaMax="max-h-full"
                     />
 
                 </div>

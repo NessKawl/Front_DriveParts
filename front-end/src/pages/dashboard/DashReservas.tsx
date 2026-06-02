@@ -285,7 +285,7 @@ export default function DashReservas() {
                     <div className="lg:col-span-4 bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-4 flex items-center justify-between transition-all duration-200 hover:border-[#222]">
                         <div className="flex flex-col">
                             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Reservas Ativas</span>
-                            <span className="text-3xl font-bold text-white mt-1">{reservasAtivas}</span>
+                            <span className="text-6xl font-bold text-white mt-1">{reservasAtivas}</span>
                         </div>
                         <div className="bg-[#FF961F]/10 text-[#FF961F] border border-[#FF961F]/20 w-10 h-10 rounded-lg flex items-center justify-center">
                             <CalendarDays size={20} />
@@ -297,7 +297,7 @@ export default function DashReservas() {
                         <GraficoLinhas
                             titulo="Reservas Mensais"
                             data={dadosGrafico}
-                            heightClass="w-full h-24"
+                            heightClass="w-full h-48"
                             series={[
                                 { key: "vendidas", color: "#369638", label: "Reservas Concluídas" },
                                 { key: "canceladas", color: "#FF2817", label: "Reservas Canceladas" },
@@ -358,7 +358,7 @@ export default function DashReservas() {
                                 titulo=""
                                 colunas={colunasReservas}
                                 fetchData={async () => reservasFiltradas}
-                                alturaMax="max-h-52"
+                                alturaMax="max-h-full"
                                 acoes={[
                                     {
                                         label: "Detalhes",

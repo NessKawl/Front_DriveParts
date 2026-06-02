@@ -779,7 +779,7 @@ export default function DashProdutos() {
             ]}
           />
         </div>
-        <div className="flex lfex-row justify-between gap-5 mx-5">
+        {/*<div className="flex lfex-row justify-between gap-5 mx-5">
           <Button
             type="button"
             onClick={() => abrirModal("Saida")}
@@ -796,7 +796,7 @@ export default function DashProdutos() {
             <BanknoteArrowDown size={20} className="mr-2" />
             Registrar entrada de estoque
           </Button>
-        </div>
+        </div>*/}
       </div>
       {/* === Modal de Cadastro === */}
       {isOpen && (

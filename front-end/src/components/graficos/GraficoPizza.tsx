@@ -9,7 +9,7 @@ interface GraficoPizzaProps {
   height?: string;
 }
 
-const COLORS = ["#F7D720","#FF961F", "#1F47FF", "#369638", "#FF2817"]; // cores personalizáveis
+const COLORS = ["#F7D720", "#FF961F", "#1F47FF", "#369638", "#FF2817"]; // cores personalizáveis
 
 export default function GraficoPizza({ data, titulo, height = "h-60" }: GraficoPizzaProps) {
   return (
@@ -24,9 +24,9 @@ export default function GraficoPizza({ data, titulo, height = "h-60" }: GraficoP
             nameKey="name"
             cx="50%"         // desloca o gráfico um pouco à esquerda
             cy="50%"
-            outerRadius={60} // reduz o tamanho da pizza
+            outerRadius={40} // reduz o tamanho da pizza
             innerRadius={0} // deixa o formato tipo donut
-            paddingAngle={2} // espaço entre as fatias
+            paddingAngle={1} // espaço entre as fatias
             
           >
             {data.map((_, index) => (

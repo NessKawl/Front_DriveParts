@@ -312,7 +312,7 @@ export default function DashCaixa() {
               <div className="bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-3.5 flex items-center justify-between transition-all duration-200 hover:border-[#222]">
                 <div className="flex flex-col">
                   <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Caixa Atual</span>
-                  <span className="text-xl font-bold text-white mt-1 font-mono">{formatReaisSinalDepois(caixaAtual)}</span>
+                  <span className="text-3xl font-bold text-white mt-1 font-mono">{formatReaisSinalDepois(caixaAtual)}</span>
                 </div>
                 <div className="bg-[#FF961F]/10 text-[#FF961F] border border-[#FF961F]/20 w-9 h-9 rounded-lg flex items-center justify-center">
                   <Coins size={18} />
@@ -324,7 +324,7 @@ export default function DashCaixa() {
                 <GraficoPizza
                   titulo="Principais formas de pagamento"
                   data={vendasPorPagamento.map((item) => ({ name: item.name, value: item.value }))}
-                  height="h-20"
+                  height="h-40"
                 />
               </div>
             </div>

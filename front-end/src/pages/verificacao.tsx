@@ -25,9 +25,9 @@ export default function Verificacao() {
               />
             ))}
           </div>
-          <p className="w-full text-end font-semibold mb-8">Reenviar código</p>
+          <button onClick={() => console.log("Reenviar código")} className="w-full text-end font-semibold mb-8">Reenviar código</button>
           <Button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/recuperar-senha")}
             children="Verificar"
             className="bg-pear-green text-ice font-semibold py-2 px-4 md:text-xl hover:bg-primary-orange"
           />

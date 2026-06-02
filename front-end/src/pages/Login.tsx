@@ -147,7 +147,7 @@ export default function Login() {
               </div>
 
               <div className="font-bold flex justify-end items-end mb-8 w-full">
-                <p className="cursor-pointer" onClick={() => navigate("/recuperar-senha")} >Esqueceu sua senha?</p>
+                <p className="cursor-pointer" onClick={() => navigate("/validar-usuario")} >Esqueceu sua senha?</p>
               </div>
             </div>
 

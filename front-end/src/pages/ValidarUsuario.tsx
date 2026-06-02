@@ -32,7 +32,7 @@ export default function RecuperarSenha() {
 
                     </div>
                     <Button
-                        onClick={() => navigate("/recuperar-senha")}
+                        onClick={() => navigate("/verificacao")}
                         children="Confirmar"
                         className="bg-ocean-blue text-ice font-semibold mt-8 mb-2 py-2 px-4 md:text-xl hover:bg-primary-orange"
                         type="submit"

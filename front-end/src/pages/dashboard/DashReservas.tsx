@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import CardEstatistica from "../../components/cards/CardEstatistica";
+import { X, CalendarDays, CalendarCheck, Filter, CalendarRange } from "lucide-react";
+//import CardEstatistica from "../../components/cards/CardEstatistica";
 import GraficoLinhas from "../../components/graficos/GraficoLinhas";
 import NavBarDashboard from "../../components/navbar/NavBarDashboard";
 import TabelaLista from "../../components/tabelas/TabelaLista";
-import { X } from "lucide-react";
 import Button from "../../components/buttons/Button";
 import { useNavigate } from "react-router-dom";
 import { dashboardReservaService } from "../../services/dashboardReservaService";
@@ -137,7 +137,6 @@ const formatarReservasParaTabela = (data: ReservaAPI[]): ReservaFormatada[] => {
 };
 
 export default function DashReservas() {
-
     const navigate = useNavigate();
     const [reservasAPI, setReservasAPI] = useState<ReservaAPI[]>([]);
     const [isOpen, setIsOpen] = useState(false);
@@ -154,7 +153,6 @@ export default function DashReservas() {
     const abrirModalSucesso = (mensagem: string, onConfirm?: () => void) => {
         setModalSucessoMensagem(mensagem);
         setModalSucessoOpen(true);
-        // Se precisar fazer algo quando clicar em OK
         if (onConfirm) {
             const originalOnClose = () => {
                 setModalSucessoOpen(false);
@@ -164,8 +162,6 @@ export default function DashReservas() {
             return originalOnClose;
         }
     };
-
-
 
     const confirmarCancelamento = async () => {
         if (!idReservaCancelar) return;
@@ -195,7 +191,7 @@ export default function DashReservas() {
         try {
             await dashboardReservaService.atualizarStatusReserva(id, status);
             abrirModalSucesso(`Reserva ${status.toLowerCase()} com sucesso!`, () => {
-                carregarReservas(); // Opcional: recarrega as reservas depois de fechar modal
+                carregarReservas();
             });
 
             carregarReservas();
@@ -204,7 +200,6 @@ export default function DashReservas() {
             setReservasAtivas(novasAtivas);
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
-
         }
     }, [carregarReservas]);
 
@@ -218,7 +213,6 @@ export default function DashReservas() {
         return formatadas.sort((a, b) => {
             const dataA = a.data ? new Date(a.data).getTime() : 0;
             const dataB = b.data ? new Date(b.data).getTime() : 0;
-
 
             if (ordenacao === "mais-recentes") return dataB - dataA;
             return dataA - dataB;
@@ -251,8 +245,8 @@ export default function DashReservas() {
     const colunasReservas = [
         { chave: "cliente", titulo: "Cliente", size: "md" },
         { chave: "telefone", titulo: "Telefone", size: "md" },
-        { chave: "quantidade", titulo: "Quantidade", size: "md" },
-        { chave: "total", titulo: "Total (R$)", size: "md" },
+        { chave: "quantidade", titulo: "Qtd", size: "sm" },
+        { chave: "total", titulo: "Total", size: "sm" },
         { chave: "periodo", titulo: "Período", size: "lg" },
         { chave: "status", titulo: "Status", size: "md" },
     ];
@@ -273,128 +267,163 @@ export default function DashReservas() {
     }, []);
 
     return (
-        <div className="flex bg-black-smooth/95">
+        <div className="flex bg-[#080808] h-screen overflow-hidden">
             <NavBarDashboard page="Reservas" />
 
-            <div className="flex flex-col justify-center gap-2 py-5 px-5 w-screen">
-                <div className="flex flex-row w-full gap-5">
-                    <CardEstatistica
-                        className="bg-black-smooth flex flex-col border-l border-primary-orange p-2 w-60 h-full"
-                        titulo="RESERVAS ATIVAS"
-                        valor={reservasAtivas}
-                    />
-                    <GraficoLinhas
-                        titulo="Reservas Mensais"
-                        data={dadosGrafico}
-                        series={[
-                            { key: "vendidas", color: "#22C55E", label: "Reservas Vendidas" },
-                            { key: "canceladas", color: "#EF4444", label: "Reservas Canceladas" },
-                        ]}
-                    />
+            <div className="flex-1 flex flex-col p-5 text-white overflow-hidden h-screen">
+                {/* Header */}
+                <div className="flex justify-between items-start mb-4">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight">Gestão de Reservas</h1>
+                        <p className="text-gray-400 text-xs mt-0.5">Monitore agendamentos e converta reservas pendentes em vendas.</p>
+                    </div>
                 </div>
 
-                {loading ? (
-                    <p className="text-gray-400">Carregando reservas...</p>
-                ) : erro ? (
-                    <p className="text-red-500">{erro}</p>
-                ) : (
-                    <>
-                        <div className="flex flex-row gap-6">
-                            <div>
-                                <label className="text-lg font-light text-ice">Status Reserva: </label>
+                {/* Dashboard Stats & Graphic Panel */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-4">
+                    {/* Card Estatístico */}
+                    <div className="lg:col-span-4 bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-4 flex items-center justify-between transition-all duration-200 hover:border-[#222]">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Reservas Ativas</span>
+                            <span className="text-3xl font-bold text-white mt-1">{reservasAtivas}</span>
+                        </div>
+                        <div className="bg-[#FF961F]/10 text-[#FF961F] border border-[#FF961F]/20 w-10 h-10 rounded-lg flex items-center justify-center">
+                            <CalendarDays size={20} />
+                        </div>
+                    </div>
+
+                    {/* Gráfico */}
+                    <div className="lg:col-span-8 bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-3 flex flex-col hover:border-[#222] transition-colors">
+                        <GraficoLinhas
+                            titulo="Reservas Mensais"
+                            data={dadosGrafico}
+                            heightClass="w-full h-24"
+                            series={[
+                                { key: "vendidas", color: "#369638", label: "Reservas Concluídas" },
+                                { key: "canceladas", color: "#FF2817", label: "Reservas Canceladas" },
+                            ]}
+                        />
+                    </div>
+                </div>
+
+                {/* Main Content: Table & Filters */}
+                <div className="bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-4 flex-1 flex flex-col gap-3 overflow-hidden transition-all duration-200 hover:border-[#222]">
+                    
+                    <div className="flex justify-between items-center border-b border-[#1A1A1A] pb-2">
+                        <div className="flex items-center gap-2">
+                            <div className="bg-orange-500/10 text-[#FF961F] w-7 h-7 rounded-md flex items-center justify-center">
+                                <CalendarCheck size={15} />
+                            </div>
+                            <span className="text-sm font-semibold text-white">Listagem de Reservas</span>
+                        </div>
+
+                        {/* Controles de Filtro */}
+                        <div className="flex items-center gap-2">
+                            {/* Filtro status */}
+                            <div className="flex items-center bg-[#121212] border border-[#222] rounded-lg px-2 py-1 text-[11px] text-white">
+                                <Filter size={10} className="text-gray-500 mr-1.5" />
                                 <select
                                     value={filtroSelecionado}
                                     onChange={(e) => setFiltroSelecionado(e.target.value)}
-                                    className="bg-black-smooth text-white border border-gray-600 rounded px-2 py-1 w-40 mb-2"
+                                    className="bg-transparent border-none text-white outline-none cursor-pointer pr-1 font-semibold"
                                 >
                                     {filtros.map(f => (
-                                        <option key={f.children} value={f.children}>{f.value}</option>
+                                        <option key={f.children} value={f.children} className="bg-[#121212]">{f.value}</option>
                                     ))}
                                 </select>
                             </div>
 
-                            <div>
-                                <label className="text-lg font-light text-ice">Data da Reserva: </label>
+                            {/* Ordenação data */}
+                            <div className="flex items-center bg-[#121212] border border-[#222] rounded-lg px-2 py-1 text-[11px] text-white">
+                                <CalendarRange size={10} className="text-gray-500 mr-1.5" />
                                 <select
                                     value={ordenacao}
                                     onChange={(e) => setOrdenacao(e.target.value as "mais-recentes" | "mais-antigas")}
-                                    className="bg-black-smooth text-white border border-gray-600 rounded px-2 py-1 w-60 mb-2"
+                                    className="bg-transparent border-none text-white outline-none cursor-pointer pr-1 font-semibold"
                                 >
-                                    <option value="mais-recentes">Mais recentes primeiro</option>
-                                    <option value="mais-antigas">Mais antigas primeiro</option>
+                                    <option value="mais-recentes" className="bg-[#121212]">Recentes</option>
+                                    <option value="mais-antigas" className="bg-[#121212]">Antigas</option>
                                 </select>
                             </div>
                         </div>
+                    </div>
 
-                        <TabelaLista
-                            titulo="Reservas"
-                            pesquisa={false}
-                            filtro={false}
-                            tituloFiltro="Filtrar"
-                            filtroChildren={filtros}
-                            colunas={colunasReservas}
-                            fetchData={async () => reservasFiltradas}
-                            acoes={[
-                                {
-                                    label: "Ver detalhes",
-                                    cor: "bg-primary-orange hover:bg-orange-400 hover:shadow-orange-400/50 hover:text-white",
-                                    onClick: (item: ReservaFormatada) => {
-                                        setSelectedReserva(item);
-                                        setIsOpen(true);
+                    <div className="flex-1 overflow-hidden">
+                        {loading ? (
+                            <p className="text-gray-400 py-4 text-center">Carregando reservas...</p>
+                        ) : erro ? (
+                            <p className="text-red-500 py-4 text-center">{erro}</p>
+                        ) : (
+                            <TabelaLista
+                                titulo=""
+                                colunas={colunasReservas}
+                                fetchData={async () => reservasFiltradas}
+                                alturaMax="max-h-52"
+                                acoes={[
+                                    {
+                                        label: "Detalhes",
+                                        cor: "bg-[#FF961F] text-black hover:bg-orange-400",
+                                        onClick: (item: ReservaFormatada) => {
+                                            setSelectedReserva(item);
+                                            setIsOpen(true);
+                                        },
                                     },
-                                },
-                            ]}
-                        />
-                    </>
-                )}
+                                ]}
+                            />
+                        )}
+                    </div>
+                </div>
             </div>
 
+            {/* Modal Detalhes */}
             {isOpen && selectedReserva && (
-                <div className="absolute flex justify-center items-center w-full h-full bg-black/50 z-50">
-                    <div className="flex flex-col justify-between bg-black-smooth h-[90%] w-[60%] rounded-md p-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+                <div className="absolute flex justify-center items-center w-full h-full bg-black/60 z-50">
+                    <div className="flex flex-col justify-between bg-[#0D0D0D] border border-[#1A1A1A] h-[85%] w-[55%] rounded-2xl p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-800 scrollbar-track-transparent">
 
-                        <div className="flex flex-col w-full">
-                            <div className="flex flex-row justify-between">
-                                <h1 className="text-xl font-light text-ice">
-                                    Detalhes da Reserva de <span className="text-2xl font-semibold text-primary-orange">{selectedReserva.cliente}</span>
+                        <div className="flex flex-col w-full gap-4">
+                            <div className="flex flex-row justify-between items-center border-b border-[#1A1A1A] pb-3">
+                                <h1 className="text-lg font-light text-gray-300">
+                                    Reserva de <span className="text-xl font-semibold text-[#FF961F]">{selectedReserva.cliente}</span>
                                 </h1>
                                 <X
-                                    size={30}
+                                    size={24}
                                     color="#FFF"
                                     onClick={() => { setIsOpen(false); setSelectedReserva(null); }}
-                                    className="cursor-pointer hover:scale-110 transition-transform"
+                                    className="cursor-pointer hover:scale-110 transition-transform opacity-70 hover:opacity-100"
                                 />
                             </div>
-                            <div className="flex flex-row gap-2 items-end">
-                                <p className="font-light text-ice text-lg">Telefone:</p>
-                                <p className="text-xl font-semibold text-primary-orange">{selectedReserva.telefone}</p>
-                            </div>
-                            <div className="flex flex-row gap-2 items-end border-b border-gray-500 pb-4">
-                                <p className="font-light text-ice text-lg">Período:</p>
-                                <p className="text-xl font-semibold text-primary-orange">{selectedReserva.periodo}</p>
-                            </div>
-                            <div className="flex flex-row gap-2 items-end border-b border-gray-500 pb-4">
-                                <p className="font-light text-ice text-lg">Data da Reserva:</p>
-                                <p className="text-xl font-semibold text-primary-orange">{formatarData(selectedReserva.data)}</p>
+                            
+                            <div className="grid grid-cols-2 gap-4 text-sm bg-[#121212]/50 p-4 border border-[#1A1A1A] rounded-xl">
+                                <div className="flex flex-col">
+                                    <span className="text-xs text-gray-500 font-bold uppercase">Telefone</span>
+                                    <span className="font-semibold text-white mt-0.5">{selectedReserva.telefone}</span>
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-xs text-gray-500 font-bold uppercase">Período</span>
+                                    <span className="font-semibold text-white mt-0.5">{selectedReserva.periodo}</span>
+                                </div>
+                                <div className="flex flex-col col-span-2">
+                                    <span className="text-xs text-gray-500 font-bold uppercase">Data de Criação</span>
+                                    <span className="font-semibold text-white mt-0.5">{formatarData(selectedReserva.data)}</span>
+                                </div>
                             </div>
 
-                            <div className="mt-5 border border-primary-orange">
+                            <div className="mt-2 border border-[#1A1A1A] rounded-xl overflow-hidden">
                                 <TabelaLista
-                                    titulo="Lista de produtos"
-                                    pesquisa={false}
-                                    filtro={false}
+                                    titulo="Lista de Produtos"
                                     colunas={colunasListaProdutos}
                                     fetchData={async () => selectedReserva.produtos}
+                                    alturaMax="max-h-24"
                                 />
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-2 items-end border-t border-gray-500 pt-4 mt-5">
-                            <div className="flex flex-row gap-2 items-end w-full">
-                                <p className="font-light text-ice text-xl">Total:</p>
-                                <p className="text-2xl font-semibold text-primary-orange">{selectedReserva.total}</p>
+                        <div className="flex flex-col gap-3 border-t border-[#1A1A1A] pt-4 mt-4">
+                            <div className="flex justify-between items-center px-2">
+                                <span className="text-xs text-gray-500 font-bold uppercase">Valor Total</span>
+                                <span className="text-xl font-bold text-[#369638] font-mono">{selectedReserva.total}</span>
                             </div>
-                            <div className="flex flex-row justify-around items-center w-full text-xl">
+                            <div className="flex justify-end gap-3 mt-2">
                                 {selectedReserva.status === "RESERVA" && (
                                     <Button
                                         onClick={() => {
@@ -402,7 +431,7 @@ export default function DashReservas() {
                                             setModalConfirmOpen(true);
                                         }}
                                         children="Cancelar reserva"
-                                        className="border border-red-alert text-red-alert font-semibold py-2 px-6 rounded-xl hover:bg-red-alert hover:text-white hover:shadow-red-alert/50 hover:shadow-md transition-shadow duration-300 cursor-pointer"
+                                        className="border border-[#FF2817] text-[#FF2817] hover:bg-[#FF2817]/10 font-semibold py-2 px-4 rounded-xl text-xs transition duration-200"
                                     />
                                 )}
                                 {selectedReserva.status === "RESERVA" && (
@@ -413,7 +442,7 @@ export default function DashReservas() {
                                             navigate(`/dashboard/vendas/nova-venda?reserva=${selectedReserva.id}`);
                                         }}
                                         children="Ir para venda"
-                                        className="bg-pear-green/80 text-white font-semibold px-6 py-2 rounded-xl hover:bg-pear-green hover:shadow-pear-green/50 hover:shadow-md transition-shadow duration-300 hover:text-shadow-2xs"
+                                        className="bg-[#369638] text-white hover:bg-green-600 font-semibold py-2 px-4 rounded-xl text-xs transition duration-200"
                                     />
                                 )}
                             </div>
@@ -441,9 +470,7 @@ export default function DashReservas() {
                 onClose={() => setModalSucessoOpen(false)}
                 onAction={() => setModalSucessoOpen(false)}
             />
-
-
-
         </div>
     );
 }
+

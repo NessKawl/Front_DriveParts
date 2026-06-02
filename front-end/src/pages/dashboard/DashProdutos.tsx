@@ -693,7 +693,7 @@ export default function DashProdutos() {
   }, []);
 
   return (
-    <div className="flex bg-black-smooth/95">
+    <div className="flex bg-[#080808]">
       <NavBarDashboard page="Produtos" />
       <div className="flex flex-col gap-2 py-10 px-5 w-screen">
         <div className="flex flex-row justify-between w-full">

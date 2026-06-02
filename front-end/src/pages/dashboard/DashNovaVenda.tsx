@@ -430,7 +430,7 @@ export default function DashNovaVenda() {
     }, [produtoSelecionado, quantidade, carrinho, formaPagamento, totalRecebido, modalAberto, modalTipo, acaoModal]);
 
     return (
-        <div className="flex h-screen bg-black-smooth/95 overflow-hidden font-sans">
+        <div className="flex h-screen bg-[#080808] overflow-hidden font-sans">
             <NavBarDashboard page="Vendas" />
 
             <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">

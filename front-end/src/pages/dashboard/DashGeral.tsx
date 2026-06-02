@@ -1,33 +1,14 @@
 import { useEffect, useState } from "react";
-import CardEstatistica from "../../components/cards/CardEstatistica";
+import { 
+  CalendarDays, 
+  TrendingUp, 
+  Coins, 
+  Activity 
+} from "lucide-react";
 import GraficoLinhas from "../../components/graficos/GraficoLinhas";
 import NavBarDashboard from "../../components/navbar/NavBarDashboard";
 import TabelaLista from "../../components/tabelas/TabelaLista";
 import { dashboardGeralService } from "../../services/dashboardGeralService";
-
-const colunasReservas = [
-    { chave: "cliente", titulo: "Cliente", size: "sm" },
-    { chave: "telefone", titulo: "Telefone", size: "md" },
-    { chave: "quantidade", titulo: "Qtd de produtos", size: "md" },
-    { chave: "total", titulo: "Total (R$)", size: "md" },
-    { chave: "periodo", titulo: "Período Reserva", size: "auto" },
-];
-
-const colunasVendas = [
-    { chave: "produto", titulo: "produto", size: "auto" },
-    { chave: "valor", titulo: "Valor Unidade", size: "md" },
-    { chave: "quantidade", titulo: "Quantidade", size: "md" },
-    { chave: "total", titulo: "Total", size: "sm" },
-    { chave: "reserva", titulo: "Reserva", size: "sm" },
-];
-
-const filtros = [
-    { value: "Dia", children: "Dia" },
-    { value: "Semanal", children: "Semanal" },
-    { value: "Mensal", children: "Mensal" },
-    { value: "Semestral", children: "Semestral" },
-    { value: "Anual", children: "Anual" },
-];
 
 interface Reserva {
     ven_id: number;
@@ -37,6 +18,22 @@ interface Reserva {
     ite_itemVenda?: any[];
     usu_usuario?: any;
 }
+
+const colunasReservas = [
+    { chave: "cliente", titulo: "Cliente", size: "sm" },
+    { chave: "telefone", titulo: "Telefone", size: "md" },
+    { chave: "quantidade", titulo: "Qtd", size: "sm" },
+    { chave: "total", titulo: "Total", size: "sm" },
+    { chave: "periodo", titulo: "Período", size: "auto" },
+];
+
+const colunasVendas = [
+    { chave: "produto", titulo: "Produto", size: "auto" },
+    { chave: "valor", titulo: "Preço Un.", size: "sm" },
+    { chave: "quantidade", titulo: "Qtd", size: "sm" },
+    { chave: "total", titulo: "Total", size: "sm" },
+    { chave: "reservaStatus", titulo: "Reserva", size: "sm" },
+];
 
 const formatarTelefone = (telefone: string) => {
   if (!telefone) return "";
@@ -118,7 +115,7 @@ function gerarIntervaloDatas(filtro: string) {
         return meses;
     }
 
-    return gerarIntervaloDatas("Mensal");
+    return gerarIntervaloDatas("Semanal");
 }
 
 function formatLabelForKey(key: string, filtro: string) {
@@ -134,12 +131,12 @@ function formatLabelForKey(key: string, filtro: string) {
 export default function DashGeral() {
     const [reservasAtivas, setReservasAtivas] = useState(0);
     const [ultimasReservas, setUltimasReservas] = useState<any[]>([]);
+    const [ultimasVendas, setUltimasVendas] = useState<any[]>([]);
     const [vendas30dias, setVendas30dias] = useState(0);
 
     const [reservas, setReservas] = useState<Reserva[]>([]);
     const [filtro, setFiltro] = useState("Semanal");
     const [dadosGrafico, setDadosGrafico] = useState<any[]>([]);
-
 
     const [caixaAtual, setCaixaAtual] = useState<number>(0);
     const [dadosGraficoVendas, setDadosGraficoVendas] = useState<{ name: string; vendas: number }[]>([]);
@@ -150,12 +147,10 @@ export default function DashGeral() {
             .then((data) => setCaixaAtual(data.caixa))
             .catch((err) => console.error(err));
 
-
         dashboardGeralService
             .getReservasAtivas()
             .then((data) => setReservasAtivas(data))
             .catch((err) => console.error(err));
-
 
         dashboardGeralService
             .getVendasUltimos30Dias()
@@ -218,6 +213,35 @@ export default function DashGeral() {
             .catch((err) => console.error(err));
     }, []);
 
+    useEffect(() => {
+        dashboardGeralService.listarVendas()
+            .then((vendas) => {
+                const formatadas = (vendas || [])
+                    .sort((a: any, b: any) => (b.ven_id ?? 0) - (a.ven_id ?? 0))
+                    .slice(0, 3)
+                    .map((v: any) => {
+                        const itens = v.ite_itemVenda ?? [];
+                        const produto = itens[0]?.pro_produto?.pro_nome ?? "—";
+                        const valorUnitario = itens[0]?.pro_produto?.pro_valor ?? 0;
+                        const quantidade = itens.reduce((acc: number, item: any) => acc + (item.ite_quantidade ?? item.ite_qtd ?? 1), 0);
+                        const total = itens.reduce((acc: number, item: any) => {
+                            const qtd = item.ite_quantidade ?? item.ite_qtd ?? 1;
+                            const preco = item.pro_produto?.pro_valor ?? 0;
+                            return acc + qtd * preco;
+                        }, 0);
+
+                        return {
+                            produto,
+                            valor: valorUnitario.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
+                            quantidade,
+                            total: total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
+                            reservaStatus: v.ven_status === "RESERVA" ? "Sim" : "Não",
+                        };
+                    });
+                setUltimasVendas(formatadas);
+            })
+            .catch((err) => console.error(err));
+    }, []);
 
     useEffect(() => {
         const montarDadosGraficoReservas = () => {
@@ -288,116 +312,129 @@ export default function DashGeral() {
     }
 
     return (
-        <div className="flex bg-black-smooth/95">
+        <div className="flex bg-[#080808] h-screen overflow-hidden">
             <NavBarDashboard page="Geral" />
-            <div className="grid grid-cols-1 w-full gap-2 py-2 px-5">
-                <div className="flex fle-row gap-4 h-full ">
-                    <div className="flex flex-col w-full gap-4 ">
-                        <div className="flex flex-row items-center gap-4 w-full h-full">
-                            <CardEstatistica
-                                className="bg-black-smooth flex flex-col border-l border-primary-orange p-2 w-60 h-full"
-                                titulo="RESERVAS ATIVAS"
-                                valor={reservasAtivas}
-                            />
-                            <TabelaLista
-                                titulo="Últimas Reservas"
-                                colunas={colunasReservas}
-                                fetchData={() => Promise.resolve(ultimasReservas)}
-                                alturaMax="md:max-h-33"
-                            />
-                        </div>
-                        <div className="flex flex-row items-center gap-4 w-full h-full">
-                            <CardEstatistica
-                                className="bg-black-smooth flex flex-col border-l border-primary-orange p-2 w-60 h-full"
-                                titulo="VENDAS NOS ULTIMOS 30 DIAS"
-                                valor={vendas30dias}
-                            />
-                            <TabelaLista
-                                titulo="Últimas Vendas"
-                                colunas={colunasVendas}
-                                fetchData={async () => {
-                                    try {
-                                        const vendas = await dashboardGeralService.listarReservas();
-                                        return (vendas || [])
-                                            .sort((a: any, b: any) => (b.ven_id ?? 0) - (a.ven_id ?? 0))
-                                            .slice(0, 5)
-                                            .map((v: any) => {
-                                                const itens = v.ite_itemVenda ?? [];
-                                                const produto = itens[0]?.pro_produto?.pro_nome ?? "—";
-                                                const valorUnitario = itens[0]?.pro_produto?.pro_valor ?? 0;
-                                                const quantidade = itens.reduce((acc: number, item: any) => acc + (item.ite_quantidade ?? item.ite_qtd ?? 1), 0);
-                                                const total = itens.reduce((acc: number, item: any) => {
-                                                    const qtd = item.ite_quantidade ?? item.ite_qtd ?? 1;
-                                                    const preco = item.pro_produto?.pro_valor ?? 0;
-                                                    return acc + qtd * preco;
-                                                }, 0);
-
-                                                return {
-                                                    produto,
-                                                    valor: valorUnitario.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
-                                                    quantidade,
-                                                    total: total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
-                                                    reserva: v.ven_status == "RESERVA" ? "Sim" : "Não",
-                                                };
-                                            });
-                                    } catch (err) {
-                                        console.error(err);
-                                        return [];
-                                    }
-                                }}
-                                alturaMax="md:max-h-33"
-                            />
-                        </div>
-                    </div>
-                    <div className="flex flex-col gap-4 h-full">
-                        <CardEstatistica
-                            className="bg-black-smooth flex flex-col border-l border-primary-orange p-2 min-w-80 "
-                            titulo="CAIXA ATUAL (R$)"
-                            valor={formatReaisSinalDepois(caixaAtual)}
-                        />
+            
+            <div className="flex-1 flex flex-col p-5 text-white overflow-hidden h-screen">
+                {/* Header */}
+                <div className="flex justify-between items-start mb-4">
+                    <div>
+                        <h1 className="text-2xl font-bold text-white tracking-tight">Dashboard Geral</h1>
+                        <p className="text-gray-400 text-xs mt-0.5">Acompanhe as métricas de vendas, reservas e fluxo de caixa da DriveParts.</p>
                     </div>
                 </div>
 
-                <div className="flex flex-row gap-4 w-full h-full">
-                    <div className="flex flex-col w-full gap-2 bg-black-smooth border-l border-primary-orange">
-                        <div className="flex flex-row justify-end gap-2 items-center p-2">
-                            <label className="text-primary-orange">Filtro Gráficos:</label>
+                {/* Metrics Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    {/* Reservas Ativas Card */}
+                    <div className="bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-3 flex items-center justify-between transition-all duration-200 hover:border-[#222]">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Reservas Ativas</span>
+                            <span className="text-2xl font-bold text-white mt-0.5">{reservasAtivas}</span>
+                        </div>
+                        <div className="bg-[#FF961F]/10 text-[#FF961F] border border-[#FF961F]/20 w-9 h-9 rounded-lg flex items-center justify-center">
+                            <CalendarDays size={18} />
+                        </div>
+                    </div>
+
+                    {/* Vendas Card */}
+                    <div className="bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-3 flex items-center justify-between transition-all duration-200 hover:border-[#222]">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Vendas (30 Dias)</span>
+                            <span className="text-2xl font-bold text-white mt-0.5">{vendas30dias}</span>
+                        </div>
+                        <div className="bg-[#369638]/10 text-[#369638] border border-[#369638]/20 w-9 h-9 rounded-lg flex items-center justify-center">
+                            <TrendingUp size={18} />
+                        </div>
+                    </div>
+
+                    {/* Caixa Card */}
+                    <div className="bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-3 flex items-center justify-between transition-all duration-200 hover:border-[#222]">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Caixa Atual</span>
+                            <span className="text-xl font-bold text-white mt-0.5 font-mono">{formatReaisSinalDepois(caixaAtual)}</span>
+                        </div>
+                        <div className="bg-blue-500/10 text-blue-500 border border-blue-500/20 w-9 h-9 rounded-lg flex items-center justify-center">
+                            <Coins size={18} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Unified Charts Panel */}
+                <div className="bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-4 flex flex-col h-full gap-3 mb-4 transition-all duration-200 hover:border-[#222]">
+                    <div className="flex flex-row justify-between items-center border-b border-[#1A1A1A] pb-2">
+                        <div className="flex items-center gap-2">
+                            <div className="bg-orange-500/10 text-[#FF961F] w-7 h-7 rounded-md flex items-center justify-center">
+                                <Activity size={15} />
+                            </div>
+                            <div>
+                                <h2 className="text-sm font-semibold text-white">Desempenho Geral</h2>
+                            </div>
+                        </div>
+                        
+                        {/* Dark Select Pill */}
+                        <div className="flex items-center bg-[#121212] border border-[#222] rounded-lg px-2 py-1 text-[11px] text-white">
                             <select
                                 value={filtro}
                                 onChange={(e) => setFiltro(e.target.value)}
-                                className="bg-black-smooth text-white border border-gray-600 rounded px-2 py-1"
+                                className="bg-transparent border-none text-white outline-none cursor-pointer pr-1 font-semibold"
                             >
-                                {filtros.map((f) => (
-                                    <option key={f.children} value={f.children}>
-                                        {f.value}
-                                    </option>
-                                ))}
+                                <option value="Dia" className="bg-[#121212]">Diário</option>
+                                <option value="Semanal" className="bg-[#121212]">Semanal</option>
+                                <option value="Mensal" className="bg-[#121212]">Mensal</option>
+                                <option value="Semestral" className="bg-[#121212]">Semestral</option>
+                                <option value="Anual" className="bg-[#121212]">Anual</option>
                             </select>
                         </div>
+                    </div>
 
-                        <div className="flex flex-row gap-5 bg-black-smooth">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 bg-transparent h-full">
+                        <div className="bg-[#121212]/30 border border-[#1A1A1A]/40 rounded-xl p-2.5 h-full">
                             <GraficoLinhas
                                 titulo="Reservas"
                                 filtro={false}
                                 data={dadosGrafico}
+                                heightClass="w-full h-[300px]"
                                 series={[
-                                    { key: "vendidas", color: "#22C55E", label: "Vendidas" },
-                                    { key: "canceladas", color: "#EF4444", label: "Canceladas" },
+                                    { key: "vendidas", color: "#369638", label: "Vendidas" },
+                                    { key: "canceladas", color: "#FF2817", label: "Canceladas" },
                                 ]}
                             />
-        
+                        </div>
+    
+                        <div className="bg-[#121212]/30 border border-[#1A1A1A]/40 rounded-xl p-2.5 h-full">
                             <GraficoLinhas
                                 data={dadosGraficoVendas}
                                 titulo="Vendas"
                                 filtro={false}
-                                tituloFiltro="Filtrar"
-                                filtroChildren={filtros}
-                                series={[{ key: "vendas", color: "#22C55E", label: "Vendas" }]}
+                                heightClass="w-full h-[300px]"
+                                series={[{ key: "vendas", color: "#369638", label: "Vendas" }]}
                             />
                         </div>
                     </div>
+                </div>
+
+                {/* Tables Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full overflow-hidden">
+                    <TabelaLista
+                        titulo="Últimas Reservas"
+                        colunas={colunasReservas}
+                        fetchData={() => Promise.resolve(ultimasReservas)}
+                        alturaMax="max-h-28"
+                    />
+
+                    <TabelaLista
+                        titulo="Últimas Vendas"
+                        colunas={colunasVendas}
+                        fetchData={() => Promise.resolve(ultimasVendas)}
+                        alturaMax="max-h-28"
+                    />
+
                 </div>
             </div>
         </div>
     );
 }
+
+
+

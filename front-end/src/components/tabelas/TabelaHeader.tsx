@@ -17,7 +17,7 @@ export default function TabelaHeader({
   return (
     <li
       style={{ gridTemplateColumns }}
-      className="grid gap-2 font-bold text-ice text-sm py-2 items-center border-b border-gray-600/40"
+      className="grid gap-2 font-bold text-gray-500 text-[11px] uppercase tracking-wider py-2.5 items-center border-b border-[#1A1A1A]"
     >
       {colunas.map((c, i) => (
         <span key={i} className="truncate px-2" title={c.titulo}>
@@ -28,3 +28,4 @@ export default function TabelaHeader({
     </li>
   );
 }
+

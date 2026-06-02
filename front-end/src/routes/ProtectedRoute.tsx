@@ -20,5 +20,6 @@ export default function ProtectedRoute({
     return <Navigate to="/catalogo" replace />;
   }
 
+
   return children;
 }

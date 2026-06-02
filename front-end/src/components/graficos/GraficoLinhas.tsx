@@ -17,17 +17,24 @@ interface GraficoLinhasProps {
   titulo: string;
   data: { name: string;[key: string]: number | string }[];
   series: Serie[];
+  heightClass?: string;
 }
 
 
-export default function GraficoLinhas({ titulo, data, series, filtro,
+export default function GraficoLinhas({ 
+  titulo, 
+  data, 
+  series, 
+  filtro,
   tituloFiltro,
-  filtroChildren, }: GraficoLinhasProps) {
+  filtroChildren,
+  heightClass
+}: GraficoLinhasProps) {
   return (
-    <div className="w-full lg:h-90 md:h-70">
-      <div className="w-full h-full bg-black-smooth p-2">
-        <div className="flex flex-row justify-between items-end">
-          <h2 className="text-xl font-semibold mb-2 text-primary-orange">{titulo}</h2>
+    <div className={heightClass || "w-full lg:h-90 md:h-70"}>
+      <div className="w-full h-full bg-transparent p-0">
+        <div className="flex flex-row justify-between items-end mb-2">
+          <h2 className="text-sm font-semibold text-white">{titulo}</h2>
           {filtro && <div>
                     <FilterTable 
                       titulo={tituloFiltro}
@@ -37,21 +44,21 @@ export default function GraficoLinhas({ titulo, data, series, filtro,
         </div>
 
 
-        <ResponsiveContainer width="100%" height="90%">
+        <ResponsiveContainer width="100%" height="85%">
           <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#3A3A3A" />
-            <XAxis dataKey="name" tick={{ fill: "#EAEAEA" }} />
-            <YAxis tick={{ fill: "#EAEAEA" }} />
-            <Tooltip />
-            <Legend />
+            <CartesianGrid strokeDasharray="3 3" stroke="#222" />
+            <XAxis dataKey="name" tick={{ fill: "#8E8E93", fontSize: 10 }} />
+            <YAxis tick={{ fill: "#8E8E93", fontSize: 10 }} />
+            <Tooltip contentStyle={{ backgroundColor: "#0D0D0D", borderColor: "#222", borderRadius: "8px" }} />
+            <Legend wrapperStyle={{ fontSize: 10 }} />
             {series.map((serie) => (
               <Line
                 key={serie.key}
-                type="linear"
+                type="monotone"
                 dataKey={serie.key}
                 stroke={serie.color}
-                strokeWidth={3}
-                dot={{ r: 2 }}
+                strokeWidth={2}
+                dot={{ r: 1 }}
                 name={serie.label}
               />
             ))}
@@ -62,3 +69,4 @@ export default function GraficoLinhas({ titulo, data, series, filtro,
     </div>
   );
 }
+

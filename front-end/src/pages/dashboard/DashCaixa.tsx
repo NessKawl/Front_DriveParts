@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import CardEstatistica from "../../components/cards/CardEstatistica";
+//import CardEstatistica from "../../components/cards/CardEstatistica";
 import GraficoLinhas from "../../components/graficos/GraficoLinhas";
 import GraficoPizza from "../../components/graficos/GraficoPizza";
 import NavBarDashboard from "../../components/navbar/NavBarDashboard";
 import TabelaLista from "../../components/tabelas/TabelaLista";
-import { X } from "lucide-react";
+import { X, Coins, PercentCircle, ClipboardList } from "lucide-react";
 import FormGenerator from "../../components/forms/FormGenerator";
 import { dashboardCaixaService } from "../../services/dashboardCaixaService";
 
@@ -290,103 +290,147 @@ export default function DashCaixa() {
   ];
 
   return (
-    <div className="flex bg-black-smooth/95">
+    <div className="flex bg-[#080808] h-screen overflow-hidden">
       <NavBarDashboard page="Caixa" />
 
-      <div className="flex flex-row gap-2 py-2 px-5 w-screen">
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-row w-full gap-2">
-            <CardEstatistica
-              className="bg-black-smooth flex flex-col border-l border-primary-orange p-2 min-w-80"
-              titulo="CAIXA ATUAL (R$)"
-              valor={formatReaisSinalDepois(caixaAtual)}
-            />
-
-            <GraficoPizza
-              titulo="Principais formas de pagamento"
-              data={vendasPorPagamento.map((item) => ({ name: item.name, value: item.value }))}
-              height="h-47"
-            />
-          </div>
-
-
-
-          <div className="w-full h-auto bg-black-smooth border-l border-primary-orange">
-            <div className="flex justify-between items-end mb-2 bg-black-smooth p-2">
-              <h2 className="text-lg text-primary-orange">
-                FLUXO DE MOVIMENTAÇÃO ({filtroMov.toUpperCase()})
-              </h2>
-              <select
-                value={filtroMov}
-                onChange={(e) => setFiltroMov(e.target.value)}
-                className="bg-zinc-900 text-white border border-zinc-700 px-2 py-1 rounded"
-              >
-                <option value="Diario">Diário</option>
-                <option value="Semanal">Semanal</option>
-                <option value="Mensal">Mensal</option>
-                <option value="Semestral">Semestral</option>
-                <option value="Anual">Anual</option>
-              </select>
-            </div>
-            <GraficoLinhas
-              titulo=""
-              data={fluxoMovimentacao}
-              series={[{ key: "caixa", color: "#FF961F", label: "Fluxo de caixa" }]}
-            />
+      <div className="flex-1 flex flex-col p-5 text-white overflow-hidden h-screen">
+        {/* Header */}
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Gestão de Caixa</h1>
+            <p className="text-gray-400 text-xs mt-0.5">Controle de entradas, saídas e formas de pagamento preferidas.</p>
           </div>
         </div>
 
-        <div className="flex flex-col w-full">
-          <TabelaLista
-            titulo="HISTÓRICO DE MOVIMENTAÇÕES DO CAIXA"
-            colunas={colunasHistoricoCaixa}
-            fetchData={async () => {
-              try {
-                const data: Movimentacao[] = await dashboardCaixaService.getMovimentacoes();
-                console.log("Vendas por pagamento -> ", data);
+        {/* Content Layout */}
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 overflow-hidden">
+          {/* Coluna Esquerda: Métricas e Gráfico */}
+          <div className="lg:col-span-7 flex flex-col gap-4 overflow-hidden">
+            {/* Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Caixa Atual */}
+              <div className="bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-3.5 flex items-center justify-between transition-all duration-200 hover:border-[#222]">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Caixa Atual</span>
+                  <span className="text-xl font-bold text-white mt-1 font-mono">{formatReaisSinalDepois(caixaAtual)}</span>
+                </div>
+                <div className="bg-[#FF961F]/10 text-[#FF961F] border border-[#FF961F]/20 w-9 h-9 rounded-lg flex items-center justify-center">
+                  <Coins size={18} />
+                </div>
+              </div>
 
-                return data
-                  .map((item: Movimentacao) => ({
-                    ...item,
-                    valor: formatReaisSinalDepois(item.valor),
-                    data: normalizarData(item.data.toString()).toLocaleDateString("pt-BR"),
-                  }))
-                  .sort((a: { data: string }, b: { data: string }) => new Date(b.data).getTime() - new Date(a.data).getTime());
-              } catch (err) {
-                console.error("Erro ao buscar movimentações:", err);
-                return [];
-              }
-            }}
-            alturaMax="md:max-h-200"
-          />
+              {/* Pizza Pagamento */}
+              <div className="bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-3 flex flex-col justify-center min-h-[90px] hover:border-[#222] transition-colors">
+                <GraficoPizza
+                  titulo="Principais formas de pagamento"
+                  data={vendasPorPagamento.map((item) => ({ name: item.name, value: item.value }))}
+                  height="h-20"
+                />
+              </div>
+            </div>
+
+            {/* Linhas Fluxo de Caixa */}
+            <div className="bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-4 flex-1 flex flex-col gap-3 overflow-hidden hover:border-[#222] transition-colors">
+              <div className="flex justify-between items-center border-b border-[#1A1A1A] pb-2">
+                <div className="flex items-center gap-2">
+                  <div className="bg-orange-500/10 text-[#FF961F] w-7 h-7 rounded-md flex items-center justify-center">
+                    <PercentCircle size={15} />
+                  </div>
+                  <span className="text-sm font-semibold text-white">Fluxo de Movimentação</span>
+                </div>
+
+                <div className="flex items-center bg-[#121212] border border-[#222] rounded-lg px-2 py-1 text-[11px] text-white">
+                  <select
+                    value={filtroMov}
+                    onChange={(e) => setFiltroMov(e.target.value)}
+                    className="bg-transparent border-none text-white outline-none cursor-pointer pr-1 font-semibold"
+                  >
+                    <option value="Diario" className="bg-[#121212]">Diário</option>
+                    <option value="Semanal" className="bg-[#121212]">Semanal</option>
+                    <option value="Mensal" className="bg-[#121212]">Mensal</option>
+                    <option value="Semestral" className="bg-[#121212]">Semestral</option>
+                    <option value="Anual" className="bg-[#121212]">Anual</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex-1">
+                <GraficoLinhas
+                  titulo=""
+                  data={fluxoMovimentacao}
+                  heightClass="w-full h-full"
+                  series={[{ key: "caixa", color: "#FF961F", label: "Fluxo de Caixa" }]}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Coluna Direita: Tabela */}
+          <div className="lg:col-span-5 bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-4 flex flex-col gap-3 overflow-hidden hover:border-[#222] transition-colors">
+            <div className="flex justify-between items-center border-b border-[#1A1A1A] pb-2">
+              <div className="flex items-center gap-2">
+                <div className="bg-orange-500/10 text-[#FF961F] w-7 h-7 rounded-md flex items-center justify-center">
+                  <ClipboardList size={15} />
+                </div>
+                <span className="text-sm font-semibold text-white">Histórico de Caixa</span>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-hidden">
+              <TabelaLista
+                titulo=""
+                colunas={colunasHistoricoCaixa}
+                fetchData={async () => {
+                  try {
+                    const data: Movimentacao[] = await dashboardCaixaService.getMovimentacoes();
+                    return data
+                      .map((item: Movimentacao) => ({
+                        ...item,
+                        valor: formatReaisSinalDepois(item.valor),
+                        data: normalizarData(item.data.toString()).toLocaleDateString("pt-BR"),
+                      }))
+                      .sort((a: { data: string }, b: { data: string }) => new Date(b.data).getTime() - new Date(a.data).getTime());
+                  } catch (err) {
+                    console.error("Erro ao buscar movimentações:", err);
+                    return [];
+                  }
+                }}
+                alturaMax="max-h-[300px]"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
       {isOpen && (
-        <div className="absolute flex justify-center items-center w-full h-full bg-black/50 z-50">
-          <div className="bg-black-smooth h-[90%] w-[60%] rounded-md p-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
-            <div className="flex flex-row justify-between mb-4">
-              <h1 className="text-2xl font-semibold text-primary-orange">
-                Cadastrar nova movimentação de {tipoMovimentacao === "Saida" ? "Saída" : "Entrada"}
-              </h1>
-              <X
-                size={30}
-                color="#FFF"
-                onClick={() => setIsOpen(false)}
-                className="cursor-pointer hover:scale-110 transition-transform"
-              />
+        <div className="absolute flex justify-center items-center w-full h-full bg-black/70 backdrop-blur-sm z-50">
+          <div className="bg-[#0D0D0D] border border-[#1A1A1A] h-[85%] w-[55%] rounded-2xl p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-800 scrollbar-track-transparent shadow-2xl flex flex-col justify-between">
+            <div>
+              <div className="flex flex-row justify-between items-center border-b border-[#1A1A1A] pb-3 mb-6">
+                <h1 className="text-xl font-semibold text-[#FF961F]">
+                  Cadastrar movimentação: {tipoMovimentacao === "Saida" ? "Saída" : "Entrada"}
+                </h1>
+                <X
+                  size={24}
+                  color="#FFF"
+                  onClick={() => setIsOpen(false)}
+                  className="cursor-pointer hover:scale-110 transition-transform opacity-70 hover:opacity-100"
+                />
+              </div>
+
+              <form className="flex flex-col gap-5 w-full" onSubmit={handleSubmit}>
+                <FormGenerator fields={fields} form={form} setForm={setForm} className="grid grid-cols-1 gap-4 w-full" />
+                
+                <div className="flex justify-end mt-4">
+                  <button
+                    type="submit"
+                    className="bg-[#FF961F] hover:bg-orange-500 text-black text-sm font-bold py-2.5 px-6 rounded-lg transition-all duration-200"
+                  >
+                    Registrar Movimentação
+                  </button>
+                </div>
+              </form>
             </div>
-
-            <form className="flex flex-col gap-5 w-full" onSubmit={handleSubmit}>
-              <FormGenerator fields={fields} form={form} setForm={setForm} className="grid grid-cols-1 gap-4 w-full" />
-
-              <button
-                type="submit"
-                className="bg-primary-orange hover:bg-orange-300 w-48 py-2 text-ice hover:text-black-smooth text-xl font-semibold rounded-md self-end"
-              >
-                Registrar
-              </button>
-            </form>
           </div>
         </div>
       )}

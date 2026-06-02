@@ -26,12 +26,12 @@ export default function TabelaLinha({
   return (
     <li
       style={{ gridTemplateColumns }}
-      className="grid gap-2 py-2 items-center transition hover:bg-gray-900/20"
+      className="grid gap-2 py-2.5 items-center border-b border-[#151515] last:border-b-0 transition-all duration-150 hover:bg-[#121212]/40 rounded-xl px-2 my-0.5 group"
     >
       {colunas.map((c, i) => (
         <span
           key={i}
-          className="text-ice text-sm truncate px-2"
+          className="text-gray-300 text-sm truncate px-2 group-hover:text-white transition-colors"
           title={String(item[c.chave] ?? "")}
         >
           {item[c.chave]}
@@ -47,7 +47,7 @@ export default function TabelaLinha({
                 if (acao.link) window.location.href = `${acao.link}?id=${item.id}`;
                 else if (acao.onClick) acao.onClick(item);
               }}
-              className={`font-semibold px-3 py-1 rounded-md transition ${acao.cor || "bg-gray-600 hover:bg-gray-700"}`}
+              className={`font-semibold text-xs px-3 py-1 rounded-lg transition-all duration-150 ${acao.cor || "bg-gray-600 hover:bg-gray-700"}`}
             >
               {acao.label}
             </button>
@@ -57,3 +57,4 @@ export default function TabelaLinha({
     </li>
   );
 }
+

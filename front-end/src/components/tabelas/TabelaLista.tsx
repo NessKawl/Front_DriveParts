@@ -80,9 +80,9 @@ export default function TabelaLista({
   }, [colunas, acoes]);
 
   return (
-    <div className="bg-black-smooth border-l border-primary-orange p-3 w-full h-full">
-      <div className="flex flex-row justify-between items-center">
-        <h2 className="text-lg font-semibold text-primary-orange mb-2">{titulo}</h2>
+    <div className="bg-[#0D0D0D] border border-[#1A1A1A] rounded-2xl p-4 w-full h-full flex flex-col gap-3 hover:border-[#222] transition-colors duration-200 shadow-sm">
+      <div className="flex flex-row justify-between items-center border-b border-[#1A1A1A] pb-2">
+        <h2 className="text-sm font-semibold text-white tracking-wide">{titulo}</h2>
         <div className="flex flex-row gap-5 h-8 items-center justify-end">
           {pesquisa && <SearchDashboard />}
           {filtro && (
@@ -98,9 +98,9 @@ export default function TabelaLista({
         <TabelaSkeleton />
       ) : (
         <div
-          className={`overflow-y-auto ${alturaMax} pr-2 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-800`}
+          className={`overflow-y-auto ${alturaMax} pr-1 scrollbar-thin scrollbar-thumb-gray-800 scrollbar-track-transparent`}
         >
-          <ul className="divide-y divide-gray-200/40 divide-dashed">
+          <ul className="flex flex-col">
             <TabelaHeader
               colunas={colunas}
               temAcoes={acoes.length > 0}
@@ -121,3 +121,4 @@ export default function TabelaLista({
     </div>
   );
 }
+

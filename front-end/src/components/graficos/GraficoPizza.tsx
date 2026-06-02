@@ -13,8 +13,8 @@ const COLORS = ["#F7D720","#FF961F", "#1F47FF", "#369638", "#FF2817"]; // cores 
 
 export default function GraficoPizza({ data, titulo, height = "h-60" }: GraficoPizzaProps) {
   return (
-    <div className={`w-96 ${height} bg-black-smooth border-l border-primary-orange py-2`}>
-      <h2 className="text-xl font-semibold mb-1 px-2 text-primary-orange">{titulo}</h2>
+    <div className={`w-96 ${height} bg-[#0D0D0D] p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-800 scrollbar-track-transparent shadow-2xl flex flex-col justify-between py-2`}>
+      <h2 className="text-md font-semibold mb-1 px-2 ">{titulo}</h2>
 
       <ResponsiveContainer width="100%" height="80%">
         <PieChart>

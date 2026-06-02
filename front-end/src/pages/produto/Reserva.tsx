@@ -62,100 +62,120 @@ export default function Reserva() {
   const { pro_caminho_img, pro_nome, pro_valor } = produto;
   const precoTotal = pro_valor * slecionaQuantidade;
 
-
   return (
-    <div className="min-h-screen bg-ice flex flex-col">
+    <div className="min-h-screen bg-[#080808] flex flex-col text-white">
       <NavBar />
       <div className="flex-1 flex flex-col justify-center items-center p-4">
-        <h2 className="text-lg sm:text-2xl font-bold text-black-smooth mb-2">RESERVA</h2>
-        <div className="w-full max-w-md md:max-w-lg lg:max-w-xl bg-white rounded-lg shadow-md p-6 md:p-8 min-h-[500px] md:min-h-[600px] flex flex-col">
+        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-wider mb-4">RESERVA</h2>
+        <div className="w-full max-w-md md:max-w-lg lg:max-w-xl bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl shadow-2xl p-6 md:p-8 min-h-[500px] md:min-h-[600px] flex flex-col transition-all duration-200 hover:border-[#222]">
           <form className="flex-1 flex flex-col space-y-8">
-            <div className="flex flex-row items-start border-b border-b-gray-300 pb-4">
-              <img src={pro_caminho_img} alt={pro_nome} className="w-32 h-32 md:w-48 md:h-48" />
-              <p className="font-bold text-base lg:text-2xl">{pro_nome}</p>
+            <div className="flex flex-row items-start border-b border-[#1A1A1A] pb-6 gap-4">
+              {pro_caminho_img && (
+                <img src={pro_caminho_img} alt={pro_nome} className="w-32 h-32 md:w-40 md:h-40 object-contain rounded-lg bg-[#121212] border border-[#1A1A1A] p-2" />
+              )}
+              <div className="flex-1">
+                <p className="font-bold text-lg lg:text-xl text-white tracking-tight leading-snug">{pro_nome}</p>
+                <p className="text-xs text-gray-500 mt-1 uppercase tracking-wider font-semibold">Produto Selecionado</p>
+              </div>
             </div>
-            <div className="flex flex-row items-end gap-2 ">
-              <label className="text-lg sm:text-xl font-semibold text-black-smooth" htmlFor="">Selecione a quantidade:</label>
-              <select
-                name="quantidade"
-                id=""
-                value={slecionaQuantidade}
-                onChange={handleChange}
-                className=" bg-primary-orange text-black-smooth font-bold px-4 py-2 rounded-md sm:rounded-none sm:w-42 outline-none border-none cursor-pointer focus:ring-2 focus:ring-white transition duration-200">
-                {Array(produto.estoque).fill(0).map((_, index) => (<option className="font-semibold text-black-smooth bg-ice" value={index + 1}>{index + 1}</option>))}
-              </select>
+            
+            <div className="flex flex-row items-center gap-3">
+              <label className="text-sm font-semibold text-gray-300" htmlFor="quantidade">Selecione a quantidade:</label>
+              <div className="relative">
+                <select
+                  name="quantidade"
+                  id="quantidade"
+                  value={slecionaQuantidade}
+                  onChange={handleChange}
+                  className="bg-[#121212] border border-[#222] text-white font-bold px-4 py-2 rounded-lg outline-none cursor-pointer focus:ring-1 focus:ring-[#FF961F] transition duration-200 text-sm"
+                >
+                  {Array(produto.estoque).fill(0).map((_, index) => (
+                    <option key={index + 1} className="font-semibold text-white bg-[#0D0D0D]" value={index + 1}>
+                      {index + 1}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <div className="mt-5">
-              <label className="text-lg sm:text-xl font-semibold text-black-smooth" htmlFor="">Selecione o periodo:</label>
-              <div className="flex flex-row justify-center items-center gap-5 m-5">
+            <div>
+              <label className="text-sm font-semibold text-gray-300" htmlFor="periodo">Selecione o período:</label>
+              <div className="flex flex-row justify-center items-center gap-4 mt-3">
                 <Button
                   children="MANHÃ"
                   type="button"
                   onClick={() => setSelecionarPeriodo("MANHA")}
-                  className={clsx("rounded-xl bg-primary-orange px-10 py-1 lg:px-25 lg:py-2 text-black-smooth font-bold sm:rounded-none",
-                    selecionarPeriodo === "TARDE" ? "bg-primary-orange/50 text-black-smooth/50" : "bg-primary-orange "
+                  className={clsx(
+                    "w-full py-2.5 rounded-lg font-bold text-xs tracking-wider transition-all duration-300 border",
+                    selecionarPeriodo === "MANHA"
+                      ? "bg-[#FF961F] border-[#FF961F] text-black shadow-lg shadow-[#FF961F]/20"
+                      : "bg-[#121212] border-[#222] text-gray-400 hover:border-gray-600 hover:text-white"
                   )}
                 />
                 <Button
                   children="TARDE"
                   type="button"
                   onClick={() => setSelecionarPeriodo("TARDE")}
-                  className={clsx("rounded-xl bg-primary-orange px-10 py-1 lg:px-25 lg:py-2 text-black-smooth font-bold sm:rounded-none",
-                    selecionarPeriodo === "MANHA" ? "bg-primary-orange/50 text-black-smooth/50" : "bg-primary-orange "
+                  className={clsx(
+                    "w-full py-2.5 rounded-lg font-bold text-xs tracking-wider transition-all duration-300 border",
+                    selecionarPeriodo === "TARDE"
+                      ? "bg-[#FF961F] border-[#FF961F] text-black shadow-lg shadow-[#FF961F]/20"
+                      : "bg-[#121212] border-[#222] text-gray-400 hover:border-gray-600 hover:text-white"
                   )}
                 />
               </div>
             </div>
-            <div className="flex flex-col ">
-              <h3>Total:</h3>
-              <div className="border-t border-t-black-smooth flex flex-row items-end gap-2" >
-                <p className="text-lg sm:text-3xl font-bold text-black-smooth">  R$ {precoTotal.toFixed(2).replace(".", ",")}
+
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">Total</span>
+              <div className="border-t border-[#1A1A1A] pt-2 flex flex-row items-baseline gap-2">
+                <p className="text-2xl sm:text-3xl font-bold text-[#FF961F] font-mono">
+                  R$ {precoTotal.toFixed(2).replace(".", ",")}
                 </p>
-                {/* <p className="text-sm sm:text-xl  text-black-smooth">{parcelasTotal()}</p> */}
               </div>
             </div>
-            <div className="mt-auto flex flex-col space-y-4 pt-4">
-              <div className="flex justify-center">
-                <Button
-                  children="Reservar"
-                  type="button"
-                  className="rounded-xl text-2xl font-semibold bg-pear-green px-15 py-1 lg:px-25 lg:py-2 text-ice sm:rounded-none"
-                  onClick={async () => {
-                    if (!selecionarPeriodo) {
-                      alert("Selecione um período antes de continuar.");
-                      return;
-                    }
 
-                    try {
-                      const resultado = await criarReservaBackend(
-                        uuid,
-                        slecionaQuantidade,
-                        selecionarPeriodo
-                      );
-                      setModalSuccessOpen(true);
-                    } catch (err: any) {
-                      alert("erro: " + (err.response?.data?.message || "Erro ao criar reserva"));
-                    }
-                  }}
-                />
+            <div className="mt-auto pt-4">
+              <Button
+                children="Reservar"
+                type="button"
+                className="w-full text-base font-bold bg-[#369638] hover:bg-green-600 text-white py-3 rounded-lg transition-all duration-300 shadow-lg shadow-green-900/20"
+                onClick={async () => {
+                  if (!selecionarPeriodo) {
+                    alert("Selecione um período antes de continuar.");
+                    return;
+                  }
 
-
-              </div>
+                  try {
+                    await criarReservaBackend(
+                      uuid!,
+                      slecionaQuantidade,
+                      selecionarPeriodo
+                    );
+                    setModalSuccessOpen(true);
+                  } catch (err: any) {
+                    alert("erro: " + (err.response?.data?.message || "Erro ao criar reserva"));
+                  }
+                }}
+              />
             </div>
           </form>
         </div>
       </div>
+
       {modalSuccessOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full flex flex-col items-center">
-            <h2 className="text-2xl text-primary-orange font-semibold mb-4">Reserva Criada com Sucesso!</h2>
-            <p className="text-gray-600 font-semibold">Você reservou {slecionaQuantidade} unidades do produto {pro_nome}</p>
+        <div className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50">
+          <div className="bg-[#0D0D0D] border border-[#1A1A1A] rounded-xl p-6 max-w-sm w-full flex flex-col items-center shadow-2xl">
+            <h2 className="text-xl text-[#FF961F] font-bold mb-3 tracking-tight">Reserva Criada!</h2>
+            <p className="text-gray-400 text-center text-sm mb-5 leading-relaxed">
+              Você reservou <span className="text-white font-semibold">{slecionaQuantidade}</span> unidade(s) de <span className="text-white font-semibold">{pro_nome}</span>.
+            </p>
             <button
               onClick={() => navigate("/catalogo")}
-              className="mt-4 px-4 py-2 bg-primary-orange text-white rounded-md hover:bg-primary-orange/80 hover:shadow-lg hover:shadow-primary-orange/40 hover:scale-105 transition-transform duration-300
-              sm:rounded-none"
-            >Voltar para o Catalogo</button>
+              className="w-full py-2 bg-[#FF961F] hover:bg-orange-500 text-black font-bold rounded-lg transition-all duration-300 text-sm shadow-md"
+            >
+              Voltar para o Catálogo
+            </button>
           </div>
         </div>
       )}

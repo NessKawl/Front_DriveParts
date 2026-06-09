@@ -22,7 +22,7 @@ export default function CardProduto({ image, name, reserva, status, onClick }: P
                 <img src={image} alt={name} className="w-32 h-32 md:w-40 md:h-40 mb-2 object-contain" />
             </div>
 
-            <h3 className="text-sm md:text-lg font-semibold line-clamp-3 md:line-clamp-4">{name}</h3>
+            <h3 className="text-sm md:text-xl font-semibold line-clamp-3 md:line-clamp-4">{name}</h3>
             
             {reserva && <p className="text-black-smooth font-normal text-md">{reserva}</p>}
             {status && <p className={`${statusColor} text-black-smooth font-semibold text-lg`}>{nowstate}</p>}

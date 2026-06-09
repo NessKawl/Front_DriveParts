@@ -10,11 +10,11 @@ body {
 }
 
 @theme{
+    --font-sans: 'Kanit', sans-serif;
     --color-ice: #F3F3F3;
     --color-black-smooth: #1E1E1E;
     --color-primary-orange: #FF961F;
     --color-ocean-blue: #1F47FF;
     --color-pear-green: #369638;
     --color-red-alert: #FF2817;
-
 }

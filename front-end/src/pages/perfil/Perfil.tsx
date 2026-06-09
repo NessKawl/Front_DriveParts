@@ -2,9 +2,8 @@ import ProductsGrid from "../../components/cards/ProductsGridHistorico";
 import NavBarSimples from "../../components/navbar/NavbarSimples";
 import FooterMain from "../../components/footer/FooterMain";
 import { useNavigate } from "react-router-dom";
-import { Edit, LogOut, Phone, User } from "lucide-react";
+import { Edit, LogOut, Phone, User, ClipboardList, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getUserProfile } from "../../services/authService";
 import {
   getReservasAtivas,
   getHistoricoGeral,
@@ -39,8 +38,8 @@ export default function Perfil() {
 
   const userStorage = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const [nome, setNome] = useState(userStorage.usu_nome || "");
-  const [tel, setTel] = useState(userStorage.usu_tel || "");
+  const nome = userStorage.usu_nome || "";
+  const tel = userStorage.usu_tel || "";
   const [reservasAtivas, setReservasAtivas] = useState<any[]>([]);
   const [historico, setHistorico] = useState<any[]>([]);
   const [reservaSelecionada, setReservaSelecionada] = useState<any>(null);
@@ -62,7 +61,6 @@ export default function Perfil() {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        
         const reservasAtivasRaw = await getReservasAtivas(token);
         const historicoRaw = await getHistoricoGeral(token);
 
@@ -104,45 +102,130 @@ export default function Perfil() {
   };
 
   return (
-    <div className="bg-ice min-h-screen ">
+    <div className="bg-ice min-h-screen">
       <NavBarSimples rota={"catalogo"} />
-      <main>
-        <header className=" flex justify-center items-center px-6 py-3 shadow">
-          <h1 className="text-2xl font-bold">Seu Perfil</h1>
-        </header>
-        <div className="flex justify-center my-10">
-          <div className="bg-white shadow-xl rounded-xl p-4 w-[350px] text-center">
-            <div className=" flex justify-end">
-              <button
-                className="flex items-center gap-2 bg-white hover:bg-primary-orange border hover:border-primary-orange px-3 py-1 rounded transition"
-                onClick={() => navigate("/editar-perfil")}
-              >
-                <Edit size={18} /> Editar
-              </button>
-            </div>
-            <div className="flex flex-col items-center mt-4">
-              <div className="w-26 h-26 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white mb-3">
-                <User size={48} />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800">{user.nome}</h2>
-              <p className="text-gray-600 flex items-center justify-center gap-1 mt-1">
-                <Phone size={16} /> {formatarTelefone(user.telefone)}
-              </p>
-            </div>
-            <button
-              className="mt-6 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition px-4 py-2 rounded-lg flex items-center justify-center gap-2 w-full"
-              onClick={() => {
-                // Lógica de logout aqui
-                logout();
-                navigate("/catalogo");
-              }}
-            >
-              <LogOut size={20} /> Desconectar
-            </button>
-          </div>
-        </div>
 
-        <div className="md:px-10 mb-2">
+      <main>
+        {/* Hero / Profile Card Section */}
+        <section className="relative overflow-hidden">
+          {/* Background banner gradient */}
+          <div
+            className="h-44 w-full"
+          >
+          </div>
+
+          {/* Card flutuante */}
+          <div className="flex justify-center mb-15">
+            <div
+              className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 px-6 pb-6 -mt-20"
+              style={{ boxShadow: "0 20px 60px rgba(0,0,0,0.12)" }}
+            >
+              {/* Botão Editar */}
+              <div className="flex justify-end pt-4">
+                <button
+                  className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-primary-orange border border-gray-200 hover:border-primary-orange px-3 py-1.5 rounded-lg transition-all duration-200"
+                  onClick={() => navigate("/editar-perfil")}
+                >
+                  <Edit size={15} />
+                  Editar
+                </button>
+              </div>
+
+              {/* Avatar */}
+              <div className="flex flex-col items-center -mt-2">
+                <div className="relative">
+                  {/* Anel decorativo externo */}
+                  <div
+                    className="w-28 h-28 rounded-full p-1"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #FF961F 0%, #ff6b1a 100%)",
+                    }}
+                  >
+                    <div className="w-full h-full rounded-full bg-white p-1">
+                      <div
+                        className="w-full h-full rounded-full flex items-center justify-center"
+                        style={{
+                          background:
+                            "linear-gradient(135deg, #FF961F 0%, #ff6b1a 100%)",
+                        }}
+                      >
+                        <User size={44} className="text-white" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <h2 className="text-2xl font-bold text-black-smooth mt-4 mb-1">
+                  {user.nome || "Usuário"}
+                </h2>
+
+                {user.telefone && (
+                  <p className="text-gray-500 flex items-center gap-1.5 text-sm">
+                    <Phone size={14} className="text-primary-orange" />
+                    {formatarTelefone(user.telefone)}
+                  </p>
+                )}
+
+                {/* Stats rápidas */}
+                <div className="flex gap-4 mt-5 w-full">
+                  <div
+                    className="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl"
+                    style={{ background: "#fff8f0" }}
+                  >
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ background: "#FF961F20" }}
+                    >
+                      <ClipboardList size={16} className="text-primary-orange" />
+                    </div>
+                    <span className="text-xl font-bold text-black-smooth">
+                      {reservasAtivas.length}
+                    </span>
+                    <span className="text-xs text-gray-400 font-medium">
+                      Ativas
+                    </span>
+                  </div>
+
+                  <div className="w-px bg-gray-100" />
+
+                  <div
+                    className="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl"
+                    style={{ background: "#f5f5f5" }}
+                  >
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ background: "#1E1E1E20" }}
+                    >
+                      <Clock size={16} className="text-black-smooth" />
+                    </div>
+                    <span className="text-xl font-bold text-black-smooth">
+                      {historico.length}
+                    </span>
+                    <span className="text-xs text-gray-400 font-medium">
+                      Histórico
+                    </span>
+                  </div>
+                </div>
+
+                {/* Botão Desconectar */}
+                <button
+                  className="mt-5 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-red-alert text-red-alert font-semibold hover:bg-red-alert hover:text-white transition-all duration-200"
+                  onClick={() => {
+                    logout();
+                    navigate("/catalogo");
+                  }}
+                >
+                  <LogOut size={17} />
+                  Desconectar
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Grids de reservas */}
+        <div className="md:px-10 mt-10 mb-20">
           <ProductsGrid
             filtro={false}
             title="Suas Reservas Ativas"
@@ -151,7 +234,7 @@ export default function Perfil() {
             onClickItem={abrirModalReserva}
           />
         </div>
-        <div className="md:px-10">
+        <div className="md:px-10 mb-10">
           <ProductsGrid
             filtro={true}
             filtroChildren={filtros}
@@ -171,6 +254,7 @@ export default function Perfil() {
           />
         )}
       </main>
+
       <footer>
         <FooterMain />
       </footer>

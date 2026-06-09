@@ -32,3 +32,21 @@ export const redefinirSenha = async (telefone: string, codigo: string, novaSenha
 
     return response.data;
 };
+
+export const loginComCodigo =
+    async (
+        telefone: string,
+        codigo: string
+    ) => {
+
+        const response =
+            await api.post(
+                "/esqueci-senha/login-codigo",
+                {
+                    telefone,
+                    codigo,
+                }
+            );
+
+        return response.data;
+    };

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { VerifyLogin } from "../services/authService";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import { enviarCodigoRecuperacao } from "../services/esqueciSenhaService";
 
 const formatTelefone = (value: string) => {
   // Remove tudo que não for número (bloqueia letras e símbolos)
@@ -59,20 +60,31 @@ export default function Login() {
       setError("Preencha todos os campos obrigatórios.");
       return;
     }
-    
+
     try {
-      setLoading(true);
-      localStorage.setItem("token", "");
-      const response = await VerifyLogin(form.telefone, form.senha);
-      localStorage.setItem("token", response.data.access_token);
-      localStorage.setItem("usu_tipo", response.data.user.usu_tipo);
+      const response = await enviarCodigoRecuperacao(form.telefone);
+
+      if (response.message == 'Usuário não encontrado.') {
+        alert("Usuário não encontrado.");
+        return;
+      }
+
+      localStorage.setItem(
+        "tipo_login",
+        "login"
+      );
+
+      localStorage.setItem(
+        "telefone_recuperacao",
+        form.telefone
+      );
+
+      navigate(
+        "/verificacao"
+      );
+
       localStorage.setItem("user", JSON.stringify(response.data.user));
 
-      if (redirect) {
-        navigate(redirect);
-      } else {
-        navigate("/catalogo");
-      }
     } catch (err: any) {
       console.log(err);
 
@@ -80,9 +92,7 @@ export default function Login() {
         setError("Muitas tentativas erradas. Tente novamente após 1 minuto.");
       } else if (err.response?.status === 401 || err.response?.status === 404) {
         setError("Telefone ou senha incorretos.");
-      } else {
-        setError("Erro ao fazer login. Tente novamente.");
-      }
+      } 
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@ import NavBarSimples from "../components/navbar/NavbarSimples";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import { useState } from "react";
+import { loginComCodigo } from "../services/esqueciSenhaService";
 
 import {
   validarCodigoRecuperacao,
@@ -16,7 +17,7 @@ export default function Verificacao() {
   const [loading, setLoading] =
     useState(false);
 
-  const handleChange = (value: string,index: number) => {
+  const handleChange = (value: string, index: number) => {
     if (!/^\d?$/.test(value))
       return;
 
@@ -27,9 +28,9 @@ export default function Verificacao() {
     setCodigo(novoCodigo);
 
     // vai pro próximo input
-    if (value &&index < 4) {
+    if (value && index < 4) {
       const nextInput = document.getElementById(`code-${index + 1}`);
-    
+
       nextInput?.focus();
     }
   };
@@ -63,8 +64,49 @@ export default function Verificacao() {
           codigoFinal
         );
 
-        navigate("/recuperar-senha");
+        const tipoLogin =
+          localStorage.getItem(
+            "tipo_login"
+          );
 
+        if (
+          tipoLogin ===
+          "login"
+        ) {
+
+          const login =
+            await loginComCodigo(
+              telefone,
+              codigoFinal
+            );
+
+          localStorage.setItem(
+            "user",
+            JSON.stringify(
+              login.user
+            )
+          );
+
+          localStorage.removeItem(
+            "tipo_login"
+          );
+
+          navigate(
+            "/catalogo"
+          );
+
+          return;
+        }
+
+        // fluxo recuperação senha
+        localStorage.setItem(
+          "codigo_recuperacao",
+          codigoFinal
+        );
+
+        navigate(
+          "/recuperar-senha"
+        );
       } catch (error) {
         alert("Código inválido ou expirado.");
       } finally {
@@ -95,22 +137,22 @@ export default function Verificacao() {
           </h2>
 
           <div className="w-full sm:w-10/12 flex flex-row justify-center items-center gap-3">
-            {codigo.map((value,index) => (
-                <input
-                  key={index}
-                  id={`code-${index}`}
-                  type="text"
-                  maxLength={1}
-                  value={value}
-                  onChange={(e) => handleChange(e.target.value,index)}
-                  className="w-10 h-12 sm:w-18 sm:h-16 border border-gray-300 rounded-lg text-2xl text-center focus:border-primary-orange focus:outline-none"
-                />
-              )
+            {codigo.map((value, index) => (
+              <input
+                key={index}
+                id={`code-${index}`}
+                type="text"
+                maxLength={1}
+                value={value}
+                onChange={(e) => handleChange(e.target.value, index)}
+                className="w-10 h-12 sm:w-18 sm:h-16 border border-gray-300 rounded-lg text-2xl text-center focus:border-primary-orange focus:outline-none"
+              />
+            )
             )}
           </div>
 
           <button
-            onClick={() =>console.log("Reenviar código")}
+            onClick={() => console.log("Reenviar código")}
             className="w-full text-end font-semibold mb-8"
           >
             Reenviar código

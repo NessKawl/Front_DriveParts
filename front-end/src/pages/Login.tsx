@@ -59,7 +59,7 @@ export default function Login() {
       setError("Preencha todos os campos obrigatórios.");
       return;
     }
-
+    
     try {
       setLoading(true);
       localStorage.setItem("token", "");
@@ -91,7 +91,7 @@ export default function Login() {
   return (
     <div className="bg-ice h-screen flex flex-col justify-between">
       <NavBarSimples rota={"catalogo"} />
-      
+
 
       <div className="flex flex-col justify-center items-center mt-10 ">
         <form
@@ -110,9 +110,8 @@ export default function Login() {
                 type="tel"
                 placeholder="Insira seu Telefone"
                 //className=" ${ error ? 'border-red-500' : 'border-gray-300'}"
-                className={`w-full border border-gray-300 rounded-lg p-2 ${
-                  error ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`w-full border border-gray-300 rounded-lg p-2 ${error ? "border-red-500" : "border-gray-300"
+                  }`}
                 value={formatTelefone(form.telefone)}
                 onChange={handleChange}
               />
@@ -128,9 +127,8 @@ export default function Login() {
                   type="password"
                   placeholder="Insira sua Senha"
                   //className="w-full border border-gray-300 rounded-lg p-2 ${ error ? border-red-500 : border-gray-300 }"
-                  className={`w-full border border-gray-300 rounded-lg p-2 ${
-                    error ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full border border-gray-300 rounded-lg p-2 ${error ? "border-red-500" : "border-gray-300"
+                    }`}
                   value={form.senha}
                   onChange={handleChange}
                 />

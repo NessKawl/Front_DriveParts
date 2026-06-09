@@ -2,12 +2,7 @@ import api from "./api";
 
 export const enviarCodigoRecuperacao =
     async (telefone: string) => {
-        const response =
-            await api.post(
-                "/esqueci-senha/solicitar",
-                { telefone }
-            );
-
+        const response = await api.post("/esqueci-senha/solicitar", { telefone });
         return response.data;
     };
 

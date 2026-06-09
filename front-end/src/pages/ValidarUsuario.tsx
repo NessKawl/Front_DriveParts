@@ -16,11 +16,16 @@ export default function RecuperarSenha() {
 
         try {
             setLoading(true);
-            const telefoneLimpo =telefone.replace(/\D/g,"");
+            const telefoneLimpo = telefone.replace(/\D/g, "");
 
             console.log(telefoneLimpo);
 
             const response = await enviarCodigoRecuperacao(telefoneLimpo);
+
+            if (response.message == 'Usuário não encontrado.') {
+                alert("Usuário não encontrado.");
+                return;
+            }
 
             console.log(response);
 
@@ -64,7 +69,7 @@ export default function RecuperarSenha() {
                                 id="telefone"
                                 type="tel"
                                 value={telefone}
-                                onChange={(e) =>setTelefone(e.target.value)}
+                                onChange={(e) => setTelefone(e.target.value)}
                                 placeholder="Insira seu número de telefone"
                                 className="w-full border border-gray-300 rounded-lg p-2"
                                 required
@@ -73,7 +78,7 @@ export default function RecuperarSenha() {
                     </div>
 
                     <Button
-                        children={loading ? "Enviando...": "Confirmar"}
+                        children={loading ? "Enviando..." : "Confirmar"}
                         className="text-black-smooth font-semibold py-2 px-5 md:text-xl border rounded-xl hover:bg-primary-orange hover:text-white hover:border-primary-orange"
                         type="submit"
                     />

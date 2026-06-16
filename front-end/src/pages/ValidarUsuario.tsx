@@ -1,93 +1,138 @@
 import { useNavigate } from "react-router-dom";
-import Button from "../components/buttons/Button";
 import NavBarSimples from "../components/navbar/NavbarSimples";
 import FooterMain from "../components/footer/FooterMain";
 import { useState } from "react";
 import { enviarCodigoRecuperacao } from "../services/esqueciSenhaService";
+import { Phone, AlertCircle } from "lucide-react";
 
-export default function RecuperarSenha() {
-    const [telefone, setTelefone] = useState("");
-    const [loading, setLoading] = useState(false);
+const formatTelefone = (value: string) => {
+  value = value.replace(/\D/g, "");
 
-    const navigate = useNavigate();
+  if (value.length > 11) value = value.slice(0, 11);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+  if (value.length <= 10) {
+    value = value.replace(/(\d{2})(\d)/, "($1) $2");
+    value = value.replace(/(\d{4})(\d)/, "$1-$2");
+  } else {
+    value = value.replace(/(\d{2})(\d)/, "($1) $2");
+    value = value.replace(/(\d{5})(\d)/, "$1-$2");
+  }
 
-        try {
-            setLoading(true);
-            const telefoneLimpo = telefone.replace(/\D/g, "");
+  return value;
+};
 
-            console.log(telefoneLimpo);
+export default function ValidarUsuario() {
+  const [telefone, setTelefone] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-            const response = await enviarCodigoRecuperacao(telefoneLimpo);
+  const navigate = useNavigate();
 
-            if (response.message == 'Usuário não encontrado.') {
-                alert("Usuário não encontrado.");
-                return;
-            }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const cleanValue = e.target.value.replace(/\D/g, "");
+    setTelefone(cleanValue);
+    if (error) setError("");
+  };
 
-            console.log(response);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
 
-            // Salva telefone para próxima tela
-            localStorage.setItem(
-                "telefone_recuperacao",
-                telefoneLimpo
-            );
+    if (!telefone) {
+      setError("Por favor, preencha o número de telefone.");
+      return;
+    }
 
-            navigate("/verificacao");
+    try {
+      setLoading(true);
+      const response = await enviarCodigoRecuperacao(telefone);
 
-        } catch (error) {
-            console.error(error);
+      if (response.message === "Usuário não encontrado.") {
+        setError("Usuário não encontrado.");
+        return;
+      }
 
-            alert("Erro ao enviar código.");
-        } finally {
-            setLoading(false);
-        }
-    };
+      // Salva telefone para próxima tela
+      localStorage.setItem("telefone_recuperacao", telefone);
 
-    return (
-        <div className="bg-ice h-screen flex flex-col justify-between">
-            <NavBarSimples rota={"login"} />
+      navigate("/verificacao");
+    } catch (err) {
+      console.error(err);
+      setError("Erro ao enviar código de recuperação. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            <div className="flex flex-col justify-center items-center">
-                <h1 className="text-4xl font-bold my-4 mt-12 mb-12">
-                    Informe seu número de telefone
-                </h1>
+  return (
+    <div className="bg-ice min-h-screen flex flex-col justify-between">
+      <NavBarSimples rota={"login"} />
 
-                <form
-                    onSubmit={handleSubmit}
-                    className="bg-white flex flex-col justify-between items-center p-10 rounded-2xl  w-10/12 md:w-8/12 lg:w-6/12 xl:w-5/12 2xl:w-4/12 shadow-2xl shadow-primary-orange/20"
-                >
-                    <div className="w-full sm:w-10/12 flex flex-col gap-5 mb-4">
-                        <div className="flex flex-col items-start">
-                            <label className="font-semibold">
-                                Telefone
-                            </label>
-
-                            <input
-                                id="telefone"
-                                type="tel"
-                                value={telefone}
-                                onChange={(e) => setTelefone(e.target.value)}
-                                placeholder="Insira seu número de telefone"
-                                className="w-full border border-gray-300 rounded-lg p-2"
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <Button
-                        children={loading ? "Enviando..." : "Confirmar"}
-                        className="text-black-smooth font-semibold py-2 px-5 md:text-xl border rounded-xl hover:bg-primary-orange hover:text-white hover:border-primary-orange"
-                        type="submit"
-                    />
-                </form>
+      <main className="w-full flex-grow flex items-center justify-center py-12 px-4">
+        <div className="w-full max-w-md">
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white p-8 md:p-10 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 space-y-5"
+          >
+            <div className="text-center mb-2">
+              <h1 className="text-3xl font-bold text-black-smooth tracking-tight">
+                Recuperar Senha
+              </h1>
+              <p className="text-sm text-gray-500 mt-1.5">
+                Informe seu número de telefone para receber o código de verificação
+              </p>
             </div>
 
-            <footer className="relative w-full">
-                <FooterMain />
-            </footer>
+            {/* Campo: Telefone */}
+            <div>
+              <label htmlFor="telefone" className="block text-sm font-semibold text-gray-700 mb-1.5">
+                Telefone
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none">
+                  <Phone size={18} />
+                </span>
+                <input
+                  id="telefone"
+                  type="tel"
+                  placeholder="Insira seu número de telefone"
+                  className={`w-full pl-10 pr-4 py-3 bg-ice text-black-smooth rounded-xl border outline-none transition-all font-medium text-sm focus:ring-2 ${
+                    error 
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" 
+                      : "border-gray-200 focus:border-primary-orange focus:ring-primary-orange/20"
+                  }`}
+                  value={formatTelefone(telefone)}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              {/* Mensagem de Erro Unificada */}
+              {error && (
+                <p className="text-red-500 text-sm font-semibold mt-2.5 flex items-center gap-1.5">
+                  <AlertCircle size={16} />
+                  {error}
+                </p>
+              )}
+            </div>
+
+            {/* Botão de Envio */}
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center bg-pear-green hover:bg-green-700 text-white font-bold py-3.5 px-6 rounded-xl hover:shadow-lg hover:shadow-pear-green/20 transition-all duration-200 cursor-pointer text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              >
+                {loading ? "Enviando..." : "Confirmar"}
+              </button>
+            </div>
+          </form>
         </div>
-    );
-}
+      </main>
+
+      <footer className="relative w-full">
+        <FooterMain />
+      </footer>
+    </div>
+  );
+}

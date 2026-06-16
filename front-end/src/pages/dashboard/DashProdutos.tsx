@@ -91,7 +91,7 @@ export default function DashProdutos() {
 
   const [form, setForm] = useState({
     nome: "",
-    valor: 0,
+    valor: "",
     marca: "",
     cod: "",
     estoque: 0,
@@ -102,7 +102,7 @@ export default function DashProdutos() {
   });
   const [formEdit, setFormEdit] = useState({
     nome: "",
-    valor: 0,
+    valor: "",
     marca: "",
     cod: "",
     status: true,
@@ -111,42 +111,48 @@ export default function DashProdutos() {
     categoria: "1",
   });
 
-  const [edit, setEdit] = useState(false);
-  const fields = [
+
+  const fieldsCadastro = [
     {
       name: "nome",
       type: "text",
       placeholder: "Nome do produto",
+      label: "Nome do Produto",
       required: true,
     },
     {
       name: "cod",
       type: "text",
       placeholder: "codigo do produto",
+      label: "Código do Produto",
       required: true,
     },
     {
       name: "marca",
       type: "text",
       placeholder: "Marca do produto",
+      label: "Marca",
       required: true,
     },
     {
       name: "valor",
-      type: "number",
+      type: "float",
       placeholder: "Valor do produto (R$)",
+      label: "Valor do Produto",
       required: true,
     },
-    edit == false && {
+    {
       name: "estoque",
       type: "number",
       placeholder: "Quantidade em estoque",
+      label: "Estoque Inicial",
       required: true,
     },
     {
       name: "status",
       type: "select",
       placeholder: "Status do produto",
+      label: "Status",
       options: [
         { label: "Ativo", value: true },
         { label: "Inativo", value: false },
@@ -156,6 +162,7 @@ export default function DashProdutos() {
       name: "categoria",
       type: "select",
       placeholder: "Categoria do produto",
+      label: "Categoria",
       options: [
         { label: "Motor", value: "1" },
         { label: "Freios", value: "4" },
@@ -169,12 +176,70 @@ export default function DashProdutos() {
         { label: "Outros", value: "10" },
       ],
     },
-  ].filter(Boolean) as any[];
+  ];
+
+  const fieldsEdit = [
+    {
+      name: "nome",
+      type: "text",
+      placeholder: "Nome do produto",
+      label: "Nome do Produto",
+      required: true,
+    },
+    {
+      name: "cod",
+      type: "text",
+      placeholder: "codigo do produto",
+      label: "Código do Produto",
+      required: true,
+    },
+    {
+      name: "marca",
+      type: "text",
+      placeholder: "Marca do produto",
+      label: "Marca",
+      required: true,
+    },
+    {
+      name: "valor",
+      type: "number",
+      placeholder: "Valor do produto (R$)",
+      label: "Valor do Produto",
+      required: true,
+    },
+    {
+      name: "status",
+      type: "select",
+      placeholder: "Status do produto",
+      label: "Status",
+      options: [
+        { label: "Ativo", value: true },
+        { label: "Inativo", value: false },
+      ],
+    },
+    {
+      name: "categoria",
+      type: "select",
+      placeholder: "Categoria do produto",
+      label: "Categoria",
+      options: [
+        { label: "Motor", value: "1" },
+        { label: "Freios", value: "4" },
+        { label: "Suspensão", value: "2" },
+        { label: "Pneus", value: "9" },
+        { label: "Acessorios", value: "8" },
+        { label: "Transmissão", value: "7" },
+        { label: "Elétrica", value: "3" },
+        { label: "Filtros", value: "5" },
+        { label: "Óleos e Lubrificantes", value: "6" },
+        { label: "Outros", value: "10" },
+      ],
+    },
+  ];
+
   const [isOpenEstoque, setIsOpenEstoque] = useState(false);
-  const [tipoEstoque, setTipoEstoque] = useState<"Entrada" | "Saida" | null>(
-    null,
-  );
-  const abrirModal = (tipo: "Entrada" | "Saida") => {
+  const [tipoEstoque] = useState<"Entrada" | "Saida" | null>(null);
+  /* const abrirModal = (tipo: "Entrada" | "Saida") => {
     setTipoEstoque(tipo);
     setIsOpenEstoque(true);
     setFormEstoque({
@@ -185,7 +250,7 @@ export default function DashProdutos() {
       quantidade: "",
       produtoId: "",
     });
-  };
+  }; */
   const [formEstoque, setFormEstoque] = useState({
     tipo: "",
     descricao: "",
@@ -199,6 +264,7 @@ export default function DashProdutos() {
       name: "tipo",
       type: "select",
       placeholder: "Selecione o tipo de movimentação",
+      label: "Tipo de Movimentação",
       options:
         tipoEstoque === "Saida"
           ? [
@@ -214,8 +280,8 @@ export default function DashProdutos() {
             { label: "Outros", value: "OUTROS" },
           ],
     },
-    { name: "data", type: "date", placeholder: "Data da movimentação" },
-    { name: "quantidade", type: "number", placeholder: "Quantidade", min: 1 },
+    { name: "data", type: "date", placeholder: "Data da movimentação", label: "Data da Movimentação" },
+    { name: "quantidade", type: "number", placeholder: "Quantidade", min: 1, label: "Quantidade" },
   ];
 
   const [produtoBuscaEstoque, setProdutoBuscaEstoque] = useState("");
@@ -777,30 +843,11 @@ export default function DashProdutos() {
                 onClick: (item) => {
                   setProdutoEditando(item);
                   setIsOpenEdit(true);
-                  setEdit(true);
                 },
               },
             ]}
           />
         </div>
-        {/*<div className="flex lfex-row justify-between gap-5 mx-5">
-          <Button
-            type="button"
-            onClick={() => abrirModal("Saida")}
-            className="bg-primary-orange hover:bg-primary-orange/80 text-xl font-semibold hover:text-ice flex flex-row justify-center items-center p-2 rounded-lg"
-          >
-            <BanknoteArrowUp size={20} className="mr-2" />
-            Registrar saída de estoque
-          </Button>
-          <Button
-            type="button"
-            onClick={() => abrirModal("Entrada")}
-            className="bg-pear-green text-xl font-semibold hover:text-ice flex flex-row justify-center items-center p-2 rounded-lg"
-          >
-            <BanknoteArrowDown size={20} className="mr-2" />
-            Registrar entrada de estoque
-          </Button>
-        </div>*/}
       </div>
       {/* === Modal de Cadastro === */}
       {isOpen && (
@@ -895,7 +942,7 @@ export default function DashProdutos() {
                   Informações Gerais
                 </label>
                 <FormGenerator
-                  fields={fields}
+                  fields={fieldsCadastro}
                   form={form}
                   setForm={setForm}
                   className="grid grid-cols-1 md:grid-cols-2 gap-6"
@@ -1072,7 +1119,7 @@ export default function DashProdutos() {
                   Informações Gerais
                 </label>
                 <FormGenerator
-                  fields={fields}
+                  fields={fieldsEdit}
                   form={formEdit}
                   setForm={setFormEdit}
                   className="grid grid-cols-1 md:grid-cols-2 gap-6"

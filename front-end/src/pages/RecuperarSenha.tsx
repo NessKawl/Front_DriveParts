@@ -26,8 +26,18 @@ export default function RecuperarSenha() {
         return;
       }
 
-      if (senha.length < 6) {
-        setError("A senha precisa ter pelo menos 6 caracteres.");
+      if (senha.length < 8) {
+        setError("A senha precisa ter pelo menos 8 caracteres.");
+        return;
+      }
+
+      const senhaForte =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+      if (!senhaForte.test(senha)) {
+        setError(
+          "A senha deve conter no mínimo 8 caracteres, incluindo letra maiúscula, número e caractere especial."
+        );
         return;
       }
 
@@ -47,8 +57,9 @@ export default function RecuperarSenha() {
       localStorage.removeItem("telefone_recuperacao");
       localStorage.removeItem("codigo_recuperacao");
 
-      alert("Senha redefinida com sucesso!");
-      navigate("/login");
+      setTimeout(() => {
+        navigate("/login");
+      }, 100);
     } catch (err) {
       console.error(err);
       setError("Erro ao redefinir senha. Tente novamente.");
@@ -65,7 +76,7 @@ export default function RecuperarSenha() {
         <div className="w-full max-w-md">
           <form
             onSubmit={handleSubmit}
-            className="bg-white p-8 md:p-10 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 space-y-6"
+            className="bg-white p-8 md:p-10 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 space-y-5"
           >
             <div className="text-center mb-2">
               <h1 className="text-3xl font-bold text-black-smooth tracking-tight">
@@ -157,7 +168,7 @@ export default function RecuperarSenha() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center bg-primary-orange hover:bg-orange-500 text-white font-bold py-3.5 px-6 rounded-xl hover:shadow-lg hover:shadow-primary-orange/20 transition-all duration-200 cursor-pointer text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="w-full flex items-center justify-center bg-pear-green hover:bg-green-700 text-white font-bold py-3.5 px-6 rounded-xl hover:shadow-lg hover:shadow-pear-green/20 transition-all duration-200 cursor-pointer text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
                 {loading ? "Salvando..." : "Confirmar"}
               </button>

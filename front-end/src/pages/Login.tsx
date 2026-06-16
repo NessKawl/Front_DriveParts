@@ -1,12 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import Button from "../components/buttons/Button";
 import NavBarSimples from "../components/navbar/NavbarSimples";
 import FooterMain from "../components/footer/FooterMain";
 import { useState } from "react";
-import { VerifyLogin } from "../services/authService";
-import { useSearchParams } from "react-router-dom";
-import axios from "axios";
 import { enviarCodigoRecuperacao } from "../services/esqueciSenhaService";
+import { Phone, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 
 const formatTelefone = (value: string) => {
   // Remove tudo que não for número (bloqueia letras e símbolos)
@@ -35,8 +32,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({ telefone: "", senha: "" });
-  const [searchParams] = useSearchParams();
-  const redirect = searchParams.get("redirect");
+
+  const [showSenha, setShowSenha] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (error) setError("");
@@ -62,29 +59,20 @@ export default function Login() {
     }
 
     try {
+      setLoading(true);
       const response = await enviarCodigoRecuperacao(form.telefone);
 
-      if (response.message == 'Usuário não encontrado.') {
-        alert("Usuário não encontrado.");
+      if (response.message == "Usuário não encontrado.") {
+        setError("Usuário não encontrado.");
         return;
       }
 
-      localStorage.setItem(
-        "tipo_login",
-        "login"
-      );
+      localStorage.setItem("tipo_login", "login");
+      localStorage.setItem("telefone_recuperacao", form.telefone);
 
-      localStorage.setItem(
-        "telefone_recuperacao",
-        form.telefone
-      );
-
-      navigate(
-        "/verificacao"
-      );
+      navigate("/verificacao");
 
       localStorage.setItem("user", JSON.stringify(response.data.user));
-
     } catch (err: any) {
       console.log(err);
 
@@ -92,91 +80,134 @@ export default function Login() {
         setError("Muitas tentativas erradas. Tente novamente após 1 minuto.");
       } else if (err.response?.status === 401 || err.response?.status === 404) {
         setError("Telefone ou senha incorretos.");
-      } 
+      } else {
+        setError("Erro ao realizar login. Tente novamente.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-ice h-screen flex flex-col justify-between">
+    <div className="bg-ice min-h-screen flex flex-col justify-between">
       <NavBarSimples rota={"catalogo"} />
 
-
-      <div className="flex flex-col justify-center items-center mt-10 ">
-        <form
-          action=""
-          onSubmit={handleSubmit}
-          className="bg-white flex flex-col justify-between items-center p-10 rounded-2xl w-10/12 md:w-8/12 lg:w-6/12 xl:w-5/12 2xl:w-4/12 shadow-2xl shadow-primary-orange/20"
-        >
-          <h1 className="text-4xl font-seminbold my-4">Entrar</h1>
-          <div className="w-full sm:w-10/12 flex flex-col gap-5 mb-4">
-            <div className="flex flex-col items-start">
-              <label htmlFor="" className="font-semibold">
-                Telefone
-              </label>
-              <input
-                id="telefone"
-                type="tel"
-                placeholder="Insira seu Telefone"
-                //className=" ${ error ? 'border-red-500' : 'border-gray-300'}"
-                className={`w-full border border-gray-300 rounded-lg p-2 ${error ? "border-red-500" : "border-gray-300"
-                  }`}
-                value={formatTelefone(form.telefone)}
-                onChange={handleChange}
-              />
+      <main className="w-full flex-grow flex items-center justify-center py-12 px-4">
+        <div className="w-full max-w-md">
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white p-8 md:p-10 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 space-y-5"
+          >
+            <div className="text-center mb-2">
+              <h1 className="text-3xl font-bold text-black-smooth tracking-tight">
+                Entrar
+              </h1>
+              <p className="text-sm text-gray-500 mt-1.5">
+                Faça login para gerenciar suas reservas e produtos
+              </p>
             </div>
 
+            {/* Campo: Telefone */}
             <div>
-              <div className="flex flex-col items-start">
-                <label htmlFor="" className="font-semibold">
-                  Senha
-                </label>
+              <label htmlFor="telefone" className="block text-sm font-semibold text-gray-700 mb-1.5">
+                Telefone
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none">
+                  <Phone size={18} />
+                </span>
                 <input
-                  id="senha"
-                  type="password"
-                  placeholder="Insira sua Senha"
-                  //className="w-full border border-gray-300 rounded-lg p-2 ${ error ? border-red-500 : border-gray-300 }"
-                  className={`w-full border border-gray-300 rounded-lg p-2 ${error ? "border-red-500" : "border-gray-300"
-                    }`}
-                  value={form.senha}
+                  id="telefone"
+                  type="tel"
+                  placeholder="Insira seu Telefone"
+                  className={`w-full pl-10 pr-4 py-3 bg-ice text-black-smooth rounded-xl border outline-none transition-all font-medium text-sm focus:ring-2 ${
+                    error 
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" 
+                      : "border-gray-200 focus:border-primary-orange focus:ring-primary-orange/20"
+                  }`}
+                  value={formatTelefone(form.telefone)}
                   onChange={handleChange}
+                  required
                 />
               </div>
+            </div>
 
-              <div className="flex">
-                {error && (
-                  <p className="text-red-600 font-semibold mb-1">{error}</p>
-                )}
-              </div>
-
-              <div className="font-bold flex justify-end items-end mb-8 w-full">
-                <p
-                  className="cursor-pointer"
+            {/* Campo: Senha */}
+            <div>
+              <div className="flex justify-between items-center mb-1.5">
+                <label htmlFor="senha" className="block text-sm font-semibold text-gray-700">
+                  Senha
+                </label>
+                <span
+                  className="text-xs font-semibold text-primary-orange hover:underline cursor-pointer"
                   onClick={() => navigate("/validar-usuario")}
                 >
                   Esqueceu sua senha?
-                </p>
+                </span>
               </div>
-            </div>
-          </div>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none">
+                  <Lock size={18} />
+                </span>
+                <input
+                  id="senha"
+                  type={showSenha ? "text" : "password"}
+                  placeholder="Insira sua Senha"
+                  className={`w-full pl-10 pr-10 py-3 bg-ice text-black-smooth rounded-xl border outline-none transition-all font-medium text-sm focus:ring-2 ${
+                    error 
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" 
+                      : "border-gray-200 focus:border-primary-orange focus:ring-primary-orange/20"
+                  }`}
+                  value={form.senha}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowSenha(!showSenha)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                >
+                  {showSenha ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
 
-          <Button
-            children="ACESSAR"
-            className=" text-black-smooth font-semibold py-3 px-5 md:text-xl border rounded-xl hover:bg-primary-orange hover:text-white hover:border-primary-orange"
-            type="submit"
-          />
-          <Button
-            type="button"
-            onClick={() => navigate("/cadastro")}
-            children="Não possui uma conta? Cadastre-se agora!"
-            className="font-medium text-black-smooth hover:text-primary-orange mt-5  underline"
-          />
-        </form>
-      </div>
+              {/* Mensagem de Erro Unificada */}
+              {error && (
+                <p className="text-red-500 text-sm font-semibold mt-2.5 flex items-center gap-1.5">
+                  <AlertCircle size={16} />
+                  {error}
+                </p>
+              )}
+            </div>
+
+            {/* Botão de Login */}
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center bg-pear-green hover:bg-green-700 text-white font-bold py-3.5 px-6 rounded-xl hover:shadow-lg hover:shadow-pear-green/20 transition-all duration-200 cursor-pointer text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              >
+                {loading ? "Acessando..." : "ACESSAR"}
+              </button>
+            </div>
+
+            <div className="text-center pt-2">
+              <button
+                type="button"
+                onClick={() => navigate("/cadastro")}
+                className="font-semibold text-sm text-black-smooth hover:text-primary-orange transition-colors cursor-pointer underline"
+              >
+                Não possui uma conta? Cadastre-se agora!
+              </button>
+            </div>
+          </form>
+        </div>
+      </main>
+
       <footer className="relative w-full">
         <FooterMain />
       </footer>
     </div>
   );
 }
+

@@ -3,7 +3,7 @@ import FormGenerator from "../../components/forms/FormGenerator";
 import NavBarSimples from "../../components/navbar/NavbarSimples";
 import Button from "../../components/buttons/Button";
 import Avatar from "../../components/imagens/Avatar";
-import { atualizarPerfil } from "../../services/perfilService";
+import { atualizarPerfil, deletarConta } from "../../services/perfilService";
 import Modal from "../../components/modal/Modal";
 
 export default function EditarPerfil() {
@@ -25,75 +25,109 @@ export default function EditarPerfil() {
   });
 
   const [modalAberto, setModalAberto] = useState(false);
-    const [modalTitulo, setModalTitulo] = useState("");
-    const [modalMensagem, setModalMensagem] = useState("");
-    const [modalBotaoAcao, setModalBotaoAcao] = useState("");
-    const [acaoModal, setAcaoModal] = useState<(() => void) | undefined>();
-    const [modalTipo, setModalTipo] = useState<"erro" | "confirmacao">("confirmacao");
+  const [modalTitulo, setModalTitulo] = useState("");
+  const [modalMensagem, setModalMensagem] = useState("");
+  const [modalBotaoAcao, setModalBotaoAcao] = useState("");
+  const [acaoModal, setAcaoModal] = useState<(() => void) | undefined>();
+  const [modalTipo, setModalTipo] = useState<"erro" | "confirmacao">("confirmacao");
 
-    const abrirModalErro = (mensagem: string) => {
-  setModalTipo("erro");
-  setModalTitulo("Erro");
-  setModalMensagem(mensagem);
-  setModalBotaoAcao("Entendi");
-  setAcaoModal(() => undefined);
-  setModalAberto(true);
-};
+  const abrirModalErro = (mensagem: string) => {
+    setModalTipo("erro");
+    setModalTitulo("Erro");
+    setModalMensagem(mensagem);
+    setModalBotaoAcao("Entendi");
+    setAcaoModal(() => undefined);
+    setModalAberto(true);
+  };
 
-const abrirModalSucesso = (mensagem: string, onConfirm?: () => void) => {
-  setModalTipo("confirmacao");
-  setModalTitulo("Sucesso");
-  setModalMensagem(mensagem);
-  setModalBotaoAcao("OK");
+  const abrirModalSucesso = (mensagem: string, onConfirm?: () => void) => {
+    setModalTipo("confirmacao");
+    setModalTitulo("Sucesso");
+    setModalMensagem(mensagem);
+    setModalBotaoAcao("OK");
 
-  setAcaoModal(() => () => {
-    if (onConfirm) onConfirm();
-    setModalAberto(false);
-  });
-
-  setModalAberto(true);
-};
-
-const abrirModalConfirmacao = () => {
-  setModalTipo("confirmacao");
-  setModalTitulo("Confirmar alteração");
-  setModalMensagem("Deseja realmente salvar as alterações do perfil?");
-  setModalBotaoAcao("Salvar");
-
-  setAcaoModal(() => confirmarAtualizacao);
-
-  setModalAberto(true);
-};
-
-const confirmarAtualizacao = async () => {
-  try {
-    const response = await atualizarPerfil({
-      nome: form.nome,
-      senha: form.novaSenha || undefined,
+    setAcaoModal(() => () => {
+      if (onConfirm) onConfirm();
+      setModalAberto(false);
     });
 
-    const userStorage = JSON.parse(localStorage.getItem("user") || "{}");
+    setModalAberto(true);
+  };
 
-    const updatedUser = {
-      ...userStorage,
-      usu_nome: form.nome,
-    };
+  const abrirModalConfirmacao = () => {
+    setModalTipo("confirmacao");
+    setModalTitulo("Confirmar alteração");
+    setModalMensagem("Deseja realmente salvar as alterações do perfil?");
+    setModalBotaoAcao("Salvar");
 
-    localStorage.setItem("user", JSON.stringify(updatedUser));
+    setAcaoModal(() => confirmarAtualizacao);
 
-    if (response.data?.access_token) {
-      localStorage.setItem("token", response.data.access_token);
+    setModalAberto(true);
+  };
+
+  const abrirModalExcluir = () => {
+    setModalTipo("confirmacao");
+    setModalTitulo("Excluir conta");
+    setModalMensagem(
+      "Tem certeza que deseja excluir sua conta? Esta ação é permanente e seus dados pessoais serão anonimizados."
+    );
+
+    setModalBotaoAcao("Excluir");
+
+    setAcaoModal(() => confirmarExclusao);
+
+    setModalAberto(true);
+  };
+
+  const confirmarAtualizacao = async () => {
+    try {
+      const response = await atualizarPerfil({
+        nome: form.nome,
+        senha: form.novaSenha || undefined,
+      });
+
+      const userStorage = JSON.parse(localStorage.getItem("user") || "{}");
+
+      const updatedUser = {
+        ...userStorage,
+        usu_nome: form.nome,
+      };
+
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      if (response.data?.access_token) {
+        localStorage.setItem("token", response.data.access_token);
+      }
+
+      abrirModalSucesso("Perfil atualizado com sucesso!", () => {
+        window.location.href = "/perfil";
+      });
+
+    } catch (error) {
+      console.error(error);
+      abrirModalErro("Erro ao atualizar perfil");
     }
+  };
 
-    abrirModalSucesso("Perfil atualizado com sucesso!", () => {
-      window.location.href = "/perfil";
-    });
+  const confirmarExclusao = async () => {
+    try {
+      await deletarConta();
 
-  } catch (error) {
-    console.error(error);
-    abrirModalErro("Erro ao atualizar perfil");
-  }
-};
+      // Limpa todos os dados da sessão
+      localStorage.clear();
+
+      abrirModalSucesso(
+        "Sua conta foi excluída com sucesso.",
+        () => {
+          window.location.href = "/login";
+        }
+      );
+
+    } catch (error) {
+      console.error(error);
+      abrirModalErro("Erro ao excluir a conta.");
+    }
+  };
 
   useEffect(() => {
     const userStorage = JSON.parse(localStorage.getItem("user") || "{}");
@@ -133,15 +167,15 @@ const confirmarAtualizacao = async () => {
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (form.novaSenha !== form.confirmarSenha) {
-    abrirModalErro("As senhas não coincidem");
-    return;
-  }
+    if (form.novaSenha !== form.confirmarSenha) {
+      abrirModalErro("As senhas não coincidem");
+      return;
+    }
 
-  abrirModalConfirmacao();
-};
+    abrirModalConfirmacao();
+  };
 
   return (
     <div className="bg-ice min-h-screen">
@@ -159,10 +193,10 @@ const confirmarAtualizacao = async () => {
 
             <div className="relative group my-6">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary-orange to-orange-400 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-              <Avatar 
-                size="xl" 
-                className="relative border-4 border-white shadow-md transform transition duration-500 group-hover:scale-105" 
-                src={"/icons/avatar.png"} 
+              <Avatar
+                size="xl"
+                className="relative border-4 border-white shadow-md transform transition duration-500 group-hover:scale-105"
+                src={"/icons/avatar.png"}
               />
             </div>
 
@@ -187,25 +221,32 @@ const confirmarAtualizacao = async () => {
             >
               Salvar Alterações
             </Button>
+            <Button
+              type="button"
+              onClick={abrirModalExcluir}
+              className="mt-5 bg-red-600 md:text-xl text-lg font-bold text-white px-6 py-4 rounded-2xl shadow-lg hover:bg-red-700 transition-all duration-300"
+            >
+              Excluir Perfil
+            </Button>
           </div>
         </form>
       </main>
 
       <Modal
-  isOpen={modalAberto}
-  title={modalTitulo}
-  message={modalMensagem}
-  actionText={modalBotaoAcao}
-  onClose={() => setModalAberto(false)}
-  onAction={() => {
-    if (modalTipo === "confirmacao") acaoModal?.();
-    setModalAberto(false);
-  }}
-  {...(modalTipo === "confirmacao" && {
-    cancelText: "Cancelar",
-    onCancel: () => setModalAberto(false),
-  })}
-/>
+        isOpen={modalAberto}
+        title={modalTitulo}
+        message={modalMensagem}
+        actionText={modalBotaoAcao}
+        onClose={() => setModalAberto(false)}
+        onAction={() => {
+          if (modalTipo === "confirmacao") acaoModal?.();
+          setModalAberto(false);
+        }}
+        {...(modalTipo === "confirmacao" && {
+          cancelText: "Cancelar",
+          onCancel: () => setModalAberto(false),
+        })}
+      />
     </div>
   );
 }

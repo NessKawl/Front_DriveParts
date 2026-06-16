@@ -14,3 +14,7 @@ export async function atualizarPerfil(data: UpdatePerfilData) {
 
     return response.data;
 }
+
+export const deletarConta = async () => {
+    return await api.delete("/perfil/deletar");
+};

@@ -91,7 +91,7 @@ export default function DashProdutos() {
 
   const [form, setForm] = useState({
     nome: "",
-    valor: "",
+    valor: 0,
     marca: "",
     cod: "",
     estoque: 0,
@@ -102,7 +102,7 @@ export default function DashProdutos() {
   });
   const [formEdit, setFormEdit] = useState({
     nome: "",
-    valor: "",
+    valor: 0,
     marca: "",
     cod: "",
     status: true,
@@ -136,7 +136,7 @@ export default function DashProdutos() {
     },
     {
       name: "valor",
-      type: "float",
+      type: "number",
       placeholder: "Valor do produto (R$)",
       label: "Valor do Produto",
       required: true,

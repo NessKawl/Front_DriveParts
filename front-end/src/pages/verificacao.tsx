@@ -56,6 +56,25 @@ export default function Verificacao() {
 
         const response = await validarCodigoRecuperacao(telefone, codigoFinal);
 
+        console.log("res: ", response.user);
+
+        localStorage.setItem("token",response.access_token);
+
+        localStorage.setItem("usu_tipo", response.user.usu_tipo);
+
+        // salva usuário
+        localStorage.setItem(
+          "user",
+          JSON.stringify(response.user)
+        );
+        
+
+        // salva código validado
+        localStorage.setItem(
+          "codigo_recuperacao",
+          codigoFinal
+        );
+
         console.log(response);
 
         // salva código validado
@@ -73,19 +92,6 @@ export default function Verificacao() {
           tipoLogin ===
           "login"
         ) {
-
-          const login =
-            await loginComCodigo(
-              telefone,
-              codigoFinal
-            );
-
-          localStorage.setItem(
-            "user",
-            JSON.stringify(
-              login.user
-            )
-          );
 
           localStorage.removeItem(
             "tipo_login"

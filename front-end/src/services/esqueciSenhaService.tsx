@@ -9,7 +9,7 @@ export const enviarCodigoRecuperacao =
 export const validarCodigoRecuperacao = async (telefone: string, codigo: string) => {
     const response =
         await api.post(
-            "/esqueci-senha/validar",
+            "/auth/validar",
             {
                 telefone,
                 codigo,

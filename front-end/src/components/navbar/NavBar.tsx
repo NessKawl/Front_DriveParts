@@ -12,7 +12,7 @@ export default function NavBar() {
 
   const [user, setUser] = useState({
     nome: userStorage.usu_nome || "",
-    telefone: userStorage.usu_tel || "",
+    usu_tipo: userStorage.usu_tipo || "",
   });
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function NavBar() {
 
       setUser({
         nome: updatedUser.usu_nome || "",
-        telefone: updatedUser.usu_tel || "",
+        usu_tipo: updatedUser.usu_tipo || "",
       });
     }
 
@@ -49,7 +49,7 @@ export default function NavBar() {
         <div className="h-20 md:h-15 md:w-1/12">
           <button
             onClick={() =>
-              user.telefone == "12987654321"
+              user.usu_tipo == "ADMIN"
                 ? navigate("/dashboard/geral")
                 : navigate("/catalogo")
             }

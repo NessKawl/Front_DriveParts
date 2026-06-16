@@ -1,154 +1,177 @@
 import NavBarSimples from "../components/navbar/NavbarSimples";
-import FooterMain from "../components/footer/FooterMain";
 import { useNavigate } from "react-router-dom";
+import Button from "../components/buttons/Button";
 import { useState } from "react";
-import { validarCodigoRecuperacao } from "../services/esqueciSenhaService";
-import { ShieldCheck, AlertCircle, RefreshCw, ArrowLeft } from "lucide-react";
+import { loginComCodigo } from "../services/esqueciSenhaService";
+
+import {
+  validarCodigoRecuperacao,
+} from "../services/esqueciSenhaService";
 
 export default function Verificacao() {
   const navigate = useNavigate();
 
-  const [codigo, setCodigo] = useState<string[]>(["", "", "", "", ""]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [codigo, setCodigo] =
+    useState<string[]>(["", "", "", "", ""]);
+
+  const [loading, setLoading] =
+    useState(false);
 
   const handleChange = (value: string, index: number) => {
-    if (!/^\d?$/.test(value)) return;
-    if (error) setError("");
+    if (!/^\d?$/.test(value))
+      return;
 
     const novoCodigo = [...codigo];
+
     novoCodigo[index] = value;
+
     setCodigo(novoCodigo);
 
-    // Vai para o próximo input
+    // vai pro próximo input
     if (value && index < 4) {
       const nextInput = document.getElementById(`code-${index + 1}`);
+
       nextInput?.focus();
     }
   };
 
-  const handleVerificar = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+  const handleVerificar =
+    async () => {
+      try {
+        setLoading(true);
 
-    try {
-      setLoading(true);
-      const telefone = localStorage.getItem("telefone_recuperacao");
+        const telefone = localStorage.getItem("telefone_recuperacao");
 
-      if (!telefone) {
-        setError("Telefone não encontrado no processo de recuperação.");
-        return;
+        if (!telefone) {
+          alert("Telefone não encontrado.");
+          return;
+        }
+
+        const codigoFinal = codigo.join("");
+
+        if (codigoFinal.length !== 5) {
+          alert("Digite os 5 números.");
+          return;
+        }
+
+        const response = await validarCodigoRecuperacao(telefone, codigoFinal);
+
+        console.log("res: ", response.user);
+
+        localStorage.setItem("token",response.access_token);
+
+        localStorage.setItem("usu_tipo", response.user.usu_tipo);
+
+        // salva usuário
+        localStorage.setItem(
+          "user",
+          JSON.stringify(response.user)
+        );
+        
+
+        // salva código validado
+        localStorage.setItem(
+          "codigo_recuperacao",
+          codigoFinal
+        );
+
+        console.log(response);
+
+        // salva código validado
+        localStorage.setItem(
+          "codigo_recuperacao",
+          codigoFinal
+        );
+
+        const tipoLogin =
+          localStorage.getItem(
+            "tipo_login"
+          );
+
+        if (
+          tipoLogin ===
+          "login"
+        ) {
+
+          localStorage.removeItem(
+            "tipo_login"
+          );
+
+          navigate(
+            "/catalogo"
+          );
+
+          return;
+        }
+
+        // fluxo recuperação senha
+        localStorage.setItem(
+          "codigo_recuperacao",
+          codigoFinal
+        );
+
+        navigate(
+          "/recuperar-senha"
+        );
+      } catch (error) {
+        alert("Código inválido ou expirado.");
+      } finally {
+        setLoading(false);
       }
-
-      const codigoFinal = codigo.join("");
-
-      if (codigoFinal.length !== 5) {
-        setError("Por favor, digite os 5 dígitos do código.");
-        return;
-      }
-
-      await validarCodigoRecuperacao(telefone, codigoFinal);
-
-      // Salva código validado
-      localStorage.setItem("codigo_recuperacao", codigoFinal);
-      navigate("/recuperar-senha");
-    } catch (err) {
-      console.error(err);
-      setError("Código inválido ou expirado. Tente novamente.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
   return (
-    <div className="bg-ice min-h-screen flex flex-col justify-between">
+    <div className="bg-ice h-screen">
+      <NavBarSimples rota={"login"} />
 
-      <main className="w-full flex-grow flex items-center justify-center py-12 px-4">
-        <div className="w-full max-w-md">
-          {/* Botão de Voltar para o Login */}
+      <div className="flex flex-col justify-center items-center mt-6">
+        <h1 className="text-xl font-bold flex justify-center items-center mb-4">
+          Verificação de Segurança
+        </h1>
+
+        <div className="bg-white flex flex-col justify-between items-center p-10 rounded-2xl sm:rounded-none w-10/12 md:w-8/12 lg:w-6/12 xl:w-5/12 2xl:w-4/12">
+          <p className="font-medium text-lg mb-6">
+            Para proteger sua conta,
+            enviamos um código
+            de verificação
+            para o número
+            cadastrado
+          </p>
+
+          <h2 className="font-light text-start w-full mb-2">
+            Código de verificação
+          </h2>
+
+          <div className="w-full sm:w-10/12 flex flex-row justify-center items-center gap-3">
+            {codigo.map((value, index) => (
+              <input
+                key={index}
+                id={`code-${index}`}
+                type="text"
+                maxLength={1}
+                value={value}
+                onChange={(e) => handleChange(e.target.value, index)}
+                className="w-10 h-12 sm:w-18 sm:h-16 border border-gray-300 rounded-lg text-2xl text-center focus:border-primary-orange focus:outline-none"
+              />
+            )
+            )}
+          </div>
+
           <button
-            onClick={() => navigate("/validar-usuario")}
-            className="flex items-center gap-2 text-gray-600 hover:text-primary-orange font-medium mb-6 transition-colors duration-200 group"
+            onClick={() => console.log("Reenviar código")}
+            className="w-full text-end font-semibold mb-8"
           >
-            <ArrowLeft
-              size={18}
-              className="transform group-hover:-translate-x-1 transition-transform"
-            />
-            Voltar
+            Reenviar código
           </button>
-          <form
-            onSubmit={handleVerificar}
-            className="bg-white p-8 md:p-10 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 space-y-6 text-center"
-          >
-            <div className="flex flex-col items-center mb-2">
-              <div className="p-3 bg-orange-50 rounded-2xl text-primary-orange mb-3">
-                <ShieldCheck size={28} />
-              </div>
-              <h1 className="text-3xl font-bold text-black-smooth tracking-tight">
-                Verificação
-              </h1>
-              <p className="text-sm text-gray-500 mt-2 px-4">
-                Para proteger sua conta, enviamos um código de verificação para o número cadastrado.
-              </p>
-            </div>
 
-            <div className="space-y-4">
-              <label className="block text-sm font-semibold text-gray-700 text-left">
-                Código de verificação de 5 dígitos
-              </label>
-
-              <div className="flex justify-center items-center gap-3 py-2">
-                {codigo.map((value, index) => (
-                  <input
-                    key={index}
-                    id={`code-${index}`}
-                    type="text"
-                    maxLength={1}
-                    value={value}
-                    onChange={(e) => handleChange(e.target.value, index)}
-                    className="w-12 h-14 sm:w-14 sm:h-16 bg-ice text-black-smooth rounded-xl border border-gray-200 text-2xl font-bold text-center focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20 focus:outline-none outline-none transition-all"
-                  />
-                ))}
-              </div>
-
-              {/* Mensagem de Erro */}
-              {error && (
-                <p className="text-red-500 text-sm font-semibold mt-2 flex items-center justify-center gap-1.5">
-                  <AlertCircle size={16} />
-                  {error}
-                </p>
-              )}
-            </div>
-
-            {/* Reenviar Código */}
-            <div className="flex justify-end pt-1">
-              <button
-                type="button"
-                onClick={() => console.log("Reenviar código")}
-                className="text-xs font-bold text-primary-orange hover:text-orange-600 flex items-center gap-1 transition-colors"
-              >
-                <RefreshCw size={12} />
-                Reenviar código
-              </button>
-            </div>
-
-            {/* Botão de Verificação */}
-            <div className="pt-2">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex items-center justify-center bg-primary-orange hover:bg-orange-500 text-white font-bold py-3.5 px-6 rounded-xl hover:shadow-lg hover:shadow-primary-orange/20 transition-all duration-200 cursor-pointer text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-              >
-                {loading ? "Verificando..." : "Verificar"}
-              </button>
-            </div>
-          </form>
+          <Button
+            onClick={handleVerificar}
+            children={loading ? "Verificando..." : "Verificar"
+            }
+            className="bg-pear-green text-ice font-semibold py-2 px-4 md:text-xl rounded-xl hover:bg-primary-orange"
+          />
         </div>
-      </main>
-
-      <footer className="relative w-full">
-        <FooterMain />
-      </footer>
+      </div>
     </div>
   );
 }

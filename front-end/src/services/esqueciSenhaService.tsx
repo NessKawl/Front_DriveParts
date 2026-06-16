@@ -19,6 +19,19 @@ export const validarCodigoRecuperacao = async (telefone: string, codigo: string)
     return response.data;
 };
 
+export const reenviarCodigoRecuperacao =
+    async (
+        telefone: string
+    ) => {
+        const response =
+            await api.post(
+                "/esqueci-senha/reenviar-codigo",
+                { telefone }
+            );
+
+        return response.data;
+    };
+
 export const redefinirSenha = async (telefone: string, codigo: string, novaSenha: string) => {
     const response =
         await api.post(

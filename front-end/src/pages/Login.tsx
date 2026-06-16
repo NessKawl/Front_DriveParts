@@ -4,6 +4,7 @@ import FooterMain from "../components/footer/FooterMain";
 import { useState } from "react";
 import { enviarCodigoRecuperacao } from "../services/esqueciSenhaService";
 import { Phone, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { VerifyLogin } from "../services/authService";
 
 const formatTelefone = (value: string) => {
   // Remove tudo que não for número (bloqueia letras e símbolos)
@@ -60,6 +61,13 @@ export default function Login() {
 
     try {
       setLoading(true);
+      const senha = await VerifyLogin(form.telefone, form.senha);
+
+      if (senha.valid == false) {
+        setError("Telefone ou senha incorretos.");
+        return;
+      }
+      
       const response = await enviarCodigoRecuperacao(form.telefone);
 
       if (response.message == "Usuário não encontrado.") {
@@ -120,11 +128,10 @@ export default function Login() {
                   id="telefone"
                   type="tel"
                   placeholder="Insira seu Telefone"
-                  className={`w-full pl-10 pr-4 py-3 bg-ice text-black-smooth rounded-xl border outline-none transition-all font-medium text-sm focus:ring-2 ${
-                    error 
-                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" 
-                      : "border-gray-200 focus:border-primary-orange focus:ring-primary-orange/20"
-                  }`}
+                  className={`w-full pl-10 pr-4 py-3 bg-ice text-black-smooth rounded-xl border outline-none transition-all font-medium text-sm focus:ring-2 ${error
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                    : "border-gray-200 focus:border-primary-orange focus:ring-primary-orange/20"
+                    }`}
                   value={formatTelefone(form.telefone)}
                   onChange={handleChange}
                   required
@@ -153,11 +160,10 @@ export default function Login() {
                   id="senha"
                   type={showSenha ? "text" : "password"}
                   placeholder="Insira sua Senha"
-                  className={`w-full pl-10 pr-10 py-3 bg-ice text-black-smooth rounded-xl border outline-none transition-all font-medium text-sm focus:ring-2 ${
-                    error 
-                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" 
-                      : "border-gray-200 focus:border-primary-orange focus:ring-primary-orange/20"
-                  }`}
+                  className={`w-full pl-10 pr-10 py-3 bg-ice text-black-smooth rounded-xl border outline-none transition-all font-medium text-sm focus:ring-2 ${error
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                    : "border-gray-200 focus:border-primary-orange focus:ring-primary-orange/20"
+                    }`}
                   value={form.senha}
                   onChange={handleChange}
                   required

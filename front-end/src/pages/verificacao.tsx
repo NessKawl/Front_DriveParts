@@ -2,7 +2,7 @@ import NavBarSimples from "../components/navbar/NavbarSimples";
 import { useNavigate } from "react-router-dom";
 import FooterMain from "../components/footer/FooterMain";
 import { useState } from "react";
-import { validarCodigoRecuperacao } from "../services/esqueciSenhaService";
+import { validarCodigoRecuperacao, reenviarCodigoRecuperacao } from "../services/esqueciSenhaService";
 import { AlertCircle } from "lucide-react";
 
 export default function Verificacao() {
@@ -11,6 +11,48 @@ export default function Verificacao() {
   const [codigo, setCodigo] = useState<string[]>(["", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [reenviando, setReenviando] = useState(false);
+  const [mensagem, setMensagem] = useState("");
+
+  const handleReenviarCodigo = async () => {
+    try {
+      setMensagem("");
+      setError("");
+      setReenviando(true);
+
+      const telefone = localStorage.getItem(
+        "telefone_recuperacao"
+      );
+
+      if (!telefone) {
+        setError("Telefone não encontrado.");
+        return;
+      }
+
+      await reenviarCodigoRecuperacao(telefone);
+
+      setMensagem(
+        "Código reenviado com sucesso."
+      );
+
+      // limpa inputs antigos
+      setCodigo(["", "", "", "", ""]);
+
+      // volta foco pro primeiro campo
+      const firstInput =
+        document.getElementById("code-0");
+
+      firstInput?.focus();
+    } catch (err) {
+      console.error(err);
+      setError(
+        "Não foi possível reenviar o código."
+      );
+    } finally {
+      setReenviando(false);
+    }
+  };
 
   const handleChange = (value: string, index: number) => {
     if (!/^\d?$/.test(value)) return;
@@ -134,7 +176,8 @@ export default function Verificacao() {
             <div className="text-right">
               <button
                 type="button"
-                onClick={() => console.log("Reenviar código")}
+                onClick={handleReenviarCodigo}
+                disabled={reenviando}
                 className="text-xs font-semibold text-primary-orange hover:underline cursor-pointer bg-transparent border-none outline-none"
               >
                 Reenviar código
@@ -161,4 +204,4 @@ export default function Verificacao() {
       </footer>
     </div>
   );
-}
+}

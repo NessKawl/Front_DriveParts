@@ -4,7 +4,8 @@ import api from "./api";
 
 export const VerifyLogin = async (usu_tel: string, usu_senha: string) => {
     
-    return await api.post("/auth/login", { usu_tel, usu_senha });
+    const response = await api.post("/auth/login", { usu_tel, usu_senha });
+    return response.data;
 };
 
 export const Register = async (usu_nome: string, usu_tel: string, usu_senha: string) => {
